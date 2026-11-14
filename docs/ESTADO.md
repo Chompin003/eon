@@ -1,51 +1,29 @@
-# Estado de la entrega — 14 de noviembre de 2026
+# Estado del proyecto — 14 de noviembre de 2026
 
-## Listo en esta computadora
+## Aplicación e infraestructura
 
-- Proyecto React + TypeScript + Vite + Three.js, organizado en cinco módulos.
-- Checkerboard procedural desde el interior de la esfera, arrastre, rueda, slider, reinicio, teclado y gestos táctiles.
-- Interfaz oscura responsiva, sin datos astronómicos reales ni IA.
-- Git inicializado en `main` y cuatro ramas `feat/*` preparadas con la misma base del prototipo.
-- Guía de colaboración, contratos, instrucciones para Live Share y `AGENTS.md`.
-- Workflow de GitHub Actions preparado para instalar, validar, probar y compilar cada PR a `main`.
-- Configuración estática para Cloudflare: salida `dist`, versión de Node y cabeceras.
-- GitHub CLI 2.104.0 instalado en `%LOCALAPPDATA%\SPHEREx-Tools\gh\bin\gh.exe`.
+- [Repositorio](https://github.com/Chompin003/spherex-explorer) y [página de producción](https://spherex-explorer.pages.dev/) publicados.
+- Checkerboard a pantalla completa, ventana flotante, zoom de 100° a 1″ y controles de fechas de prueba; sin imágenes científicas reales conectadas.
+- Coordenadas de Iván/GorditoG integradas en el [PR #3](https://github.com/Chompin003/spherex-explorer/pull/3). Su cuenta tiene permiso de escritura.
+- Cuatro ramas del equipo preparadas: `feat/sky-viewer`, `feat/spherex-data`, `feat/drawing-tools`, `feat/interface`. Sus cambios se conservan al sincronizar `main`.
+- Cloudflare Pages conectado con GitHub, producción `main`, build `npm run build`, salida `dist`, Node 24.11.1 y previews de todas las ramas no productivas.
 
-## Verificado localmente
+## Integración sin aprobación humana
 
-| Comprobación                                    | Resultado                                |
-| ----------------------------------------------- | ---------------------------------------- |
-| `npm install` y `npm ci`                        | Correctos                                |
-| `npm run check`                                 | TypeScript y ESLint correctos            |
-| `npm test`                                      | 5 pruebas correctas                      |
-| `npm run build`                                 | Correcto                                 |
-| `npm run test:e2e` sobre el build de producción | 2 pruebas correctas (escritorio y móvil) |
-| `npm audit`                                     | 0 vulnerabilidades                       |
-| Capturas 1440 px y 390 px                       | Revisadas visualmente                    |
+Por decisión del propietario, basta hacer push a una rama del mismo repositorio: **Auto integrate** crea o reutiliza el PR y habilita la integración automática. CI corre en cada push. GitHub integra al pasar `quality` y `Cloudflare Pages`; Cloudflare publica en la misma URL de producción.
 
-Las pruebas móviles usan emulación Chromium, no un teléfono físico. Vite avisa que el chunk de Three.js mide unos 526 kB minificados (130 kB gzip); es un aviso de tamaño, no un fallo del build.
+No se exige aprobación humana ni actualizar la rama por cada merge ajeno. Los errores de build/tests, conflictos de código y PR en borrador detienen la integración. Se conservan protecciones contra force push y borrados, incluso para administradores.
 
-## Infraestructura remota
+Prueba real: el bot creó el [PR #4](https://github.com/Chompin003/spherex-explorer/pull/4) y habilitó auto-merge; GitHub lo integró a las 15:34 del 14 de noviembre (hora de Los Ángeles), sin aprobación manual. [Workflow del bot](https://github.com/Chompin003/spherex-explorer/actions/runs/43653793038), [CI correcto](https://github.com/Chompin003/spherex-explorer/actions/runs/43653793045), commit de integración `e644a0a3f86306be6dd5d07b9fb3724f387384e2`.
 
-| Entregable remoto                           | Estado real                                                                |
-| ------------------------------------------- | -------------------------------------------------------------------------- |
-| Repositorio GitHub `spherex-explorer`       | Publicado: https://github.com/Chompin003/spherex-explorer                  |
-| Cuatro ramas en GitHub                      | Publicadas y con seguimiento desde esta computadora                        |
-| Protección de `main` y revisión obligatoria | Política documentada; pendiente de aplicar en GitHub                       |
-| Ejecución remota de GitHub Actions          | Primer run completado correctamente; enlace más abajo                      |
-| Página pública Cloudflare Pages             | Publicada: https://spherex-explorer.pages.dev/                             |
-| Previews y despliegue automático a `main`   | Integración GitHub conectada; comprobación de cambios posteriores en curso |
-| Acceso de los otros tres desarrolladores    | Pendiente de sus usuarios e invitaciones del propietario                   |
-| Sesión Live Share                           | Debe iniciarla y compartirla una persona; guía preparada                   |
+La automatización ignora ramas sin diferencias de archivos, incluidas sincronizaciones que solo añaden historial. No borra ramas ni ejecuta código de un PR con el token de escritura del integrador.
 
-GitHub CLI fue autorizada como `Chompin003`, incluido el permiso `workflow`. La aplicación oficial Cloudflare Workers and Pages quedó instalada con acceso solo a `spherex-explorer`.
+## Herramientas Python preparadas
 
-El primer despliegue de Pages compiló el commit `5c6e18cc55b6cf81f7a549945616102c850c5629` de `main` y terminó en Success. La URL pública respondió HTTP 200. Configuración: React (Vite), `npm run build`, salida `dist`, `NODE_VERSION=24.11.1` para producción y preview.
+Se agregó un entorno Python 3.13 en `.venv` con Astroquery 0.4.11 y el extra `[all]`, Astropy 8.0.2, NumPy 2.5.4, SciPy 1.18.1, Matplotlib 3.11.2, Pillow 13.0.0 y PyVO 1.10.0. Los archivos de requisitos y la comprobación offline están en [tools/astronomy](../tools/astronomy/README.md).
 
-Primer [run de CI correcto](https://github.com/Chompin003/spherex-explorer/actions/runs/43646811398).
+Las herramientas Python no se ejecutan en Cloudflare Pages ni en el navegador. Todavía no hay consultas o descargas de datos SPHEREx, backend de archivos ni credenciales de archivos astronómicos. Se conectarán los datos reales cuando lo indique el propietario.
 
-El entorno oficial de Cloudflare para Codex también quedó instalado y autorizado; consulta [CLOUDFLARE-CODEX.md](CLOUDFLARE-CODEX.md). Es necesario reiniciar Codex para cargar el nuevo servidor MCP.
+## Colaboración
 
-## Comprobación final de la integración
-
-Se está comprobando un push posterior al primer despliegue y un preview de PR; se registrarán sus URLs y SHA en la entrega final. La protección de `main` se aplicará al terminar la inicialización. Las invitaciones de los compañeros requieren sus nombres de usuario reales.
+Lee [COLABORACION.md](COLABORACION.md), [AGENTS.md](../AGENTS.md) y [la integración de coordenadas](INTEGRACION-COORDENADAS.md). Cada integrante usa su propia cuenta, sesión de IA y checkout. Live Share sigue disponible para sesiones compartidas iniciadas por una persona.

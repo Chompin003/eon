@@ -24,7 +24,7 @@ git push -u origin feat/sky-viewer feat/spherex-data feat/drawing-tools feat/int
 
 Ejecuta estos comandos solo desde la carpeta de este proyecto y después de que su bootstrap esté completo. Si ya hay un repositorio del mismo nombre o un remoto `origin`, inspecciónalo primero y no lo reemplaces. El repositorio público permite usar las protecciones de rama del plan gratuito; no publiques archivos ajenos o secretos.
 
-En Settings → General → Pull Requests, conserva merge commits y desmarca el borrado automático de ramas para las cuatro ramas duraderas. En Settings → Branches / Rules → añade protección para `main`: exigir PR, una aprobación, conversaciones resueltas y check `quality`, sin force pushes ni eliminación. Incluye administradores para que toda integración futura pase por revisión. No configures pagos.
+En Settings → General → Pull Requests están habilitados **Allow auto-merge** y merge commits; las ramas duraderas no se borran automáticamente. `main` exige cero aprobaciones humanas y los checks `quality` y `Cloudflare Pages`, sin force pushes ni eliminación, incluso para administradores. No se exige actualizar la rama por cada integración ajena; los conflictos reales sí bloquean el merge. No configures pagos.
 
 ## Cloudflare: integración oficial de Git
 
@@ -55,7 +55,7 @@ Después de conectar GitHub y Pages:
 1. Abre un PR de una rama de trabajo con un cambio pequeño y útil, por ejemplo corregir una instrucción de la guía.
 2. Comprueba que GitHub Actions ejecuta **CI / quality** y termina verde.
 3. Comprueba que la app de Cloudflare añade un deployment/check y una URL de preview al PR. Abre esa URL y prueba arrastre, slider y Reset View.
-4. Obtén la aprobación de otro integrante e integra con merge commit a `main`.
+4. El workflow **Auto integrate** habilita el merge automático; GitHub lo integra al pasar los checks, sin aprobación humana.
 5. En Cloudflare, comprueba que el despliegue de producción indica el mismo SHA integrado. Abre la URL pública y verifica el cambio.
 
 Un build local correcto o la existencia de `ci.yml` no prueban que la integración remota funciona. Registra la URL pública, la URL del PR, el run de CI y el SHA desplegado en `docs/ESTADO.md`. Hasta entonces, los despliegues automáticos quedan pendientes de verificar.
