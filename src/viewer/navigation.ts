@@ -15,7 +15,9 @@ export function panView(
 }
 
 export function zoomView(view: ViewState, factor: number): ViewState {
-  return normalizeView({ ...view, fov: view.fov * factor });
+  const radians = Math.PI / 180;
+  const fov = (2 * Math.atan(Math.tan((view.fov * radians) / 2) * factor)) / radians;
+  return normalizeView({ ...view, fov });
 }
 
 /** Scale line/page-mode wheel devices into approximately equivalent pixel deltas. */
