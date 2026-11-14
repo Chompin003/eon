@@ -58,10 +58,9 @@ git diff
 git add src/viewer
 git commit -m "feat(viewer): describe el cambio"
 git push -u origin feat/sky-viewer
-gh pr create --base main --head feat/sky-viewer --fill
 ```
 
-Adapta la ruta y la rama a tu módulo. Si no tienes `gh`, abre GitHub → Pull requests → New pull request, base `main`, compare tu rama. Pide revisión a otro integrante y espera CI verde y preview de Cloudflare. Para ramas compartidas duraderas usa **Create a merge commit**, sin eliminar la rama; evita squash/rebase en estas cuatro ramas para no dejar historiales divergentes. Después de integrar, vuelve a actualizar tu rama con `origin/main`.
+Adapta la ruta y la rama a tu módulo. GitHub crea el PR y lo integra automáticamente al pasar los checks. Puedes abrir un PR manualmente en GitHub si necesitas un borrador o coordinar un cambio; al marcarlo listo se habilita la integración automática. Para ramas compartidas duraderas se usa **Create a merge commit**, sin eliminar la rama; evita squash/rebase en estas cuatro ramas para no dejar historiales divergentes. Después de integrar, vuelve a actualizar tu rama con `origin/main`.
 
 ## 3. Live Share: trabajar juntos en una sesión
 
@@ -73,6 +72,6 @@ Adapta la ruta y la rama a tu módulo. Si no tienes `gh`, abre GitHub → Pull r
 
 Live Share no reemplaza las ramas, los PR ni las cuentas individuales; sirve para programación conjunta puntual. La sesión debe iniciarla y compartirla una persona.
 
-## 4. Revisión y protección
+## 4. Comprobaciones y protección
 
-El propietario configura una regla para `main`: requerir PR, al menos una aprobación, resolver conversaciones y el check `quality`; bloquear borrados y force pushes. No exigir CODEOWNERS hasta registrar los usuarios reales. Las cuentas de los compañeros deben proporcionarlas ellos; no inventes invitaciones. En repositorios privados la disponibilidad de protecciones depende del plan de GitHub; no activar planes de pago.
+`main` requiere los checks `quality` y `Cloudflare Pages`, y está protegida contra borrados y force pushes, incluso para administradores. Se exigen cero aprobaciones humanas. Un fallo o conflicto debe corregirse en la rama de origen; luego basta hacer push otra vez. Las cuentas de los compañeros deben proporcionarlas ellos; no inventes invitaciones ni compartas credenciales. No activar planes de pago.

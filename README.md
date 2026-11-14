@@ -42,9 +42,13 @@ Lee [la guía de colaboración](docs/COLABORACION.md), [los contratos de módulo
 
 ## Despliegue
 
+Los colaboradores hacen push a su rama: **Auto integrate** crea/actualiza el PR y lo integra cuando pasan `quality` y `Cloudflare Pages`. No se exige aprobación humana. La página pública conserva la misma URL. Los fallos de tests o conflictos detienen la integración.
+
 Cloudflare Pages: `main`, `npm run build`, salida `dist`, Node `24.11.1`. Configuración y verificación en [docs/DESPLIEGUE.md](docs/DESPLIEGUE.md). La existencia de los archivos de CI no confirma que un despliegue remoto se haya ejecutado; comprueba los estados en GitHub y Cloudflare.
 
 Tecnologías: React, TypeScript, Vite y Three.js. Licencia MIT.
+
+El [entorno Python de astronomía](tools/astronomy/README.md) incluye Astroquery y herramientas FITS/PNG. Todavía no hay datos reales conectados al visor.
 
 Consulta el [estado de la entrega y las autorizaciones pendientes](docs/ESTADO.md).
 

@@ -42,9 +42,9 @@ jobs:
             encoded_ref=$(jq -rn --arg ref "$HEAD_BRANCH" '$ref | @uri')
             HEAD_SHA=$(gh api "repos/$GH_REPO/commits/$encoded_ref" --jq .sha)
           fi
-          ahead=$(gh api "repos/$GH_REPO/compare/main...$HEAD_SHA" --jq .ahead_by)
-          if [[ "$ahead" == "0" ]]; then
-            echo "La rama ya está integrada."
+          has_changes=$(gh api "repos/$GH_REPO/compare/main...$HEAD_SHA" --jq '(.ahead_by > 0) and ((.files | length) > 0)')
+          if [[ "$has_changes" != "true" ]]; then
+            echo "La rama ya está integrada o solo sincroniza el historial sin cambiar archivos."
             exit 0
           fi
           pr=$(gh pr list --base main --head "$HEAD_BRANCH" --state open --json number --jq '.[0].number // empty')
