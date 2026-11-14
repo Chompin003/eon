@@ -13,12 +13,12 @@ Lee este archivo y `docs/COLABORACION.md` antes de editar. Estas reglas aplican 
 
 ## Propiedad de módulos
 
-| Rama | Archivos principales |
-| --- | --- |
-| `feat/sky-viewer` | `src/viewer/**` |
-| `feat/spherex-data` | `src/data/**` |
-| `feat/drawing-tools` | `src/drawing/**` |
-| `feat/interface` | `src/ui/**` |
+| Rama                 | Archivos principales |
+| -------------------- | -------------------- |
+| `feat/sky-viewer`    | `src/viewer/**`      |
+| `feat/spherex-data`  | `src/data/**`        |
+| `feat/drawing-tools` | `src/drawing/**`     |
+| `feat/interface`     | `src/ui/**`          |
 
 `src/shared/**`, `src/App.tsx`, configuración, dependencias, lockfile, CI y documentos requieren coordinación previa en el PR. No inventes cambios en contratos compartidos sin explicar a los otros módulos qué cambia.
 

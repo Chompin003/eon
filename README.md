@@ -24,16 +24,20 @@ npm run preview
 
 Lee [la guía de colaboración](docs/COLABORACION.md), [los contratos de módulos](docs/ARQUITECTURA.md) y [AGENTS.md](AGENTS.md). Cada desarrollador usa su computadora, cuenta y sesión de IA. Live Share sirve para sesiones conjuntas; Git y Pull Requests integran el trabajo independiente.
 
-| Rama | Responsabilidad |
-| --- | --- |
-| `main` | Versión integrada para producción |
-| `feat/sky-viewer` | Esfera, cámara, controles y WebGL |
-| `feat/spherex-data` | Proveedores de datos y coordenadas |
-| `feat/drawing-tools` | Selección y futuras anotaciones |
-| `feat/interface` | Interfaz, controles y estilos |
+| Rama                 | Responsabilidad                    |
+| -------------------- | ---------------------------------- |
+| `main`               | Versión integrada para producción  |
+| `feat/sky-viewer`    | Esfera, cámara, controles y WebGL  |
+| `feat/spherex-data`  | Proveedores de datos y coordenadas |
+| `feat/drawing-tools` | Selección y futuras anotaciones    |
+| `feat/interface`     | Interfaz, controles y estilos      |
 
 ## Despliegue
 
 Cloudflare Pages: `main`, `npm run build`, salida `dist`, Node `24.11.1`. Configuración y verificación en [docs/DESPLIEGUE.md](docs/DESPLIEGUE.md). La existencia de los archivos de CI no confirma que un despliegue remoto se haya ejecutado; comprueba los estados en GitHub y Cloudflare.
 
 Tecnologías: React, TypeScript, Vite y Three.js. Licencia MIT.
+
+Consulta el [estado de la entrega y las autorizaciones pendientes](docs/ESTADO.md).
+
+![Vista del prototipo](docs/preview-desktop.png)
