@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_VIEW, normalizeView } from '../shared';
+import { DEFAULT_VIEW, VIEW_LIMITS, normalizeView } from '../shared';
 import { panView, wheelZoomFactor, zoomView } from './navigation';
 
 describe('celestial navigation', () => {
@@ -11,7 +11,7 @@ describe('celestial navigation', () => {
     expect(panView(DEFAULT_VIEW, 0, 100000, 500).latitude).toBe(85);
     expect(panView(DEFAULT_VIEW, 0, -100000, 500).latitude).toBe(-85);
     expect(zoomView(DEFAULT_VIEW, 100).fov).toBe(100);
-    expect(zoomView(DEFAULT_VIEW, 0.001).fov).toBe(25);
+    expect(zoomView(DEFAULT_VIEW, 1e-9).fov).toBe(VIEW_LIMITS.minFov);
   });
   it('scales drag sensitivity with zoom and viewport size', () => {
     expect(panView({ ...DEFAULT_VIEW, fov: 50 }, 100, 50, 500)).toEqual({
@@ -29,7 +29,8 @@ describe('celestial navigation', () => {
     );
   });
   it('keeps a pinch anchored at a valid finite field of view', () => {
-    expect(zoomView(DEFAULT_VIEW, 100 / 200).fov).toBe(37.5);
+    const next = zoomView(DEFAULT_VIEW, 100 / 200);
+    expect(zoomView(next, 200 / 100).fov).toBeCloseTo(DEFAULT_VIEW.fov, 10);
     expect(normalizeView({ longitude: NaN, latitude: Infinity, fov: NaN })).toEqual(DEFAULT_VIEW);
   });
 });

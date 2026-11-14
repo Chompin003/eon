@@ -24,6 +24,9 @@ Lee este archivo y `docs/COLABORACION.md` antes de editar. Estas reglas aplican 
 
 ## Arquitectura
 
+- Iván (`GorditoG`) implementa coordenadas; su punto de entrada está descrito en `docs/INTEGRACION-COORDENADAS.md`. Conserva el slot `coordinateTools`, `CoordinateToolsProps` y `ViewState` en grados. El formulario futuro será RA h:m:s y Dec ±d:m:s J2000.
+- Paint se monta en `drawingTools`. No sustituyas la ventana flotante para integrar estos módulos.
+
 - `shared` no importa otros módulos; `viewer`, `data`, `drawing` y `ui` importan contratos de `shared`.
 - Los módulos no se importan entre sí; `App.tsx` compone sus API públicas (`index.ts`).
 - React posee el estado de navegación; Three.js posee recursos WebGL. Libera geometrías, materiales, eventos y animation frames al desmontar.

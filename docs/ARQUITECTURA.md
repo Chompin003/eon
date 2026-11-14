@@ -14,15 +14,25 @@ src/
 
 `App.tsx` conecta las API públicas (`index.ts`) de los módulos. Cada módulo importa tipos/constantes de `shared`, nunca de un módulo hermano. ESLint verifica esta frontera. El punto de entrada solo monta React e importa estilos. No hay dependencias circulares.
 
-| Contrato        | Responsabilidad                                                                       |
-| --------------- | ------------------------------------------------------------------------------------- |
-| `ViewState`     | Longitud `[0, 360)`, latitud `[-85, 85]`, campo de visión vertical `[25, 100]` grados |
-| `ViewerLayers`  | Activación de la cuadrícula y puntos decorativos de referencia                        |
-| `SkySource`     | Unión discriminada; por ahora solo `CheckerboardSource` con filas y columnas          |
-| `SkyAnnotation` | Forma de anotaciones futuras; no hay herramientas activas todavía                     |
-| `normalizeView` | Protege límites, envoltura longitudinal y valores no finitos                          |
+| Contrato        | Responsabilidad                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| `ViewState`     | Longitud `[0, 360)`, latitud `[-85, 85]`, campo vertical `[1/3600, 100]` grados (1″ a 100°) |
+| `ViewerLayers`  | Activación de la cuadrícula y puntos decorativos de referencia                              |
+| `SkySource`     | Unión discriminada; por ahora solo `CheckerboardSource` con filas y columnas                |
+| `SkyAnnotation` | Forma de anotaciones futuras; no hay herramientas activas todavía                           |
+| `normalizeView` | Protege límites, envoltura longitudinal y valores no finitos                                |
 
-Las coordenadas son de una esfera sintética y no están calibradas como observaciones científicas. El zoom mostrado es `100 / fov`, relativo a la vista más amplia, no una magnificación científica.
+Las coordenadas son de una esfera sintética y no están calibradas como observaciones científicas. Se conserva `ViewState` en grados para no romper al equipo. El módulo de coordenadas implementará RA en h:m:s y Dec en ±d:m:s, según la convención ecuatorial J2000 acordada en el documento del equipo. No se implementa el conversor aquí.
+
+El zoom relativo usa `tan(100° / 2) / tan(fov / 2)`, no una magnificación de telescopio ni mayor resolución científica. El slider usa esa escala óptica en logaritmos, con 1000 pasos; sus extremos son 100° y 1″. Rueda, pellizco y teclado respetan los mismos límites. El paso de las flechas se reduce con el campo de visión.
+
+## Ventana y contratos para los compañeros
+
+La superficie Three.js ocupa todo el viewport. `ExplorerLayout` solo añade una flecha y `FloatingPanel`, basado en `react-rnd` (MIT). La ventana es no modal: se puede seguir moviendo el cielo fuera de ella. Sus bordes permiten redimensionar, la barra permite arrastrar y las flechas del teclado también permiten mover/redimensionar. Permanece dentro del viewport al cambiar el tamaño de pantalla. Cerrar/abrir conserva su geometría durante la sesión.
+
+`ExplorerLayout.coordinateTools` y `.drawingTools` son slots `ReactNode`. Cada compañero exporta su componente desde la API pública de su módulo; `App.tsx` lo pasa al slot. No importar `data/` o `drawing/` dentro de `ui/`. Los marcadores RA/Dec y Paint no tienen comportamiento de consulta ni edición.
+
+`ObservationEpoch` contiene `id` y `dateUtc` ISO. `TimelineState` contiene `epochIndex`, `intervalMs` y `playing`; el estado y el reloj están en `App.tsx`. `demoEpochs` contiene cuatro fixtures etiquetadas como prueba, no cobertura SPHEREx. Reemplazar esa lista por épocas reales en `data/` y conectar el identificador de época con el futuro proveedor de imágenes. El intervalo de 100–2000 ms es tiempo de reproducción en pantalla, independiente de los años/fechas de observación. Cambiar fecha actualmente no cambia la textura.
 
 ## Visor
 
@@ -43,7 +53,7 @@ No añadas ahora estas funciones: el objetivo de esta entrega es validar la infr
 
 ## Dependencias y pruebas
 
-Las versiones exactas están fijadas en `package.json` y `package-lock.json`. Se usa Node 24.11.1 para alinear desarrollo, CI y Pages. Las tipografías DM Sans y Space Grotesk se sirven localmente mediante Fontsource; el visor no depende de Google Fonts ni APIs externas.
+Las versiones exactas están fijadas en `package.json` y `package-lock.json`. Se usa Node 24.11.1 para alinear desarrollo, CI y Pages. La interfaz usa la tipografía del sistema y no solicita fuentes externas.
 
 El override de `minimatch` a `11.0.1` en `@typescript-eslint/typescript-estree` corrige el aviso [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249); se verifica con ESLint y `npm audit`. Retirarlo cuando la dependencia transitiva ya incorpore una versión corregida.
 

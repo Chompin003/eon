@@ -27,7 +27,7 @@ export function createCheckerboard(source: CheckerboardSource, layers: ViewerLay
       void main() {
         vec2 cell = vUv * uCells;
         float checker = mod(floor(cell.x) + floor(cell.y), 2.0);
-        vec3 color = mix(vec3(0.016, 0.030, 0.050), vec3(0.044, 0.074, 0.104), checker);
+        vec3 color = mix(vec3(0.027), vec3(0.10), checker);
 
         // Derivative-based antialiasing keeps the spherical grid crisp at all FOVs.
         vec2 gridDistance = abs(fract(cell - 0.5) - 0.5) / max(fwidth(cell), vec2(0.00001));
