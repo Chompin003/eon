@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { demoEpochs, demoSource } from './data';
+import { CoordinatesPanel, demoEpochs, demoSource } from './data';
 import { DEFAULT_VIEW, normalizeView, type TimelineState, type ViewState } from './shared';
 import { SkyViewer } from './viewer';
 import { ExplorerLayout } from './ui';
@@ -25,9 +25,6 @@ export function App() {
 
   const updateView = (next: ViewState) => setView(normalizeView(next));
 
-  // Iván / GorditoG: mount your component using coordinateTools below.
-  // Example: coordinateTools={<CoordinatesPanel view={view} onViewChange={updateView} />}
-  // Contract and steps: docs/INTEGRACION-COORDENADAS.md. No UI window changes required.
   return (
     <ExplorerLayout
       view={view}
@@ -36,6 +33,7 @@ export function App() {
       onTimelineChange={setTimeline}
       onViewChange={updateView}
       onReset={() => setView({ ...DEFAULT_VIEW })}
+      coordinateTools={<CoordinatesPanel view={view} onViewChange={updateView} />}
     >
       <SkyViewer
         source={demoSource}
