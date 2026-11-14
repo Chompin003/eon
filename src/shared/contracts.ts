@@ -30,7 +30,8 @@ export interface SkyAnnotation {
   label: string;
 }
 
-export const VIEW_LIMITS = { minFov: 25, maxFov: 100, maxLatitude: 85 } as const;
+/** Vertical FOV in degrees: 100 degrees down to one arcsecond. */
+export const VIEW_LIMITS = { minFov: 1 / 3600, maxFov: 100, maxLatitude: 85 } as const;
 export const DEFAULT_VIEW: Readonly<ViewState> = Object.freeze({
   longitude: 180,
   latitude: 12,
