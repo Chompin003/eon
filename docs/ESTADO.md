@@ -27,16 +27,17 @@ Las pruebas móviles usan emulación Chromium, no un teléfono físico. Vite avi
 
 ## Infraestructura remota
 
-| Entregable remoto                           | Estado real                                                                |
-| ------------------------------------------- | -------------------------------------------------------------------------- |
-| Repositorio GitHub `spherex-explorer`       | Publicado: https://github.com/Chompin003/spherex-explorer                  |
-| Cuatro ramas en GitHub                      | Publicadas y con seguimiento desde esta computadora                        |
-| Protección de `main` y revisión obligatoria | Política documentada; pendiente de aplicar en GitHub                       |
-| Ejecución remota de GitHub Actions          | Primer run completado correctamente; enlace más abajo                      |
-| Página pública Cloudflare Pages             | Publicada: https://spherex-explorer.pages.dev/                             |
-| Previews y despliegue automático a `main`   | Integración GitHub conectada; comprobación de cambios posteriores en curso |
-| Acceso de los otros tres desarrolladores    | Pendiente de sus usuarios e invitaciones del propietario                   |
-| Sesión Live Share                           | Debe iniciarla y compartirla una persona; guía preparada                   |
+| Entregable remoto                           | Estado real                                                                                                       |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Repositorio GitHub `spherex-explorer`       | Publicado: https://github.com/Chompin003/spherex-explorer                                                         |
+| Cuatro ramas en GitHub                      | Publicadas y con seguimiento desde esta computadora                                                               |
+| Protección de `main` y revisión obligatoria | Activa incluso para administradores: PR, una aprobación, conversaciones resueltas, `quality` y `Cloudflare Pages` |
+| Ejecución remota de GitHub Actions          | Dos runs de producción correctos; enlaces más abajo                                                               |
+| Página pública Cloudflare Pages             | Publicada: https://spherex-explorer.pages.dev/                                                                    |
+| Despliegue automático a `main`              | Verificado mediante un push posterior a la conexión; SHA y evidencia más abajo                                    |
+| Previews de ramas y PR                      | Habilitados para todas las ramas no productivas; URL y checks desde el PR de validación                           |
+| Acceso de los otros tres desarrolladores    | Pendiente de sus usuarios e invitaciones del propietario                                                          |
+| Sesión Live Share                           | Debe iniciarla y compartirla una persona; guía preparada                                                          |
 
 GitHub CLI fue autorizada como `Chompin003`, incluido el permiso `workflow`. La aplicación oficial Cloudflare Workers and Pages quedó instalada con acceso solo a `spherex-explorer`.
 
@@ -44,8 +45,12 @@ El primer despliegue de Pages compiló el commit `5c6e18cc55b6cf81f7a54994561610
 
 Primer [run de CI correcto](https://github.com/Chompin003/spherex-explorer/actions/runs/43646811398).
 
+Después de conectar Pages se publicó el commit `83bb2e54cb367ee8240ed1f858489b3358c15473`. Sin iniciar un despliegue manual, Cloudflare creó y completó el [despliegue automático de producción](https://dash.cloudflare.com/?to=/9fa7f5f15a39ee0ee74c46ca3838d778/pages/view/spherex-explorer/2d05f42f-94c6-4e71-b37b-177714687fb2). El [segundo run de CI](https://github.com/Chompin003/spherex-explorer/actions/runs/43647690694) también terminó correctamente.
+
+La configuración de Branch control fue comprobada en el panel: producción `main`, automatic deployments activados y previews **All non-Production branches**. Se bloquearon force pushes y borrados de `main`; las aprobaciones se invalidan cuando cambia el PR. Solo se permiten merge commits y no se eliminan automáticamente las ramas del equipo.
+
 El entorno oficial de Cloudflare para Codex también quedó instalado y autorizado; consulta [CLOUDFLARE-CODEX.md](CLOUDFLARE-CODEX.md). Es necesario reiniciar Codex para cargar el nuevo servidor MCP.
 
-## Comprobación final de la integración
+## Revisión de la entrega
 
-Se está comprobando un push posterior al primer despliegue y un preview de PR; se registrarán sus URLs y SHA en la entrega final. La protección de `main` se aplicará al terminar la inicialización. Las invitaciones de los compañeros requieren sus nombres de usuario reales.
+El PR de la rama `codex/verify-pipeline` registra esta evidencia y comprueba los checks de PR y el preview. Sus enlaces de CI y Cloudflare se pueden abrir desde la pestaña Checks del PR. Es una actualización de documentación; el prototipo ya está publicado en producción. La aprobación debe realizarla otro integrante con acceso, conforme a la protección configurada. Las invitaciones de los compañeros requieren sus nombres de usuario reales.

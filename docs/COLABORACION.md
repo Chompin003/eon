@@ -67,4 +67,4 @@ Live Share no reemplaza las ramas, los PR ni las cuentas individuales; sirve par
 
 ## 4. Revisión y protección
 
-El propietario configura una regla para `main`: requerir PR, al menos una aprobación, resolver conversaciones y el check `quality`; bloquear borrados y force pushes. No exigir CODEOWNERS hasta registrar los usuarios reales. Las cuentas de los compañeros deben proporcionarlas ellos; no inventes invitaciones. En repositorios privados la disponibilidad de protecciones depende del plan de GitHub; no activar planes de pago.
+`main` ya está protegida: requiere PR, al menos una aprobación, conversaciones resueltas y los checks `quality` y `Cloudflare Pages`; bloquea borrados y force pushes incluso para administradores. Un PR debe actualizarse con `main` antes de integrarlo y los nuevos commits invalidan aprobaciones anteriores. No se exige CODEOWNERS hasta registrar los usuarios reales. Las cuentas de los compañeros deben proporcionarlas ellos; no inventes invitaciones. En repositorios privados la disponibilidad de protecciones depende del plan de GitHub; no activar planes de pago.

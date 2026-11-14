@@ -24,7 +24,7 @@ git push -u origin feat/sky-viewer feat/spherex-data feat/drawing-tools feat/int
 
 Ejecuta estos comandos solo desde la carpeta de este proyecto y después de que su bootstrap esté completo. Si ya hay un repositorio del mismo nombre o un remoto `origin`, inspecciónalo primero y no lo reemplaces. El repositorio público permite usar las protecciones de rama del plan gratuito; no publiques archivos ajenos o secretos.
 
-En Settings → General → Pull Requests, conserva merge commits y desmarca el borrado automático de ramas para las cuatro ramas duraderas. En Settings → Branches / Rules → añade protección para `main`: exigir PR, una aprobación, conversaciones resueltas y check `quality`, sin force pushes ni eliminación. Incluye administradores para que toda integración futura pase por revisión. No configures pagos.
+En Settings → General → Pull Requests, conserva merge commits y desmarca el borrado automático de ramas para las cuatro ramas duraderas. En Settings → Branches / Rules → añade protección para `main`: exigir PR, una aprobación, conversaciones resueltas y checks `quality` y `Cloudflare Pages`, sin force pushes ni eliminación. Incluye administradores para que toda integración futura pase por revisión. Estas reglas ya quedaron aplicadas al repositorio de este equipo. No configures pagos.
 
 ## Cloudflare: integración oficial de Git
 
