@@ -1,5 +1,9 @@
 # SPHEREx Explorer
 
+Repositorio del equipo: [Chompin003/spherex-explorer](https://github.com/Chompin003/spherex-explorer).
+
+**Explorador público:** [spherex-explorer.pages.dev](https://spherex-explorer.pages.dev/).
+
 Prototipo web para NASA Space Apps Challenge: una esfera celeste 3D con checkerboard procedural, navegación desde su interior y controles accesibles. No contiene imágenes ni datos científicos reales y no es un producto oficial de NASA.
 
 ## Desarrollo local

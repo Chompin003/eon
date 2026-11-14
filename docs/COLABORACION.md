@@ -4,10 +4,10 @@
 
 El propietario invita a los tres compañeros desde GitHub → repositorio → Settings → Collaborators → Add people. Cada uno acepta con su propia cuenta. No se comparten contraseñas ni sesiones de Codex/Antigravity.
 
-Clona en una carpeta local fuera de carpetas sincronizadas (OneDrive puede causar bloqueos de archivos). Sustituye `USUARIO` por el dueño del repositorio:
+Clona en una carpeta local fuera de carpetas sincronizadas (OneDrive puede causar bloqueos de archivos):
 
 ```sh
-git clone https://github.com/USUARIO/spherex-explorer.git
+git clone https://github.com/Chompin003/spherex-explorer.git
 cd spherex-explorer
 git switch feat/sky-viewer
 npm ci
