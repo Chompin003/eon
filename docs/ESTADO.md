@@ -25,28 +25,27 @@
 
 Las pruebas móviles usan emulación Chromium, no un teléfono físico. Vite avisa que el chunk de Three.js mide unos 526 kB minificados (130 kB gzip); es un aviso de tamaño, no un fallo del build.
 
-## Requiere autorización del propietario
+## Infraestructura remota
 
-| Entregable remoto                           | Estado real                                              |
-| ------------------------------------------- | -------------------------------------------------------- |
-| Repositorio GitHub `spherex-explorer`       | Pendiente de autenticar GitHub CLI y crear/subir         |
-| Cuatro ramas en GitHub                      | Existen localmente; pendientes de push                   |
-| Protección de `main` y revisión obligatoria | Política documentada; pendiente de aplicar en GitHub     |
-| Ejecución remota de GitHub Actions          | Workflow listo; pendiente de primer push/PR              |
-| Página pública Cloudflare Pages             | Pendiente de iniciar sesión y conectar GitHub            |
-| Previews y despliegue automático a `main`   | Pendientes de conexión y comprobación real               |
-| Acceso de los otros tres desarrolladores    | Pendiente de sus usuarios e invitaciones del propietario |
-| Sesión Live Share                           | Debe iniciarla y compartirla una persona; guía preparada |
+| Entregable remoto                           | Estado real                                                                |
+| ------------------------------------------- | -------------------------------------------------------------------------- |
+| Repositorio GitHub `spherex-explorer`       | Publicado: https://github.com/Chompin003/spherex-explorer                  |
+| Cuatro ramas en GitHub                      | Publicadas y con seguimiento desde esta computadora                        |
+| Protección de `main` y revisión obligatoria | Política documentada; pendiente de aplicar en GitHub                       |
+| Ejecución remota de GitHub Actions          | Primer run completado correctamente; enlace más abajo                      |
+| Página pública Cloudflare Pages             | Publicada: https://spherex-explorer.pages.dev/                             |
+| Previews y despliegue automático a `main`   | Integración GitHub conectada; comprobación de cambios posteriores en curso |
+| Acceso de los otros tres desarrolladores    | Pendiente de sus usuarios e invitaciones del propietario                   |
+| Sesión Live Share                           | Debe iniciarla y compartirla una persona; guía preparada                   |
 
-La integración de GitHub del chat está vinculada a `Chompin003`; la CLI tiene una autorización separada. El primer código de dispositivo caducó mientras el propietario estaba ausente. Hay que iniciar un nuevo `gh auth login --web` al retomar, sin compartir credenciales en el chat.
+GitHub CLI fue autorizada como `Chompin003`, incluido el permiso `workflow`. La aplicación oficial Cloudflare Workers and Pages quedó instalada con acceso solo a `spherex-explorer`.
 
-Cloudflare fue revisado en Edge y mostró `https://dash.cloudflare.com/login`; esa página quedó abierta para que el propietario inicie sesión. No se creó una cuenta ni se autorizaron permisos en su nombre.
+El primer despliegue de Pages compiló el commit `5c6e18cc55b6cf81f7a549945616102c850c5629` de `main` y terminó en Success. La URL pública respondió HTTP 200. Configuración: React (Vite), `npm run build`, salida `dist`, `NODE_VERSION=24.11.1` para producción y preview.
 
-## Retomar
+Primer [run de CI correcto](https://github.com/Chompin003/spherex-explorer/actions/runs/43646811398).
 
-1. Autorizar GitHub CLI en el navegador con la cuenta elegida.
-2. Crear el repositorio sin sobrescribir uno existente, subir `main` y las cuatro ramas y aplicar protección.
-3. Iniciar sesión en Cloudflare y autorizar su integración oficial solo para este repositorio.
-4. Conectar Pages con `main`, `npm run build`, `dist` y Node 24.11.1.
-5. Verificar producción, CI y un preview de PR siguiendo `DESPLIEGUE.md`.
-6. Registrar aquí las URLs reales y el SHA desplegado. No hay todavía una URL pública ni evidencia de automatización remota.
+El entorno oficial de Cloudflare para Codex también quedó instalado y autorizado; consulta [CLOUDFLARE-CODEX.md](CLOUDFLARE-CODEX.md). Es necesario reiniciar Codex para cargar el nuevo servidor MCP.
+
+## Comprobación final de la integración
+
+Se está comprobando un push posterior al primer despliegue y un preview de PR; se registrarán sus URLs y SHA en la entrega final. La protección de `main` se aplicará al terminar la inicialización. Las invitaciones de los compañeros requieren sus nombres de usuario reales.

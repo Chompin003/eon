@@ -135,7 +135,7 @@ export function SkyViewer({ source, view, layers, onViewChange }: Props) {
     };
     const keyDown = (event: KeyboardEvent) => {
       const active = current.current.view;
-      const step = event.shiftKey ? 10 : 3;
+      const step = active.fov / (event.shiftKey ? 7.5 : 25);
       const directions: Record<string, [number, number]> = {
         ArrowLeft: [-step, 0],
         ArrowRight: [step, 0],
