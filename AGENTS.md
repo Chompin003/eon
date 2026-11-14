@@ -8,7 +8,7 @@ Lee este archivo y `docs/COLABORACION.md` antes de editar. Estas reglas aplican 
 - Nunca sobrescribas trabajo ajeno ni uses `reset --hard`, `clean -fd` o force push.
 - Ejecuta `git status` antes de trabajar. No edites un checkout que otra persona o agente esté usando. Un checkout/worktree por agente.
 - No subas credenciales, `.env`, `node_modules`, `dist` ni tokens. No uses servicios de pago.
-- No hagas push directo a `main` después de la inicialización. Integra mediante PR con revisión y CI verde.
+- Trabaja en una rama propia y haz push. GitHub abre/actualiza el PR y lo integra automáticamente cuando pasan `quality` y `Cloudflare Pages`; no se exige aprobación humana. No uses force push ni omitas los checks.
 - No delegues a otros agentes automáticamente; cada integrante administra su propia sesión.
 
 ## Propiedad de módulos
@@ -37,4 +37,4 @@ Lee este archivo y `docs/COLABORACION.md` antes de editar. Estas reglas aplican 
 1. `git fetch origin` y actualiza tu rama con `origin/main` sin perder cambios locales.
 2. `npm ci`, `npm run check`, `npm run build`; ejecuta `npm test` para navegación o contratos.
 3. Explica cambios y comprobaciones en el PR. Adjunta captura si cambias la interfaz.
-4. Solicita revisión a otro integrante. Nunca compartas cuentas o sesiones de IA.
+4. Comprueba que Auto integrate, CI y Pages terminan correctamente. Si falla un check o hay conflictos, corrige el problema y vuelve a subir tu rama. Los PR en borrador no se publican. Nunca compartas cuentas o sesiones de IA.
