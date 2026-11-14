@@ -1,5 +1,13 @@
 # Colaboración en español
 
+## Publicación automática
+
+Por decisión del propietario, ya no se requiere aprobar cambios manualmente. Cada colaborador trabaja en su rama y ejecuta `git push`: el workflow **Auto integrate** abre o reutiliza el PR y habilita su integración al pasar **quality** y **Cloudflare Pages**. Cloudflare actualiza automáticamente la misma URL de producción. El código debe estar listo para publicarse antes de subirlo; usa un PR en borrador para trabajo que no deba publicarse.
+
+CI se ejecuta en cada push a las ramas del repositorio, de modo que un PR creado por el bot no requiere pulsar «Approve workflows». No se ejecuta código de forks con permisos de escritura. La automatización opera sobre ramas del mismo repositorio, accesibles a los colaboradores autorizados.
+
+Los fallos de tests/build y los conflictos de Git detienen la integración. Se conservan las comprobaciones, la protección contra force pushes y borrados, y las ramas duraderas. Las instrucciones antiguas de aprobación humana de esta guía quedan sustituidas por este flujo.
+
 ## 1. Una cuenta y una carpeta por persona/agente
 
 El propietario invita a los tres compañeros desde GitHub → repositorio → Settings → Collaborators → Add people. Cada uno acepta con su propia cuenta. No se comparten contraseñas ni sesiones de Codex/Antigravity.

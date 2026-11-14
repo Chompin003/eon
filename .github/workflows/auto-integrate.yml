@@ -1,0 +1,65 @@
+name: Auto integrate
+
+on:
+  push:
+    branches-ignore: [main]
+  pull_request_target:
+    branches: [main]
+    types: [opened, reopened, synchronize, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Rama del mismo repositorio que se debe integrar
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-integrate-${{ inputs.branch || github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  integrate:
+    if: github.event_name != 'pull_request_target' || (github.event.pull_request.head.repo.full_name == github.repository && !github.event.pull_request.draft)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      HEAD_BRANCH: ${{ inputs.branch || github.event.pull_request.head.ref || github.ref_name }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha || (github.event_name == 'push' && github.sha) || '' }}
+    steps:
+      # No checkout: this job only calls GitHub's API, never code from a PR.
+      - name: Open PR and enable integration after required checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$HEAD_BRANCH" == "main" ]]; then exit 0; fi
+          if [[ -z "$HEAD_SHA" ]]; then
+            encoded_ref=$(jq -rn --arg ref "$HEAD_BRANCH" '$ref | @uri')
+            HEAD_SHA=$(gh api "repos/$GH_REPO/commits/$encoded_ref" --jq .sha)
+          fi
+          ahead=$(gh api "repos/$GH_REPO/compare/main...$HEAD_SHA" --jq .ahead_by)
+          if [[ "$ahead" == "0" ]]; then
+            echo "La rama ya está integrada."
+            exit 0
+          fi
+          pr=$(gh pr list --base main --head "$HEAD_BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [[ -z "$pr" ]]; then
+            gh pr create --base main --head "$HEAD_BRANCH" \
+              --title "Integra $HEAD_BRANCH" \
+              --body "Integración automática de una rama del equipo. Se publica cuando pasan quality y Cloudflare Pages. Si hay conflictos o pruebas fallidas, la integración queda detenida."
+            pr=$(gh pr list --base main --head "$HEAD_BRANCH" --state open --json number --jq '.[0].number')
+          fi
+          if [[ "$(gh pr view "$pr" --json isDraft --jq .isDraft)" == "true" ]]; then
+            echo "El PR es un borrador; se conserva sin publicar."
+            exit 0
+          fi
+          if [[ "$(gh pr view "$pr" --json autoMergeRequest --jq '.autoMergeRequest != null')" == "true" ]]; then
+            echo "La integración automática ya está habilitada."
+            exit 0
+          fi
+          gh pr merge "$pr" --merge --auto --match-head-commit "$HEAD_SHA"
