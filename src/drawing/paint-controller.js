@@ -388,6 +388,7 @@ import M from './paint-model.js';
           this.updateControls();
         });
         listen(root.getElementById(id), 'change', () => {
+          if (root.getElementById('text-editor').open) return;
           if (this.selected !== null)
             this.change(
               this.history.items.map((item) =>

@@ -31,7 +31,9 @@ test('text and space symbols edit, undo, follow the sky and share both panes', a
   await expect(page.getByRole('textbox', { name: 'Texto', exact: true })).toHaveValue(
     'α Centauri\nΔ = ±5°',
   );
+  await page.getByRole('slider', { name: 'Transparencia', exact: true }).fill('80');
   await page.getByRole('button', { name: 'Cancelar texto' }).click();
+  await expect(text).toHaveAttribute('opacity', '1');
   await page.getByRole('slider', { name: 'Transparencia', exact: true }).fill('35');
   await expect(text).toHaveAttribute('opacity', '0.65');
   await page.getByRole('button', { name: 'Pantalla dividida', exact: true }).click();
