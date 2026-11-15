@@ -46,7 +46,7 @@ En Settings → General → Pull Requests están habilitados **Allow auto-merge*
 5. Pulsa **Save and Deploy**. Espera el estado **Success** y abre la URL `*.pages.dev` que Cloudflare asigne (no se da por creada hasta que el panel la confirme).
 6. En Settings → Builds & deployments / Branch control, activa los despliegues automáticos de producción para `main` y previews para todas las ramas no productivas. No excluyas las cuatro ramas de trabajo.
 
-El archivo `.node-version` fija Node; `public/_headers` añade cabeceras básicas y caché de assets. No se necesita backend, dominio comprado, secreto ni token de Cloudflare para esta integración.
+El archivo `.node-version` fija Node; `public/_headers` añade cabeceras básicas y caché de assets. El proyecto existente de Pages se conserva. `functions/api/observations.ts` y `functions/api/cutout.ts` se compilan automáticamente como Pages Functions durante el despliegue Git. `wrangler.jsonc` fija compatibilidad y salida; `public/_routes.json` limita las Functions a `/api/*`, manteniendo estáticos el visor y las teselas de biblioteca. No se necesitan secretos de IRSA ni un servidor Python permanente.
 
 ## Comprobar la automatización, con evidencia
 
@@ -54,7 +54,7 @@ Después de conectar GitHub y Pages:
 
 1. Abre un PR de una rama de trabajo con un cambio pequeño y útil, por ejemplo corregir una instrucción de la guía.
 2. Comprueba que GitHub Actions ejecuta **CI / quality** y termina verde.
-3. Comprueba que la app de Cloudflare añade un deployment/check y una URL de preview al PR. Abre esa URL y prueba arrastre, slider y Reset View.
+3. Comprueba que la app de Cloudflare añade un deployment/check y una URL de preview al PR. Abre esa URL y prueba coordenadas, canales A/B, pantalla dividida y una exposición real por fecha. Verifica también `/api/observations?ra=60.8109955&dec=51.3404038`.
 4. El workflow **Auto integrate** habilita el merge automático; GitHub lo integra al pasar los checks, sin aprobación humana.
 5. En Cloudflare, comprueba que el despliegue de producción indica el mismo SHA integrado. Abre la URL pública y verifica el cambio.
 

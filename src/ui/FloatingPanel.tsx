@@ -28,13 +28,15 @@ function keepVisible(rect: PanelRect): PanelRect {
 export function FloatingPanel({
   open,
   onClose,
+  observationDate,
   children,
 }: {
   open: boolean;
   onClose: () => void;
+  observationDate?: string;
   children: ReactNode;
 }) {
-  const [rect, setRect] = useState(() => keepVisible({ x: 44, y: 44, width: 336, height: 550 }));
+  const [rect, setRect] = useState(() => keepVisible({ x: 44, y: 44, width: 356, height: 680 }));
   const titleRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const resize = () => setRect((current) => keepVisible(current));
@@ -70,80 +72,92 @@ export function FloatingPanel({
   };
 
   return (
-    <div className="panel-stage" aria-hidden={!open}>
-      {open && (
-        <Rnd
-          className="floating-panel"
-          size={{ width: rect.width, height: rect.height }}
-          position={{ x: rect.x, y: rect.y }}
-          bounds="parent"
-          minWidth={Math.min(280, available().width)}
-          minHeight={Math.min(300, available().height)}
-          maxWidth={available().width}
-          maxHeight={available().height}
-          dragHandleClassName="window-drag-handle"
-          onDragStop={(_, data) =>
-            setRect((current) => keepVisible({ ...current, x: data.x, y: data.y }))
-          }
-          onResizeStop={(_, __, element, ___, position) =>
-            setRect(
-              keepVisible({
-                ...position,
-                width: element.offsetWidth,
-                height: element.offsetHeight,
-              }),
-            )
-          }
-          resizeHandleComponent={{
-            bottomRight: (
-              <button
-                className="resize-grip"
-                aria-label="Cambiar tamaño del panel"
-                title="Arrastra para cambiar tamaño. Flechas con el teclado."
-                onKeyDown={(e) => keyboard(e, true)}
-              >
-                <svg viewBox="0 0 16 16" aria-hidden="true">
-                  <path d="m4 13 9-9M9 13l4-4" />
-                </svg>
-              </button>
-            ),
-          }}
+    <div
+      className="panel-stage"
+      aria-hidden={!open}
+      style={{ visibility: open ? 'visible' : 'hidden' }}
+      inert={!open}
+    >
+      <Rnd
+        className="floating-panel"
+        size={{ width: rect.width, height: rect.height }}
+        position={{ x: rect.x, y: rect.y }}
+        bounds="parent"
+        minWidth={Math.min(280, available().width)}
+        minHeight={Math.min(300, available().height)}
+        maxWidth={available().width}
+        maxHeight={available().height}
+        dragHandleClassName="window-drag-handle"
+        onDragStop={(_, data) =>
+          setRect((current) => keepVisible({ ...current, x: data.x, y: data.y }))
+        }
+        onResizeStop={(_, __, element, ___, position) =>
+          setRect(
+            keepVisible({
+              ...position,
+              width: element.offsetWidth,
+              height: element.offsetHeight,
+            }),
+          )
+        }
+        resizeHandleComponent={{
+          bottomRight: (
+            <button
+              className="resize-grip"
+              aria-label="Cambiar tamaño del panel"
+              title="Arrastra para cambiar tamaño. Flechas con el teclado."
+              onKeyDown={(e) => keyboard(e, true)}
+            >
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="m4 13 9-9M9 13l4-4" />
+              </svg>
+            </button>
+          ),
+        }}
+      >
+        <div
+          id="viewer-controls"
+          className="panel-inner"
+          role="dialog"
+          aria-modal="false"
+          aria-label="Controles del visor"
         >
-          <div
-            id="viewer-controls"
-            className="panel-inner"
-            role="dialog"
-            aria-modal="false"
-            aria-label="Controles del visor"
-          >
-            <div className="window-titlebar">
-              <div
-                ref={titleRef}
-                className="window-drag-handle"
-                role="button"
-                tabIndex={0}
-                aria-label="Mover panel"
-                title="Arrastra para mover. Flechas con el teclado."
-                onKeyDown={(e) => keyboard(e, false)}
-              >
-                <span className="drag-dots" aria-hidden="true">
-                  ⠿
-                </span>
-                <span>Controles</span>
-              </div>
-              <button
-                className="close-panel"
-                onClick={onClose}
-                aria-label="Cerrar controles"
-                title="Cerrar · Esc"
-              >
-                ×
-              </button>
+          <div className="window-titlebar">
+            <div
+              ref={titleRef}
+              className="window-drag-handle"
+              role="button"
+              tabIndex={0}
+              aria-label="Mover panel"
+              title="Arrastra para mover. Flechas con el teclado."
+              onKeyDown={(e) => keyboard(e, false)}
+            >
+              <span className="drag-dots" aria-hidden="true">
+                ⠿
+              </span>
+              <span>Controles</span>
+              {observationDate && (
+                <time
+                  className="panel-observation-date"
+                  dateTime={observationDate}
+                  title="Exposición seleccionada · UTC"
+                >
+                  {observationDate.slice(0, 4)} · {observationDate.slice(5, 10)}
+                </time>
+              )}
             </div>
-            <div className="panel-content">{children}</div>
+            <button
+              className="close-panel"
+              onClick={onClose}
+              aria-label="Cerrar controles"
+              title="Cerrar · Esc"
+            >
+              ×
+            </button>
           </div>
-        </Rnd>
-      )}
+          <div className="panel-content">{children}</div>
+        </div>
+      </Rnd>
     </div>
   );
 }

@@ -28,10 +28,16 @@ En Linux/macOS usa `python3.13 -m venv .venv` y `.venv/bin/python` para los otro
 
 La comprobación es offline: importa bibliotecas, comprueba coordenadas J2000 y crea un FITS y PNG sintéticos en memoria. No consulta catálogos ni descarga imágenes científicas.
 
-## Siguiente etapa
+## Consulta real y verificación
 
-Astroquery es un cliente de consultas, no un repositorio de todos los PNG oficiales. SPHEREx publica imágenes científicas principalmente en FITS; los previews y servicios concretos se seleccionarán usando IRSA cuando el propietario pida conectar datos reales. No se añadieron todavía consultas, descargas, credenciales ni un backend a la web.
+```powershell
+.\.venv\Scripts\python.exe tools/astronomy/query_spherex.py --verify-first
+```
 
-Cloudflare Pages sigue sirviendo la aplicación Vite estática. Este entorno Python es para preparación/consulta/procesamiento de datos; no se ejecuta dentro del navegador ni aparece automáticamente en Pages.
+Consulta exposiciones DR1/QR3 en SIA mediante Astroquery, filtra D4, guarda un manifiesto en `data-cache` y verifica con Astropy la WCS/SIP del primer recorte. Opciones: `--ra` y `--dec` en grados, `--detector 1..6`, `--max-records`, `--output`. El archivo científico se consulta con sus metadatos reales; no se usa la fecha de procesamiento como fecha de observación.
+
+La prueba real en la posición inicial devolvió 395 filas y 60 exposiciones D4 entre 2025-08-22 y 2026-09-02. El recorte de 58×58 píxeles en MJy/sr contiene la posición solicitada; el retorno píxel→cielo→píxel coincidió a menos de 0.001″. Estos números son una comprobación de esa consulta, no cobertura universal.
+
+Astroquery busca productos; no contiene todos los PNG ni actualiza una web automáticamente. El runtime web usa Aladin/HiPS y dos Pages Functions que hablan HTTP con SIA y el servicio de recortes. Python queda como herramienta reproducible de preparación y contraste científico. Véase [cómo funciona](../../docs/COMO-FUNCIONA.md), incluida la reproyección visual TAN-SIP.
 
 Fuentes: [Astroquery](https://docs.astropy.org/projects/astroquery/en/stable/), [IRSA SPHEREx](https://irsa.ipac.caltech.edu/Missions/spherex.html), [notebooks de SPHEREx](https://caltech-ipac.github.io/irsa-tutorials/spherex/).

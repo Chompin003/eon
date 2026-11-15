@@ -12,7 +12,10 @@
     }
   },
   "scripts": {
+    "predev": "node scripts/sync-aladin.mjs",
+    "prebuild": "node scripts/sync-aladin.mjs",
     "dev": "vite",
+    "dev:full": "npm run build && wrangler pages dev dist --port 8788",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "check": "tsc -b && eslint .",
@@ -22,6 +25,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "aladin-lite": "3.8.2",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-rnd": "10.5.3",
@@ -40,6 +44,7 @@
     "typescript": "6.0.3",
     "typescript-eslint": "8.72.2",
     "vite": "8.3.8",
-    "vitest": "5.1.0"
+    "vitest": "5.1.0",
+    "wrangler": "4.162.0"
   }
 }

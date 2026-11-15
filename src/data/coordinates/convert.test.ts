@@ -36,7 +36,7 @@ describe('sexagesimal coordinates', () => {
     expect(formatSexagesimal(-0.5, 'dec')).toBe('-00 30 00.000000');
     expect(formatSexagesimal(12.99999999999, 'dec')).toBe('+13 00 00.000000');
   });
-  it('retains numeric precision and zoom and refuses camera clamping at the poles', () => {
+  it('retains numeric precision and zoom and supports the full declination range', () => {
     const view = { longitude: 180, latitude: 12, fov: 1 / 3600 };
     const { ra, dec } = convertCoordinates('12 30 45.123456789', '-00 15 30');
     expect(coordinateTarget(ra, dec, view)).toEqual({
@@ -45,8 +45,9 @@ describe('sexagesimal coordinates', () => {
       fov: view.fov,
     });
     expect(coordinateTarget(0, 85, view)?.latitude).toBe(85);
-    expect(coordinateTarget(0, 85.00001, view)).toBeNull();
-    expect(coordinateTarget(0, -90, view)).toBeNull();
+    expect(coordinateTarget(0, 90, view)?.latitude).toBe(90);
+    expect(coordinateTarget(0, -90, view)?.latitude).toBe(-90);
+    expect(coordinateTarget(0, 90.00001, view)).toBeNull();
     expect(view.latitude).toBe(12);
   });
 });

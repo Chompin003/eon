@@ -1,0 +1,22 @@
+html,
+body,
+#sky {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #141414;
+}
+#sky {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+}
+#sky:focus-visible {
+  outline: 2px solid #2383e2;
+  outline-offset: -2px;
+}
+/* Attribution and the unmodified library's source/license live in the floating panel. */
+.aladin-logo {
+  display: none !important;
+}

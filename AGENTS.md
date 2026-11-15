@@ -4,7 +4,7 @@ Lee este archivo y `docs/COLABORACION.md` antes de editar. Estas reglas aplican 
 
 ## Alcance y seguridad
 
-- Prototipo educativo: esfera checkerboard procedural, sin datos SPHEREx reales ni IA.
+- Explorador educativo con datos SPHEREx reales autorizados por el propietario: mosaico HiPS DR1 y exposiciones FITS de IRSA DR1/QR3. No sustituir fallos por datos sintéticos ni inventar fechas/canales.
 - Nunca sobrescribas trabajo ajeno ni uses `reset --hard`, `clean -fd` o force push.
 - Ejecuta `git status` antes de trabajar. No edites un checkout que otra persona o agente esté usando. Un checkout/worktree por agente.
 - No subas credenciales, `.env`, `node_modules`, `dist` ni tokens. No uses servicios de pago.
@@ -29,7 +29,9 @@ Lee este archivo y `docs/COLABORACION.md` antes de editar. Estas reglas aplican 
 
 - `shared` no importa otros módulos; `viewer`, `data`, `drawing` y `ui` importan contratos de `shared`.
 - Los módulos no se importan entre sí; `App.tsx` compone sus API públicas (`index.ts`).
-- React posee el estado de navegación; Three.js posee recursos WebGL. Libera geometrías, materiales, eventos y animation frames al desmontar.
+- React posee la navegación ecuatorial ICRS en grados y FOV horizontal; Aladin Lite posee la proyección HiPS/FITS. Cada visor vive en un documento aislado que libera WASM, eventos y WebGL al desmontar. Three.js se conserva solo para la referencia checkerboard, cargada bajo demanda.
+- Los canales espectrales del mosaico no son fechas. Las fechas individuales vienen de `t_min` (MJD UTC) de SIA; `DATE` del FITS puede ser procesamiento. Las exposiciones de un detector pueden tener longitudes de onda distintas.
+- `functions/api` consulta únicamente IRSA y sirve únicamente la extensión IMAGE de recortes FITS limitados; `server` contiene helpers compartidos del backend. Conserva la WCS/SIP y los píxeles originales.
 - Mantén soporte mouse, teclado y táctil, accesibilidad y diseño responsivo.
 
 ## Verificación y entrega

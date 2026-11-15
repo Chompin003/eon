@@ -1,0 +1,668 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ns0:VOTABLE xmlns:ns0="http://www.ivoa.net/xml/VOTable/v1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.3" xsi:schemaLocation="http://www.ivoa.net/xml/VOTable/v1.3 http://www.ivoa.net/xml/VOTable/v1.3 http://www.ivoa.net/xml/STC/v1.30 http://www.ivoa.net/xml/STC/v1.30">
+  <ns0:RESOURCE type="meta" utype="adhoc:this">
+    <ns0:DESCRIPTION>Self description and list of supported parameters</ns0:DESCRIPTION>
+    <ns0:GROUP name="inputParams">
+      <ns0:PARAM name="BAND" datatype="double" arraysize="2" unit="m" value="" xtype="interval">
+        <ns0:DESCRIPTION>Specify energy bounds</ns0:DESCRIPTION>
+      </ns0:PARAM>
+      <ns0:PARAM name="CALIB" datatype="int" arraysize="*" value="">
+        <ns0:DESCRIPTION>Specify calibration level</ns0:DESCRIPTION>
+        <ns0:VALUES type="actual">
+          <ns0:OPTION value="1" />
+          <ns0:OPTION value="2" />
+          <ns0:OPTION value="3" />
+          <ns0:OPTION value="4" />
+        </ns0:VALUES>
+      </ns0:PARAM>
+      <ns0:PARAM name="CLOSEST" datatype="char" arraysize="*" value="">
+        <ns0:DESCRIPTION>specify grouping columns</ns0:DESCRIPTION>
+        <ns0:VALUES type="actual">
+          <ns0:OPTION value="collection" />
+          <ns0:OPTION value="facility" />
+          <ns0:OPTION value="instrument" />
+          <ns0:OPTION value="dptype" />
+          <ns0:OPTION value="target" />
+          <ns0:OPTION value="format" />
+        </ns0:VALUES>
+      </ns0:PARAM>
+      <ns0:PARAM name="COLLECTION" datatype="char" arraysize="*" value="">
+        <ns0:DESCRIPTION>Specify collection name</ns0:DESCRIPTION>
+        <ns0:VALUES type="actual">
+          <ns0:OPTION value="akari_allskymaps" />
+          <ns0:OPTION value="blast" />
+          <ns0:OPTION value="bolocam_gps" />
+          <ns0:OPTION value="bolocam_lh" />
+          <ns0:OPTION value="bolocam_planck_sz" />
+          <ns0:OPTION value="champ" />
+          <ns0:OPTION value="euclid_DpdMerBksMosaic" />
+          <ns0:OPTION value="euclid_DpdNirCalibratedFrame" />
+          <ns0:OPTION value="euclid_DpdVisCalibratedQuadFrame" />
+          <ns0:OPTION value="euclid_dr1_deep_DpdMerBksMosaic" />
+          <ns0:OPTION value="euclid_dr1_DpdNirStackedFrame" />
+          <ns0:OPTION value="euclid_dr1_DpdVisStackedFrame" />
+          <ns0:OPTION value="euclid_dr1_wide_DpdMerBksMosaic" />
+          <ns0:OPTION value="euclid_ero" />
+          <ns0:OPTION value="euclid_q2" />
+          <ns0:OPTION value="goals" />
+          <ns0:OPTION value="gpips" />
+          <ns0:OPTION value="heron" />
+          <ns0:OPTION value="herschel_acmc" />
+          <ns0:OPTION value="herschel_coldcores" />
+          <ns0:OPTION value="herschel_cooltnos" />
+          <ns0:OPTION value="herschel_dunes" />
+          <ns0:OPTION value="herschel_dustpedia" />
+          <ns0:OPTION value="herschel_goods" />
+          <ns0:OPTION value="herschel_gotcplus" />
+          <ns0:OPTION value="herschel_hatlas" />
+          <ns0:OPTION value="herschel_helga" />
+          <ns0:OPTION value="herschel_heritage" />
+          <ns0:OPTION value="herschel_herm33es" />
+          <ns0:OPTION value="herschel_hermes" />
+          <ns0:OPTION value="herschel_hevics" />
+          <ns0:OPTION value="herschel_hgbs" />
+          <ns0:OPTION value="herschel_hhli" />
+          <ns0:OPTION value="herschel_hhpdp" />
+          <ns0:OPTION value="herschel_hops" />
+          <ns0:OPTION value="herschel_localgroup" />
+          <ns0:OPTION value="herschel_mess" />
+          <ns0:OPTION value="herschel_pep" />
+          <ns0:OPTION value="herschel_phpdp" />
+          <ns0:OPTION value="herschel_sag4" />
+          <ns0:OPTION value="herschel_shpdp" />
+          <ns0:OPTION value="herschel_v838mon" />
+          <ns0:OPTION value="herschel_vngs" />
+          <ns0:OPTION value="herschel_z0mgs_dust" />
+          <ns0:OPTION value="iras_eiga" />
+          <ns0:OPTION value="iras_iga" />
+          <ns0:OPTION value="iras_iris" />
+          <ns0:OPTION value="iras_issa" />
+          <ns0:OPTION value="iras_miga" />
+          <ns0:OPTION value="irts" />
+          <ns0:OPTION value="isogal" />
+          <ns0:OPTION value="msx" />
+          <ns0:OPTION value="musyc" />
+          <ns0:OPTION value="neowiser" />
+          <ns0:OPTION value="p60grb" />
+          <ns0:OPTION value="sofia_fifils" />
+          <ns0:OPTION value="sofia_fireplace" />
+          <ns0:OPTION value="sofia_flitecam" />
+          <ns0:OPTION value="sofia_forcast" />
+          <ns0:OPTION value="sofia_fpi" />
+          <ns0:OPTION value="sofia_hawc" />
+          <ns0:OPTION value="spherex_dr1" />
+          <ns0:OPTION value="spherex_dr1_cube" />
+          <ns0:OPTION value="spherex_dr1_deep" />
+          <ns0:OPTION value="spherex_qr3" />
+          <ns0:OPTION value="spherex_qr3_deep" />
+          <ns0:OPTION value="spitzer_abell1763" />
+          <ns0:OPTION value="spitzer_clash" />
+          <ns0:OPTION value="spitzer_cosmic_dawn" />
+          <ns0:OPTION value="spitzer_cygx" />
+          <ns0:OPTION value="spitzer_deepdrill" />
+          <ns0:OPTION value="spitzer_dustings" />
+          <ns0:OPTION value="spitzer_elflock" />
+          <ns0:OPTION value="spitzer_feps" />
+          <ns0:OPTION value="spitzer_fidel" />
+          <ns0:OPTION value="spitzer_frontier" />
+          <ns0:OPTION value="spitzer_glimpse" />
+          <ns0:OPTION value="spitzer_goods" />
+          <ns0:OPTION value="spitzer_iudf" />
+          <ns0:OPTION value="spitzer_lvl" />
+          <ns0:OPTION value="spitzer_m31irac" />
+          <ns0:OPTION value="spitzer_mipsgal" />
+          <ns0:OPTION value="spitzer_mips_lg" />
+          <ns0:OPTION value="spitzer_s4g" />
+          <ns0:OPTION value="spitzer_safires" />
+          <ns0:OPTION value="spitzer_sage" />
+          <ns0:OPTION value="spitzer_sagesmc" />
+          <ns0:OPTION value="spitzer_scandels" />
+          <ns0:OPTION value="spitzer_sdwfs" />
+          <ns0:OPTION value="spitzer_seip" />
+          <ns0:OPTION value="spitzer_sep" />
+          <ns0:OPTION value="spitzer_servs" />
+          <ns0:OPTION value="spitzer_sha" />
+          <ns0:OPTION value="spitzer_shela" />
+          <ns0:OPTION value="spitzer_simla" />
+          <ns0:OPTION value="spitzer_simple" />
+          <ns0:OPTION value="spitzer_sings" />
+          <ns0:OPTION value="spitzer_smclast" />
+          <ns0:OPTION value="spitzer_smuvs" />
+          <ns0:OPTION value="spitzer_spies" />
+          <ns0:OPTION value="spitzer_spuds" />
+          <ns0:OPTION value="spitzer_srelics" />
+          <ns0:OPTION value="spitzer_ssdf" />
+          <ns0:OPTION value="spitzer_swire" />
+          <ns0:OPTION value="spitzer_taurus" />
+          <ns0:OPTION value="thrumms" />
+          <ns0:OPTION value="twomass_allsky" />
+          <ns0:OPTION value="twomass_calibration" />
+          <ns0:OPTION value="twomass_extsrc" />
+          <ns0:OPTION value="twomass_full" />
+          <ns0:OPTION value="twomass_lga" />
+          <ns0:OPTION value="twomass_lh" />
+          <ns0:OPTION value="twomass_sixdeg" />
+          <ns0:OPTION value="twomass_sixxcat" />
+          <ns0:OPTION value="twomass_sixxfull" />
+          <ns0:OPTION value="wise_2bandcryo" />
+          <ns0:OPTION value="wise_3bandcryo" />
+          <ns0:OPTION value="wise_allsky" />
+          <ns0:OPTION value="wise_allwise" />
+          <ns0:OPTION value="wise_fdepa" />
+          <ns0:OPTION value="wise_prelim" />
+          <ns0:OPTION value="wise_prelim_2bandcryo" />
+          <ns0:OPTION value="wise_unwise" />
+          <ns0:OPTION value="wise_z0mgs" />
+        </ns0:VALUES>
+      </ns0:PARAM>
+      <ns0:PARAM name="DPTYPE" datatype="char" arraysize="*" value="">
+        <ns0:DESCRIPTION>Specify value of dataproduct_type field</ns0:DESCRIPTION>
+        <ns0:VALUES type="actual">
+          <ns0:OPTION value="cube" />
+          <ns0:OPTION value="image" />
+        </ns0:VALUES>
+      </ns0:PARAM>
+      <ns0:PARAM name="EXPTIME" datatype="double" arraysize="2" unit="sec" value="" xtype="interval">
+        <ns0:DESCRIPTION>Specify exposure duration</ns0:DESCRIPTION>
+      </ns0:PARAM>
+      <ns0:PARAM name="FACILITY" datatype="char" arraysize="*" value="">
+        <ns0:DESCRIPTION>Specify telescope name</ns0:DESCRIPTION>
+        <ns0:VALUES type="actual">
+          <ns0:OPTION value="1.83 m Perkins" />
+          <ns0:OPTION value="2.54m Isaac Newton Telescope (INT) at Observatorio del Roque de los Muchachos" />
+          <ns0:OPTION value="2.5m Sloan Digital Sky Survey (SDSS) Telescope at Apache Point Observatory" />
+          <ns0:OPTION value="2m Liverpool Telescope Observatorio del Roque de los Muchachos" />
+          <ns0:OPTION value="4m Nicholas U. Mayall Telescope at Kitt Peak National Observatory" />
+          <ns0:OPTION value="4m Victor M. Blanco Telescope Cerro Tololo Inter-American Observatory" />
+          <ns0:OPTION value="AKARI" />
+          <ns0:OPTION value="ATNF/CSIRO 22m Mopra Radio Telescope" />
+          <ns0:OPTION value="Balloon-borne Large Aperture Submillimeter Telescope" />
+          <ns0:OPTION value="Blanco" />
+          <ns0:OPTION value="California Institute of Technology 5.1m (200inch) Hale Telescope at Palomar Observatory" />
+          <ns0:OPTION value="Caltech Submillimeter Observatory" />
+          <ns0:OPTION value="CFHT" />
+          <ns0:OPTION value="DESI Legacy Imaging Surveys" />
+          <ns0:OPTION value="DSS1" />
+          <ns0:OPTION value="DSS2" />
+          <ns0:OPTION value="ESO 3.6m New Technology Telescope La Silla Observatory" />
+          <ns0:OPTION value="ESO 3.6m New Techology Telescope at La Silla Observatory" />
+          <ns0:OPTION value="ESO/MPG 2.2m Telescope at La Silla Observatory" />
+          <ns0:OPTION value="Euclid" />
+          <ns0:OPTION value="Galaxy Evolution Explorer" />
+          <ns0:OPTION value="Herschel Space Observatory" />
+          <ns0:OPTION value="Hubble Space Telescope" />
+          <ns0:OPTION value="InfraRed Astronomical Satellite" />
+          <ns0:OPTION value="Infrared Space Observatory" />
+          <ns0:OPTION value="Infrared Telescope in Space" />
+          <ns0:OPTION value="Jeanne Rich Telescope" />
+          <ns0:OPTION value="Palomar 60 inch Telescope" />
+          <ns0:OPTION value="Pan-STARRS" />
+          <ns0:OPTION value="Planck" />
+          <ns0:OPTION value="see docs" />
+          <ns0:OPTION value="Sloan Digital Sky Survey" />
+          <ns0:OPTION value="SOFIA" />
+          <ns0:OPTION value="SPHEREx" />
+          <ns0:OPTION value="SPIRIT III" />
+          <ns0:OPTION value="Spitzer" />
+          <ns0:OPTION value="Spitzer Space Telescope" />
+          <ns0:OPTION value="Stratospheric Observatory For Infrared Astronomy" />
+          <ns0:OPTION value="Subaru Telescope" />
+          <ns0:OPTION value="The 2 Micron All Sky Survey" />
+          <ns0:OPTION value="The 2 Micron All Sky Survey 1.3m Telescope at Cerro Tololo Inter-American Observatory" />
+          <ns0:OPTION value="The 2 Micron All Sky Survey 1.3m Telescope at Fred Lawrence Whipple Observatory" />
+          <ns0:OPTION value="Wide-field Infrared Survey Explorer" />
+          <ns0:OPTION value="WISE" />
+        </ns0:VALUES>
+      </ns0:PARAM>
+      <ns0:PARAM name="FORMAT" datatype="char" arraysize="*" value="">
+        <ns0:DESCRIPTION>Specify content type</ns0:DESCRIPTION>
+        <ns0:VALUES type="actual">
+          <ns0:OPTION value="application/fits" />
+          <ns0:OPTION value="application/x-gzip" />
+          <ns0:OPTION value="cube/fits" />
+          <ns0:OPTION value="image/fits" />
+          <ns0:OPTION value="image/png" />
+          <ns0:OPTION value="plain/text" />
+          <ns0:OPTION value="text/plain" />
+        </ns0:VALUES>
+      </ns0:PARAM>
+      <ns0:PARAM name="FOV" datatype="double" arraysize="2" unit="deg" value="" xtype="interval">
+        <ns0:DESCRIPTION>Specify field of view</ns0:DESCRIPTION>
+      </ns0:PARAM>
+      <ns0:PARAM name="ID" datatype="char" arraysize="*" value="">
+        <ns0:DESCRIPTION>Specify observation ID</ns0:DESCRIPTION>
+      </ns0:PARAM>
+      <ns0:PARAM name="INSTRUMENT" datatype="char" arraysize="*" value="">
+        <ns0:DESCRIPTION>Specify instrument name</ns0:DESCRIPTION>
+        <ns0:VALUES type="actual">
+          <ns0:OPTION value="2MASS Survey Camera" />
+          <ns0:OPTION value="ACS" />
+          <ns0:OPTION value="BLAST" />
+          <ns0:OPTION value="Bolocam" />
+          <ns0:OPTION value="BOLOCAM" />
+          <ns0:OPTION value="column density" />
+          <ns0:OPTION value="DECam" />
+          <ns0:OPTION value="DSS" />
+          <ns0:OPTION value="dust temp" />
+          <ns0:OPTION value="EFOSC2" />
+          <ns0:OPTION value="FIFI-LS" />
+          <ns0:OPTION value="FILM" />
+          <ns0:OPTION value="FIRP" />
+          <ns0:OPTION value="FIS" />
+          <ns0:OPTION value="FLI09000" />
+          <ns0:OPTION value="FLITECAM" />
+          <ns0:OPTION value="FORCAST" />
+          <ns0:OPTION value="FPI_PLUS" />
+          <ns0:OPTION value="GALEX" />
+          <ns0:OPTION value="GRBCam" />
+          <ns0:OPTION value="HAWC_PLUS" />
+          <ns0:OPTION value="HFI" />
+          <ns0:OPTION value="HIFI" />
+          <ns0:OPTION value="Hyper Suprime-Cam" />
+          <ns0:OPTION value="IRAC" />
+          <ns0:OPTION value="IRAS" />
+          <ns0:OPTION value="IRS" />
+          <ns0:OPTION value="ISOCAM" />
+          <ns0:OPTION value="ISPI" />
+          <ns0:OPTION value="LFC" />
+          <ns0:OPTION value="LFI" />
+          <ns0:OPTION value="MegaCam" />
+          <ns0:OPTION value="Mimir" />
+          <ns0:OPTION value="MIPS" />
+          <ns0:OPTION value="MIRS" />
+          <ns0:OPTION value="MOPS" />
+          <ns0:OPTION value="Mosaic-1" />
+          <ns0:OPTION value="Mosaic-II" />
+          <ns0:OPTION value="NISP" />
+          <ns0:OPTION value="none" />
+          <ns0:OPTION value="Optical-Infrared IO:O Camera" />
+          <ns0:OPTION value="PACS" />
+          <ns0:OPTION value="Pan-STARRS" />
+          <ns0:OPTION value="SDSS" />
+          <ns0:OPTION value="see docs" />
+          <ns0:OPTION value="SHARC-II" />
+          <ns0:OPTION value="SofI" />
+          <ns0:OPTION value="SPHEREx" />
+          <ns0:OPTION value="SPIRE" />
+          <ns0:OPTION value="SPIRIT III" />
+          <ns0:OPTION value="STL11000m" />
+          <ns0:OPTION value="Suprime-Cam" />
+          <ns0:OPTION value="VIS" />
+          <ns0:OPTION value="WFC" />
+          <ns0:OPTION value="WFI" />
+          <ns0:OPTION value="WIRC" />
+          <ns0:OPTION value="WISE" />
+        </ns0:VALUES>
+      </ns0:PARAM>
+      <ns0:PARAM name="POL" datatype="char" arraysize="*" value="">
+        <ns0:DESCRIPTION>Specify polarization states</ns0:DESCRIPTION>
+      </ns0:PARAM>
+      <ns0:PARAM name="POS" datatype="char" arraysize="*" value="" xtype="polygon">
+        <ns0:DESCRIPTION>Specify polygon of interest</ns0:DESCRIPTION>
+      </ns0:PARAM>
+      <ns0:PARAM name="POS" datatype="char" arraysize="*" value="" xtype="range">
+        <ns0:DESCRIPTION>Specify range of interest</ns0:DESCRIPTION>
+      </ns0:PARAM>
+      <ns0:PARAM name="POS" datatype="char" arraysize="*" value="" xtype="circle">
+        <ns0:DESCRIPTION>Specify circle of interest</ns0:DESCRIPTION>
+      </ns0:PARAM>
+      <ns0:PARAM name="RESPONSEFORMAT" datatype="char" arraysize="*" value="">
+        <ns0:DESCRIPTION>specify format of response</ns0:DESCRIPTION>
+        <ns0:VALUES type="actual">
+          <ns0:OPTION value="csv" />
+          <ns0:OPTION value="db" />
+          <ns0:OPTION value="fits" />
+          <ns0:OPTION value="hdf5" />
+          <ns0:OPTION value="html" />
+          <ns0:OPTION value="ipac_table" />
+          <ns0:OPTION value="json" />
+          <ns0:OPTION value="json5" />
+          <ns0:OPTION value="oracle" />
+          <ns0:OPTION value="postgres" />
+          <ns0:OPTION value="sqlite" />
+          <ns0:OPTION value="text" />
+          <ns0:OPTION value="tsv" />
+          <ns0:OPTION value="votable" />
+          <ns0:OPTION value="xml" />
+        </ns0:VALUES>
+      </ns0:PARAM>
+      <ns0:PARAM name="SPATRES" datatype="double" arraysize="2" unit="arcsec" value="" xtype="interval">
+        <ns0:DESCRIPTION>Specify position resolution</ns0:DESCRIPTION>
+      </ns0:PARAM>
+      <ns0:PARAM name="SPECRP" datatype="double" arraysize="2" value="" xtype="interval">
+        <ns0:DESCRIPTION>Specify energy resolving power</ns0:DESCRIPTION>
+      </ns0:PARAM>
+      <ns0:PARAM name="TARGET" datatype="char" arraysize="*" value="">
+        <ns0:DESCRIPTION>Specify target name</ns0:DESCRIPTION>
+      </ns0:PARAM>
+      <ns0:PARAM name="TIME" datatype="double" arraysize="2" unit="d" value="" xtype="interval">
+        <ns0:DESCRIPTION>Specify time bounds</ns0:DESCRIPTION>
+      </ns0:PARAM>
+      <ns0:PARAM name="TIMERES" datatype="double" arraysize="2" unit="sec" value="" xtype="interval">
+        <ns0:DESCRIPTION>Specify time resolution</ns0:DESCRIPTION>
+      </ns0:PARAM>
+    </ns0:GROUP>
+    <ns0:PARAM name="standardID" datatype="char" arraysize="*" value="ivo://ivoa.net/std/SIA#query-2.0" />
+    <ns0:PARAM name="accessURL" datatype="char" arraysize="*" value="https://irsa.ipac.caltech.edu/SIA" />
+    <ns0:PARAM name="resourceIdentifier" datatype="char" arraysize="*" value="ivo://irsa.ipac/SIA" />
+  </ns0:RESOURCE>
+  <ns0:RESOURCE type="results">
+    <ns0:INFO name="QUERY_STATUS" value="OK" />
+    <ns0:TABLE>
+      <ns0:FIELD name="s_ra" datatype="double" ID="col_0" ucd="pos.eq.ra" unit="deg" utype="obscore:char.spatialaxis.coverage.location.coord.position2d.value2.c1">
+        <ns0:DESCRIPTION>Central Spatial Position in ICRS Right ascension</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="s_dec" datatype="double" ID="col_1" ucd="pos.eq.dec" unit="deg" utype="obscore:char.spatialaxis.coverage.location.coord.position2d.value2.c2">
+        <ns0:DESCRIPTION>Central Spatial Position in ICRS Declination</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="facility_name" datatype="char" arraysize="*" ID="col_2" ucd="meta.id;instr.tel" utype="obscore:provenance.obsconfig.facility.name">
+        <ns0:DESCRIPTION>Name of telescope used to acquire observation</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="instrument_name" datatype="char" arraysize="*" ID="col_3" ucd="meta.id;instr" utype="obscore:provenance.obsconfig.instrument.name">
+        <ns0:DESCRIPTION>Name of instrument used to acquire observation</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="dataproduct_subtype" datatype="char" arraysize="*" ID="col_4" ucd="meta.code" utype="caom2:artifact.producttype">
+        <ns0:DESCRIPTION>Product type (e.g. science, calibration, auxiliary, preview, info)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="calib_level" datatype="short" ID="col_5" ucd="meta.code;obs.calib" utype="obscore:obsdataset.caliblevel">
+        <ns0:DESCRIPTION>Calibration level of the observation: in {0, 1, 2, 3, 4}</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="dataproduct_type" datatype="char" arraysize="*" ID="col_6" ucd="meta.id" utype="obscore:obsdataset.dataproducttype">
+        <ns0:DESCRIPTION>Data product (file content) primary type</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="energy_bandpassname" datatype="char" arraysize="*" ID="col_7" utype="caom2:Energy.bandpassName">
+        <ns0:DESCRIPTION>Collection-specific name for energy band (e.g. filter name)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="energy_emband" datatype="char" arraysize="*" ID="col_8" utype="caom2:Energy.emBand">
+        <ns0:DESCRIPTION>Generic name for energy band (Radio,Millimeter,Infrared,Optical,...)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="obs_id" datatype="char" arraysize="*" ID="col_9" ucd="meta.id" utype="obscore:dataid.observationid">
+        <ns0:DESCRIPTION>Internal ID given by the ObsTAP service</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="s_resolution" datatype="double" ID="col_10" irsa_format="12.6f" precision="F6" ucd="pos.angResolution" unit="arcsec" utype="obscore:char.spatialaxis.resolution.refval.value">
+        <ns0:DESCRIPTION>Spatial resolution (FWHM)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="em_min" datatype="double" ID="col_11" irsa_format="10.5e" precision="E5" ucd="em.wl;stat.min" unit="m" utype="obscore:char.spectralaxis.coverage.bounds.limits.lolimit">
+        <ns0:DESCRIPTION>Lower bound on energy axis (barycentric wavelength)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="em_max" datatype="double" ID="col_12" irsa_format="10.5e" precision="E5" ucd="em.wl;stat.max" unit="m" utype="obscore:char.spectralaxis.coverage.bounds.limits.hilimit">
+        <ns0:DESCRIPTION>Upper bound on energy axis (barycentric wavelength)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="em_res_power" datatype="double" ID="col_13" irsa_format="12.6f" precision="F6" ucd="spect.resolution" utype="obscore:char.spectralaxis.resolution.resolpower.refval">
+        <ns0:DESCRIPTION>Spectral resolving power (R)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="proposal_title" datatype="char" arraysize="*" ID="col_14" utype="caom2:Proposal.title">
+        <ns0:DESCRIPTION>Proposal title</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="access_url" datatype="char" arraysize="*" ID="col_15" ucd="meta.ref.url" utype="obscore:access.reference">
+        <ns0:DESCRIPTION>URI for the physical artifact</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="access_format" datatype="char" arraysize="*" ID="col_16" ucd="meta.code.mime" utype="obscore:access.format">
+        <ns0:DESCRIPTION>Content-Type of the representation at uri</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="access_estsize" datatype="long" ID="col_17" ucd="phys.size;meta.file" unit="kbyte" utype="obscore:access.size">
+        <ns0:DESCRIPTION>Estimated size of the download at uri</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="t_exptime" datatype="double" ID="col_18" irsa_format="12.6f" precision="F6" ucd="time.duration;obs.exposure" unit="s" utype="obscore:char.timeaxis.coverage.support.extent">
+        <ns0:DESCRIPTION>Exposure time per pixel</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="s_region" datatype="char" arraysize="*" ID="col_19" ucd="pos.outline;obs.field" unit="deg" utype="obscore:char.spatialaxis.coverage.support.area">
+        <ns0:DESCRIPTION>AstroCoordArea Region covered in STC</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="obs_collection" datatype="char" arraysize="*" ID="col_20" ucd="meta.id" utype="obscore:dataid.collection">
+        <ns0:DESCRIPTION>Data collection this observation belongs to</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="obs_intent" datatype="char" arraysize="*" ID="col_21" utype="caom2:ObservationIntentType">
+        <ns0:DESCRIPTION>Intended purpose of data (one of: science, calibration)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="algorithm_name" datatype="char" arraysize="*" ID="col_22" utype="caom2:Algorithm">
+        <ns0:DESCRIPTION>Algorithm that defines the observation</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="facility_keywords" datatype="char" arraysize="*" ID="col_23" utype="caom2:Telescope.keywords">
+        <ns0:DESCRIPTION>Telescope keywords formatted as a JSON string</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="instrument_keywords" datatype="char" arraysize="*" ID="col_24" utype="caom2:Instrument.keywords">
+        <ns0:DESCRIPTION>Instrument keywords formatted as a JSON string</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="environment_photometric" datatype="boolean" ID="col_25" utype="caom2:Environment.photometric">
+        <ns0:DESCRIPTION>Conditions were photometric (0=false, 1=true)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="proposal_id" datatype="char" arraysize="*" ID="col_26" ucd="meta.id;obs.proposal" utype="obscore:provenance.proposal.identifier">
+        <ns0:DESCRIPTION>Collection-specific unique proposal identifier</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="proposal_pi" datatype="char" arraysize="*" ID="col_27" utype="caom2:Proposal.pi">
+        <ns0:DESCRIPTION>Proposal principal investigator</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="proposal_project" datatype="char" arraysize="*" ID="col_28" utype="caom2:Proposal.project">
+        <ns0:DESCRIPTION>Project that created/acquired the observation</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="target_name" datatype="char" arraysize="*" ID="col_29" ucd="meta.id;src" utype="obscore:target.name">
+        <ns0:DESCRIPTION>Name of intended target</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="target_type" datatype="char" arraysize="*" ID="col_30" utype="caom2:Target.type">
+        <ns0:DESCRIPTION>Classification of intended target ('object' or 'field')</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="target_standard" datatype="boolean" ID="col_31" utype="caom2:Target.standard">
+        <ns0:DESCRIPTION>Intended target is a standard (0=false, 1=true)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="target_moving" datatype="boolean" ID="col_32" utype="caom2:Target.moving">
+        <ns0:DESCRIPTION>Intended target is moving (0=false, 1=true)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="target_keywords" datatype="char" arraysize="*" ID="col_33" utype="caom2:Target.keywords">
+        <ns0:DESCRIPTION>Target keywords formatted as a JSON string</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="obs_release_date" datatype="char" arraysize="*" ID="col_34" ucd="time.release" utype="obscore:Curation.releaseDate" xtype="timestamp">
+        <ns0:DESCRIPTION>Timestamp of date the data becomes publicly available</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="s_xel1" datatype="long" ID="col_35" ucd="meta.number" utype="obscore:char.spatialaxis.numbins1">
+        <ns0:DESCRIPTION>Dimensions (number of pixels) along first spatial axis</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="s_xel2" datatype="long" ID="col_36" ucd="meta.number" utype="obscore:char.spatialaxis.numbins2">
+        <ns0:DESCRIPTION>Dimensions (number of pixels) along second spatial axis</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="s_pixel_scale" datatype="double" ID="col_37" irsa_format="7.3f" precision="F3" unit="arcsec" utype="phys.angSize;instr.pixel">
+        <ns0:DESCRIPTION>Sample (pixel) size on spatial axes</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="position_timedependent" datatype="boolean" ID="col_38" utype="caom2:Position.timeDependent">
+        <ns0:DESCRIPTION>Position is time-dependent (0=false, 1=true)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="t_min" datatype="double" ID="col_39" irsa_format="12.6f" precision="F6" ucd="time.start;obs.exposure" unit="d" utype="obscore:char.timeaxis.coverage.bounds.limits.starttime">
+        <ns0:DESCRIPTION>Lower bound on time axis (Modified Julian Day)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="t_max" datatype="double" ID="col_40" irsa_format="12.6f" precision="F6" ucd="time.end;obs.exposure" unit="d" utype="obscore:char.timeaxis.coverage.bounds.limits.stoptime">
+        <ns0:DESCRIPTION>Upper bound on time axis (Modified Julian Day)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="t_resolution" datatype="double" ID="col_41" irsa_format="12.6f" precision="F6" ucd="time.resolution" unit="s" utype="obscore:char.timeaxis.resolution.refval.value">
+        <ns0:DESCRIPTION>Resolution on the time axis</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="t_xel" datatype="long" ID="col_42" ucd="meta.number" utype="obscore:char.timeaxis.numbins">
+        <ns0:DESCRIPTION>Dimensions (number of pixels) along the time axis</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="obs_publisher_did" datatype="char" arraysize="*" ID="col_43" ucd="meta.ref.uri;meta.curation" utype="obscore:curation.publisherdid">
+        <ns0:DESCRIPTION>IVOA Dataset ID given by the publisher</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="s_fov" datatype="double" ID="col_44" irsa_format="6.3e" precision="E3" ucd="phys.angSize;instr.fov" unit="deg" utype="obscore:char.spatialaxis.coverage.bounds.extent.diameter">
+        <ns0:DESCRIPTION>Estimated size of the covered region as the diameter of a containing circle</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="em_xel" datatype="long" ID="col_45" ucd="meta.number" utype="obscore:char.spectralaxis.numbins">
+        <ns0:DESCRIPTION>Dimensions (number of pixels) along the energy axis</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="pol_states" datatype="char" arraysize="*" ID="col_46" ucd="meta.code;phys.polarization" utype="obscore:char.polarizationaxis.statelist">
+        <ns0:DESCRIPTION>List of polarization states present in the data file</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="pol_xel" datatype="long" ID="col_47" ucd="meta.number" utype="obscore:char.polarizationaxis.numbins">
+        <ns0:DESCRIPTION>Dimensions (number of pixels) along the polarization axis</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="cloud_access" datatype="char" arraysize="*" ID="col_48">
+        <ns0:DESCRIPTION>URI for the enclouded artifact</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="o_ucd" datatype="char" arraysize="*" ID="col_49" ucd="meta.ucd" utype="obscore:char.observableaxis.ucd">
+        <ns0:DESCRIPTION>UCD describing the observable axis (pixel values)</ns0:DESCRIPTION>
+      </ns0:FIELD>
+      <ns0:FIELD name="upload_row_id" datatype="long" ID="col_50" />
+      <ns0:DATA>
+        <ns0:TABLEDATA>
+          <ns0:TR>
+            <ns0:TD>58.99809948824366</ns0:TD>
+            <ns0:TD>51.545863349848872</ns0:TD>
+            <ns0:TD>SPHEREx</ns0:TD>
+            <ns0:TD>SPHEREx</ns0:TD>
+            <ns0:TD>science</ns0:TD>
+            <ns0:TD>2</ns0:TD>
+            <ns0:TD>image</ns0:TD>
+            <ns0:TD>SPHEREx-D4</ns0:TD>
+            <ns0:TD>Infrared</ns0:TD>
+            <ns0:TD>2025W34_2B_0099_1</ns0:TD>
+            <ns0:TD>3.075000</ns0:TD>
+            <ns0:TD>2.40270e-06</ns0:TD>
+            <ns0:TD>3.84730e-06</ns0:TD>
+            <ns0:TD>34.900000</ns0:TD>
+            <ns0:TD>SPHEREx LVF Survey Data</ns0:TD>
+            <ns0:TD>https://irsa.ipac.caltech.edu/ibe/data/spherex/dr1/level2/2025W34_2B/l2b-v27-2026-229/4/level2_2025W34_2B_0099_1D4_spx_l2b-v27-2026-229.fits</ns0:TD>
+            <ns0:TD>image/fits</ns0:TD>
+            <ns0:TD>60567</ns0:TD>
+            <ns0:TD>113.582600</ns0:TD>
+            <ns0:TD>POLYGON ICRS 62.129275834124435 50.16584105268626 56.849145920106444 49.45667075280635 55.66047105851991 52.863906674134846 61.38669645341794 53.62987474710136 62.129275834124435 50.16584105268626</ns0:TD>
+            <ns0:TD>spherex_dr1</ns0:TD>
+            <ns0:TD>science</ns0:TD>
+            <ns0:TD>exposure</ns0:TD>
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD>SPHEREx</ns0:TD>
+            <ns0:TD>SPS_016354_S12</ns0:TD>
+            <ns0:TD>field</ns0:TD>
+            <ns0:TD>0</ns0:TD>
+            <ns0:TD>0</ns0:TD>
+            <ns0:TD />
+            <ns0:TD>2026-10-04 05:45:39</ns0:TD>
+            <ns0:TD>2040</ns0:TD>
+            <ns0:TD>2040</ns0:TD>
+            <ns0:TD>6.150</ns0:TD>
+            <ns0:TD>0</ns0:TD>
+            <ns0:TD>60909.026945</ns0:TD>
+            <ns0:TD>60909.028277</ns0:TD>
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD>ivo://irsa.ipac/spherex_dr1?2025W34_2B_0099_1/D4</ns0:TD>
+            <ns0:TD>3.485e+00</ns0:TD>
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD>{"aws": {"bucket_name": "nasa-irsa-spherex", "key":"dr1/level2/2025W34_2B/l2b-v27-2026-229/4/level2_2025W34_2B_0099_1D4_spx_l2b-v27-2026-229.fits", "region": "us-east-1"}}</ns0:TD>
+            <ns0:TD />
+            <ns0:TD>1</ns0:TD>
+          </ns0:TR>
+          <ns0:TR>
+            <ns0:TD>59.982581501880503</ns0:TD>
+            <ns0:TD>49.590119125766812</ns0:TD>
+            <ns0:TD>SPHEREx</ns0:TD>
+            <ns0:TD>SPHEREx</ns0:TD>
+            <ns0:TD>science</ns0:TD>
+            <ns0:TD>2</ns0:TD>
+            <ns0:TD>image</ns0:TD>
+            <ns0:TD>SPHEREx-D4</ns0:TD>
+            <ns0:TD>Infrared</ns0:TD>
+            <ns0:TD>2026W07_2A_0374_3</ns0:TD>
+            <ns0:TD>3.075000</ns0:TD>
+            <ns0:TD>2.40270e-06</ns0:TD>
+            <ns0:TD>3.84730e-06</ns0:TD>
+            <ns0:TD>34.900000</ns0:TD>
+            <ns0:TD>SPHEREx LVF Survey Data</ns0:TD>
+            <ns0:TD>https://irsa.ipac.caltech.edu/ibe/data/spherex/dr1/level2/2026W07_2A/l2b-v27-2026-226/4/level2_2026W07_2A_0374_3D4_spx_l2b-v27-2026-226.fits</ns0:TD>
+            <ns0:TD>image/fits</ns0:TD>
+            <ns0:TD>61215</ns0:TD>
+            <ns0:TD>113.582600</ns0:TD>
+            <ns0:TD>POLYGON ICRS 56.68458011884644 50.75066225444815 62.019870669205744 51.72615682712432 63.13626762895053 48.313609039274205 58.09392308784233 47.38125888019699 56.68458011884644 50.75066225444815</ns0:TD>
+            <ns0:TD>spherex_dr1</ns0:TD>
+            <ns0:TD>science</ns0:TD>
+            <ns0:TD>exposure</ns0:TD>
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD>SPHEREx</ns0:TD>
+            <ns0:TD>SPS_086060_S12</ns0:TD>
+            <ns0:TD>field</ns0:TD>
+            <ns0:TD>0</ns0:TD>
+            <ns0:TD>0</ns0:TD>
+            <ns0:TD />
+            <ns0:TD>2026-10-08 04:42:13</ns0:TD>
+            <ns0:TD>2040</ns0:TD>
+            <ns0:TD>2040</ns0:TD>
+            <ns0:TD>6.150</ns0:TD>
+            <ns0:TD>0</ns0:TD>
+            <ns0:TD>61085.471030</ns0:TD>
+            <ns0:TD>61085.472362</ns0:TD>
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD>ivo://irsa.ipac/spherex_dr1?2026W07_2A_0374_3/D4</ns0:TD>
+            <ns0:TD>3.485e+00</ns0:TD>
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD>{"aws": {"bucket_name": "nasa-irsa-spherex", "key":"dr1/level2/2026W07_2A/l2b-v27-2026-226/4/level2_2026W07_2A_0374_3D4_spx_l2b-v27-2026-226.fits", "region": "us-east-1"}}</ns0:TD>
+            <ns0:TD />
+            <ns0:TD>1</ns0:TD>
+          </ns0:TR>
+          <ns0:TR>
+            <ns0:TD>59.27166504996628</ns0:TD>
+            <ns0:TD>51.688179791598046</ns0:TD>
+            <ns0:TD>SPHEREx</ns0:TD>
+            <ns0:TD>SPHEREx</ns0:TD>
+            <ns0:TD>science</ns0:TD>
+            <ns0:TD>2</ns0:TD>
+            <ns0:TD>image</ns0:TD>
+            <ns0:TD>SPHEREx-D4</ns0:TD>
+            <ns0:TD>Infrared</ns0:TD>
+            <ns0:TD>2026W36_1A_0557_1</ns0:TD>
+            <ns0:TD>3.075000</ns0:TD>
+            <ns0:TD>2.40270e-06</ns0:TD>
+            <ns0:TD>3.84730e-06</ns0:TD>
+            <ns0:TD>34.900000</ns0:TD>
+            <ns0:TD>SPHEREx LVF Survey Data</ns0:TD>
+            <ns0:TD>https://irsa.ipac.caltech.edu/ibe/data/spherex/qr3/level2/2026W36_1A/l2b-v27-2026-252/4/level2_2026W36_1A_0557_1D4_spx_l2b-v27-2026-252.fits</ns0:TD>
+            <ns0:TD>image/fits</ns0:TD>
+            <ns0:TD>60740</ns0:TD>
+            <ns0:TD>113.582600</ns0:TD>
+            <ns0:TD>POLYGON ICRS 62.408072251570324 50.304412923019356 57.11056462153071 49.60136643030764 55.92687137168953 53.00975513855374 61.67460487260466 53.7693528048908 62.408072251570324 50.304412923019356</ns0:TD>
+            <ns0:TD>spherex_qr3</ns0:TD>
+            <ns0:TD>science</ns0:TD>
+            <ns0:TD>exposure</ns0:TD>
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD>SPHEREx</ns0:TD>
+            <ns0:TD>SPS_016354_S34</ns0:TD>
+            <ns0:TD>field</ns0:TD>
+            <ns0:TD>0</ns0:TD>
+            <ns0:TD>0</ns0:TD>
+            <ns0:TD />
+            <ns0:TD>2026-10-12 22:31:00</ns0:TD>
+            <ns0:TD>2040</ns0:TD>
+            <ns0:TD>2040</ns0:TD>
+            <ns0:TD>6.150</ns0:TD>
+            <ns0:TD>0</ns0:TD>
+            <ns0:TD>61285.442022</ns0:TD>
+            <ns0:TD>61285.443355</ns0:TD>
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD>ivo://irsa.ipac/spherex_qr3?2026W36_1A_0557_1/D4</ns0:TD>
+            <ns0:TD>3.485e+00</ns0:TD>
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD />
+            <ns0:TD>{"aws": {"bucket_name": "nasa-irsa-spherex", "key":"qr3/level2/2026W36_1A/l2b-v27-2026-252/4/level2_2026W36_1A_0557_1D4_spx_l2b-v27-2026-252.fits", "region": "us-east-1"}}</ns0:TD>
+            <ns0:TD />
+            <ns0:TD>1</ns0:TD>
+          </ns0:TR>
+          </ns0:TABLEDATA>
+      </ns0:DATA>
+    </ns0:TABLE>
+  </ns0:RESOURCE>
+</ns0:VOTABLE>

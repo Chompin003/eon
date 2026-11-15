@@ -13,7 +13,7 @@ interface CoordinateToolsProps {
 }
 ```
 
-`ViewState` mantiene `longitude`, `latitude` y `fov` en **grados decimales**. Para la integración ecuatorial, `longitude` corresponde a RA y `latitude` a Dec. El estado actual describe una esfera sintética; no representa una solución WCS de una imagen científica.
+`ViewState` mantiene `longitude`, `latitude` y `fov` en **grados decimales**. Para la integración ecuatorial, `longitude` corresponde a RA y `latitude` a Dec. El estado actual corresponde al centro real ICRS del visor HiPS/FITS de Aladin. `fov` es ahora horizontal; las imágenes se proyectan con su WCS. Tu módulo sigue consumiendo exactamente `CoordinateToolsProps`.
 
 El formulario debe mostrar/aceptar RA h:m:s y Dec ±d:m:s, siguiendo la convención J2000 del documento E-STAR. Convierte a grados antes de llamar al callback. Conserva `view.fov` para que una búsqueda no reinicie el zoom. Los grados decimales son un formato de almacenamiento, no un cambio de sistema de coordenadas.
 
@@ -37,7 +37,7 @@ La prop sustituye automáticamente el marcador RA/Dec dentro de la ventana; no c
 - RA: 24 h equivalen a 360° y se envuelven a 0°. Un minuto de tiempo de RA equivale a 15 minutos de arco, no a uno.
 - Dec: conserva el signo como dato separado, incluso en `−00° 30′ 00″`. El ejemplo Python del documento pierde ese signo si convierte primero los grados a un entero cero.
 - Valida minutos/segundos, ±90° y entradas no finitas antes de aplicar la vista. No uses texto redondeado para volver a escribir el estado numérico.
-- La navegación de este prototipo limita latitud a ±85° para evitar invertir la cámara. No recortes silenciosamente coordenadas científicas de los polos: coordina ese soporte con `viewer/` antes de dar por terminada una búsqueda de todo el cielo.
+- El visor científico admite latitud ±90°; se retiró el límite de ±85° de la esfera de prueba. RA en el polo exacto es degenerada. No recortes silenciosamente coordenadas válidas.
 - Revisa las fixtures del documento: la fila de Barnard’s Star repite coordenadas de Betelgeuse. Usa fuentes contrastadas antes de convertirlas en tests.
 
 ## Mensaje para pegar en tu Codex

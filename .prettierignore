@@ -1,9 +1,12 @@
 node_modules
+public/vendor
 .venv
 data-cache
 dist
+.wrangler
 coverage
 test-results
 playwright-report
 package-lock.json
+cloudflare-env.d.ts
 *.tsbuildinfo
