@@ -26,7 +26,17 @@ test('text and space symbols edit, undo, follow the sky and share both panes', a
   await expect(text).toContainText('Δ = ±5°');
   await page.getByLabel('Anotar (bloquea arrastre del cielo)').check();
   await page.getByRole('button', { name: 'Cerrar controles' }).click();
-  await text.dblclick();
+  // SVG text hit testing differs across fonts; a user can double-click the gap
+  // between lines, which the canvas resolves against the object's sky bounds.
+  const box = (await text.boundingBox())!;
+  const board = page.locator('.study-annotations');
+  const boardBox = (await board.boundingBox())!;
+  await board.dblclick({
+    position: {
+      x: box.x + box.width / 2 - boardBox.x,
+      y: box.y + box.height / 2 - boardBox.y,
+    },
+  });
   await page.getByRole('button', { name: 'Mostrar controles' }).click();
   await expect(page.getByRole('textbox', { name: 'Texto', exact: true })).toHaveValue(
     'α Centauri\nΔ = ±5°',
