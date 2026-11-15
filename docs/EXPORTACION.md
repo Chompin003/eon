@@ -1,0 +1,5 @@
+# Exportación PNG y GIF
+
+Coordinación previa del cambio: App compondrá una herramienta de exportación en la ventana existente mediante un slot de ui. viewer expondrá captura visual PNG del visor y esperará a cuadros Canvas presentados; la captura Aladin usará su API pública desde el documento aislado. shared conservará ViewState en grados y añadirá únicamente opciones de capas y nombres sexagesimales seguros. La anotación SVG y las marcas se compondrán independientemente de las imágenes; no se modificará ningún FITS ni la API de coordenadas/Paint.
+
+La exportación GIF será explícita y cancelable, con encoder abierto ejecutado en Worker y sin servicios externos. Usará exclusivamente fechas ya preparadas, ordenadas y con su fecha real; informará de cuadros pendientes/fallidos. La reproducción se pausará y se abrirán los cuadros preparados a través de la solicitud de fecha existente. Las imágenes serán obligatorias en GIF y opcionales en PNG. PNG conservará transparencia sin imágenes. El nombre incluirá centro ICRS/J2000 en RA h:m:s y Dec ±d:m:s; GIF añadirá el rango UTC exportado. Se coordina añadir gifenc como dependencia fijada y su licencia MIT.
