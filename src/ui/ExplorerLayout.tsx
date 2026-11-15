@@ -112,17 +112,75 @@ export function ExplorerLayout({
         onClose={close}
         observationDate={observationDate}
       >
-        {shareTools}
-        <ControlMenu title="Exportar" description="PNG y GIF">
-          {exportTools}
+        <div className="control-menu-toolbar">
+          <button
+            className="text-button"
+            onClick={(event) => {
+              const panel = event.currentTarget.closest('.panel-content');
+              panel?.querySelectorAll<HTMLDetailsElement>('details[open]').forEach((menu) => {
+                menu.open = false;
+              });
+            }}
+          >
+            Plegar todo
+          </button>
+        </div>
+        <ControlMenu title="Ubicación y zoom" description="Coordenadas J2000 y campo visible">
+          <section
+            className="control-section"
+            aria-labelledby="coordinates-heading"
+            data-module-slot="coordinates"
+          >
+            <div className="section-title">
+              <h2 id="coordinates-heading">Coordenadas</h2>
+              <span>J2000</span>
+            </div>
+            {coordinateTools ?? (
+              <div className="module-placeholder">
+                <div className="coordinate-field">
+                  <span>RA</span>
+                  <span>— h — m — s</span>
+                </div>
+                <div className="coordinate-field">
+                  <span>Dec</span>
+                  <span>± — ° — ′ — ″</span>
+                </div>
+                <p>Módulo por conectar</p>
+              </div>
+            )}
+          </section>
+
+          <section className="control-section" aria-labelledby="zoom-heading">
+            <div className="section-title">
+              <h2 id="zoom-heading">Zoom</h2>
+              <output data-testid="zoom">
+                {new Intl.NumberFormat('es-MX', { maximumFractionDigits: 1 }).format(
+                  opticalZoom(view.fov),
+                )}
+                ×
+              </output>
+            </div>
+            <input
+              aria-label="Zoom"
+              type="range"
+              min="0"
+              max="1000"
+              step="1"
+              value={fovToZoomPosition(view.fov)}
+              onChange={(e) =>
+                onViewChange({ ...view, fov: zoomPositionToFov(Number(e.target.value)) })
+              }
+            />
+            <div className="control-detail">
+              <span>Campo horizontal</span>
+              <output data-testid="control-fov">{formatFieldOfView(view.fov)}</output>
+            </div>
+            <button className="text-button" onClick={onReset}>
+              Restablecer vista
+            </button>
+          </section>
         </ControlMenu>
-        <ControlMenu title="Telescopios" description="Comparación y campos observados">
-          {telescopeTools}
-        </ControlMenu>
-        <ControlMenu title="Estudiar región" description="Detecciones y catálogos">
-          {studyTools}
-        </ControlMenu>
-        <ControlMenu title="Imagen SPHEREx" description="Canales, color y referencias">
+        <ControlMenu title="Imagen" description="Canales, color y referencias">
           <section className="control-section" aria-labelledby="survey-heading">
             <div className="section-title">
               <h2 id="survey-heading">SPHEREx DR1</h2>
@@ -234,39 +292,7 @@ export function ExplorerLayout({
             </details>
           </section>
         </ControlMenu>
-        <ControlMenu title="Zoom" description="Escala y campo visible">
-          <section className="control-section" aria-labelledby="zoom-heading">
-            <div className="section-title">
-              <h2 id="zoom-heading">Zoom</h2>
-              <output data-testid="zoom">
-                {new Intl.NumberFormat('es-MX', { maximumFractionDigits: 1 }).format(
-                  opticalZoom(view.fov),
-                )}
-                ×
-              </output>
-            </div>
-            <input
-              aria-label="Zoom"
-              type="range"
-              min="0"
-              max="1000"
-              step="1"
-              value={fovToZoomPosition(view.fov)}
-              onChange={(e) =>
-                onViewChange({ ...view, fov: zoomPositionToFov(Number(e.target.value)) })
-              }
-            />
-            <div className="control-detail">
-              <span>Campo horizontal</span>
-              <output data-testid="control-fov">{formatFieldOfView(view.fov)}</output>
-            </div>
-            <button className="text-button" onClick={onReset}>
-              Restablecer vista
-            </button>
-          </section>
-        </ControlMenu>
-
-        <ControlMenu title="Tiempo y exposiciones" description="Regiones y fechas disponibles">
+        <ControlMenu title="Animación" description="Región, fechas y velocidad">
           <section className="control-section" aria-labelledby="time-heading">
             <div className="section-title">
               <h2 id="time-heading">Tiempo · exposiciones reales</h2>
@@ -274,31 +300,8 @@ export function ExplorerLayout({
             {timeTools}
           </section>
         </ControlMenu>
-
-        <ControlMenu title="Coordenadas" description="RA / Dec · J2000">
-          <section
-            className="control-section"
-            aria-labelledby="coordinates-heading"
-            data-module-slot="coordinates"
-          >
-            <div className="section-title">
-              <h2 id="coordinates-heading">Coordenadas</h2>
-              <span>J2000</span>
-            </div>
-            {coordinateTools ?? (
-              <div className="module-placeholder">
-                <div className="coordinate-field">
-                  <span>RA</span>
-                  <span>— h — m — s</span>
-                </div>
-                <div className="coordinate-field">
-                  <span>Dec</span>
-                  <span>± — ° — ′ — ″</span>
-                </div>
-                <p>Módulo por conectar</p>
-              </div>
-            )}
-          </section>
+        <ControlMenu title="Análisis" description="Detecciones y catálogos">
+          {studyTools}
         </ControlMenu>
         <ControlMenu title="Paint" description="Dibujo, texto y símbolos">
           <section className="control-section" aria-labelledby="drawing-heading">
@@ -307,6 +310,13 @@ export function ExplorerLayout({
             </div>
             {drawingTools ?? <p className="module-note">Módulo por conectar</p>}
           </section>
+        </ControlMenu>
+        <ControlMenu title="Telescopios" description="Comparación y campos observados">
+          {telescopeTools}
+        </ControlMenu>
+        <ControlMenu title="Descargar y compartir" description="Imagen PNG, animación GIF y enlace">
+          {shareTools}
+          {exportTools}
         </ControlMenu>
       </FloatingPanel>
     </main>

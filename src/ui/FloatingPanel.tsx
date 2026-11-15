@@ -36,7 +36,7 @@ export function FloatingPanel({
   observationDate?: string;
   children: ReactNode;
 }) {
-  const [rect, setRect] = useState(() => keepVisible({ x: 44, y: 44, width: 356, height: 680 }));
+  const [rect, setRect] = useState(() => keepVisible({ x: 44, y: 44, width: 356, height: 480 }));
   const titleRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const resize = () => setRect((current) => keepVisible(current));

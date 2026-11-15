@@ -17,9 +17,9 @@ export function ControlMenu({
           <strong>{title}</strong>
           <small>{description}</small>
         </span>
-        <span className="control-menu-chevron" aria-hidden="true">
-          ⌄
-        </span>
+        <svg className="control-menu-chevron" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="m6 3 5 5-5 5" />
+        </svg>
       </summary>
       <div className="control-menu-body">{children}</div>
     </details>
