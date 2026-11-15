@@ -1,0 +1,8 @@
+# Third-party software and data
+
+Application code is MIT. It uses the following separately licensed libraries/data:
+
+- **Aladin Lite 3.8.2**, CDS / UDS / CNRS, LGPL-3.0-or-later. The library is copied unmodified from the pinned npm package into `/vendor/aladin/aladin.js` during build, as a separately replaceable JavaScript module. Its license, GPL and LGPL texts are distributed beside it. Package metadata says `GPL-3`; the included LICENSE and upstream source explicitly specify LGPL-3.0-or-later. Upstream corresponding source: https://github.com/cds-astro/aladin-lite/tree/v3.8.2 (commit 3476c535e682336d1bde3dac98cf7db54fcc749f). Build instructions and Rust/WASM sources are included upstream. Replace the module at that URL to use a modified version; no signature check prevents relinking. This application does not restrict reverse engineering to debug modifications to the library. Visible attribution is in the floating panel.
+- **React, Three.js, react-rnd, Vite, TypeScript**: see their distributed licenses and pinned packages. The original Three.js checkerboard remains available as a development reference.
+- **Astroquery / Astropy**: installed separately in the local Python virtual environment; their open-source licenses remain with those distributions.
+- **SPHEREx imagery and metadata**: NASA/SPHEREx; mosaics created and served by Caltech/IPAC IRSA / SPHEREx Science Data Center. The application does not claim authorship or NASA endorsement. Scientific data provenance and official explanatory supplements are linked in the UI and documentation. Test fixture source URLs and observation metadata are recorded in `tests/fixtures/spherex/provenance.json`.

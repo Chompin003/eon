@@ -113,8 +113,8 @@ export function CoordinatesPanel({ view, onViewChange }: CoordinateToolsProps) {
         {message}
       </p>
       <p className="coordinate-help">
-        Vista actual: RA {view.longitude.toFixed(8)}° · Dec {view.latitude.toFixed(8)}°. Esfera
-        sintética sin calibración científica.
+        Centro de imagen: RA {view.longitude.toFixed(8)}° · Dec {view.latitude.toFixed(8)}°. Marco
+        ecuatorial ICRS (referencia J2000).
       </p>
     </form>
   );

@@ -4,11 +4,13 @@ Repositorio del equipo: [Chompin003/spherex-explorer](https://github.com/Chompin
 
 **Explorador público:** [spherex-explorer.pages.dev](https://spherex-explorer.pages.dev/).
 
-Prototipo web para NASA Space Apps Challenge: una esfera celeste 3D con checkerboard procedural, navegación desde su interior y controles accesibles. No contiene imágenes ni datos científicos reales y no es un producto oficial de NASA.
+Explorador educativo de imágenes reales de NASA/SPHEREx servidas por Caltech/IPAC IRSA. No es un producto oficial de NASA.
 
-La interfaz ocupa toda la pantalla. La flecha de la esquina abre una ventana flotante para zoom, fecha e intervalo de reproducción. Arrastra su barra para moverla o sus bordes para redimensionarla. El zoom va de 100° a 1″. Coordenadas J2000 y Paint tienen slots preparados para los módulos de otros integrantes. Las fechas actuales son de prueba; el checkerboard permanece fijo.
+Visor a pantalla completa y una sola flecha para abrir una ventana móvil/redimensionable. Incluye coordenadas RA h:m:s / Dec ±d:m:s, 100 canales útiles del mosaico DR1, superposición de dos canales, B/N, color falso y pantalla dividida sincronizada. La búsqueda de exposiciones por coordenadas permite recorrer fechas reales con año, hora UTC y reproducción regulable. Paint conserva su slot para el equipo.
 
-Referencias y decisiones: [WISE View, el documento del equipo y los recursos del challenge](docs/REFERENCIAS-VISOR.md).
+El mosaico mezcla fechas y tiene muestreo aproximado de 12.88″/píxel; ampliar hasta 1″ no añade resolución. Las exposiciones individuales se obtienen como recortes FITS de 0.1° y se corrigen para visualización usando su WCS/SIP. Las longitudes de onda de un detector pueden variar entre exposiciones: el parpadeo no constituye una medición fotométrica a longitud de onda fija.
+
+[Cómo funciona, qué se usó del documento y evaluación de Astroquery](docs/COMO-FUNCIONA.md). [Licencias y procedencia](docs/THIRD-PARTY.md).
 
 ## Desarrollo local
 
@@ -16,10 +18,10 @@ Requiere Node.js 24 LTS, npm y Git.
 
 ```sh
 npm ci
-npm run dev
+npm run dev:full
 ```
 
-Abre la dirección que imprime Vite. `npm run dev -- --host 0.0.0.0` permite probar en un teléfono de tu red local.
+Abre la dirección que imprime Wrangler (puerto 8788). Este comando construye y sirve frontend + Functions. `npm run dev` conserva Vite con recarga rápida para cambios de interfaz, sin los endpoints de exposiciones.
 
 ```sh
 npm run check
@@ -46,10 +48,10 @@ Los colaboradores hacen push a su rama: **Auto integrate** crea/actualiza el PR 
 
 Cloudflare Pages: `main`, `npm run build`, salida `dist`, Node `24.11.1`. Configuración y verificación en [docs/DESPLIEGUE.md](docs/DESPLIEGUE.md). La existencia de los archivos de CI no confirma que un despliegue remoto se haya ejecutado; comprueba los estados en GitHub y Cloudflare.
 
-Tecnologías: React, TypeScript, Vite y Three.js. Licencia MIT.
+Tecnologías: React, TypeScript, Vite, Aladin Lite (CDS) y Pages Functions. Three.js se conserva como referencia de desarrollo. Código de la aplicación MIT; Aladin LGPL-3.0-or-later.
 
-El [entorno Python de astronomía](tools/astronomy/README.md) incluye Astroquery y herramientas FITS/PNG. Todavía no hay datos reales conectados al visor.
+El [entorno Python de astronomía](tools/astronomy/README.md) incluye Astroquery y herramientas FITS/PNG. El script `query_spherex.py --verify-first` consulta exposiciones reales y contrasta el recorte con Astropy; el runtime web usa SIA/HiPS directamente.
 
-Consulta el [estado de la entrega y las autorizaciones pendientes](docs/ESTADO.md).
+Consulta el [estado de la entrega](docs/ESTADO.md).
 
-![Vista del prototipo](docs/preview-desktop.png)
+![Visor SPHEREx con datos reales](docs/preview-spherex.png)

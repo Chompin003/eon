@@ -7,7 +7,9 @@ export default tseslint.config(
   {
     ignores: [
       'dist/**',
+      '.wrangler/**',
       'node_modules/**',
+      'public/vendor/**',
       '.venv/**',
       'data-cache/**',
       'playwright-report/**',

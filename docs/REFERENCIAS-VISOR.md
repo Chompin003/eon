@@ -1,4 +1,6 @@
-# Referencias del visor y alcance de esta iteración
+# Referencias del visor — historial de la primera interfaz
+
+La sección siguiente describe la etapa inicial con checkerboard. La implementación actual con datos reales, el uso de Astroquery/SIA, Aladin y las decisiones espectrales/temporales están documentados en [COMO-FUNCIONA.md](COMO-FUNCIONA.md).
 
 ## Documento del equipo
 

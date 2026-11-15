@@ -1,0 +1,100 @@
+{
+  "retrieved": "2026-11-14",
+  "sky": {
+    "ra": 60.8109955,
+    "dec": 51.3404038
+  },
+  "tileSource": "https://irsa.ipac.caltech.edu/data/hips/SPHEREx/spherex_allsky_cube/Norder5/Dir0/Npix445_{63,85}.png",
+  "exposures": [
+    {
+      "id": "2025W34_2B_0099_1:SPHEREx-D4",
+      "url": "https://irsa.ipac.caltech.edu/ibe/data/spherex/dr1/level2/2025W34_2B/l2b-v27-2026-229/4/level2_2025W34_2B_0099_1D4_spx_l2b-v27-2026-229.fits",
+      "mjd": "60909.026945",
+      "centerRa": 60.810058235481236,
+      "centerDec": 51.33990803129761,
+      "width": 58,
+      "height": 58,
+      "fixture": "epoch-0.fits",
+      "linearCenterRa": 60.81117810115753,
+      "linearCenterDec": 51.33711874528648
+    },
+    {
+      "id": "2026W07_2A_0374_3:SPHEREx-D4",
+      "url": "https://irsa.ipac.caltech.edu/ibe/data/spherex/dr1/level2/2026W07_2A/l2b-v27-2026-226/4/level2_2026W07_2A_0374_3D4_spx_l2b-v27-2026-226.fits",
+      "mjd": "61085.471030",
+      "centerRa": 60.81171424783947,
+      "centerDec": 51.34042203461536,
+      "width": 58,
+      "height": 58,
+      "fixture": "epoch-1.fits",
+      "linearCenterRa": 60.8162561503499,
+      "linearCenterDec": 51.34639793341154
+    },
+    {
+      "id": "2026W36_1A_0557_1:SPHEREx-D4",
+      "url": "https://irsa.ipac.caltech.edu/ibe/data/spherex/qr3/level2/2026W36_1A/l2b-v27-2026-252/4/level2_2026W36_1A_0557_1D4_spx_l2b-v27-2026-252.fits",
+      "mjd": "61285.442022",
+      "centerRa": 60.811191347190885,
+      "centerDec": 51.33970417660292,
+      "width": 58,
+      "height": 58,
+      "fixture": "epoch-2.fits",
+      "linearCenterRa": 60.81223049074717,
+      "linearCenterDec": 51.338721877857864
+    }
+  ],
+  "sipAstropyCases": [
+    {
+      "linearFits": [1, 1],
+      "distortedFits": [0.8289675018174174, -0.933294649367383]
+    },
+    {
+      "linearFits": [29.5, 29.5],
+      "distortedFits": [29.33486901187807, 27.818505439006543]
+    },
+    {
+      "linearFits": [58, 58],
+      "distortedFits": [57.841056065973355, 56.55907119576943]
+    },
+    {
+      "linearFits": [1, 58],
+      "distortedFits": [0.9205916644091348, 56.07397806879706]
+    },
+    {
+      "linearFits": [58, 1],
+      "distortedFits": [57.762798770755595, -0.45295139771747506]
+    },
+    {
+      "linearFits": [15.4, 42.7],
+      "distortedFits": [15.274124100677408, 40.899443923831555]
+    }
+  ],
+  "sipModel": {
+    "crpix1": 661.5,
+    "crpix2": 281.5,
+    "a": [
+      [0, 0, 0.274843587634],
+      [0, 1, 0.00034630475355],
+      [0, 2, -1.4309159386e-6],
+      [0, 3, -6.44331960391e-11],
+      [1, 0, -0.000264118529436],
+      [1, 1, 4.24694552947e-6],
+      [1, 2, 6.67822785372e-10],
+      [2, 0, -1.59733408741e-6],
+      [2, 1, -2.02685573106e-10],
+      [3, 0, 5.30029377306e-10]
+    ],
+    "b": [
+      [0, 0, -1.12494329999],
+      [0, 1, 5.30862678344e-5],
+      [0, 2, 1.93050325859e-6],
+      [0, 3, 3.38307709873e-10],
+      [1, 0, -0.000269298249878],
+      [1, 1, -7.47633237948e-7],
+      [1, 2, -1.36543706021e-10],
+      [2, 0, 6.76097214721e-6],
+      [2, 1, 6.87833038253e-10],
+      [3, 0, -5.1928557096e-11]
+    ]
+  }
+}

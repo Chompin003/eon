@@ -3,7 +3,7 @@
 ## Aplicación e infraestructura
 
 - [Repositorio](https://github.com/Chompin003/spherex-explorer) y [página de producción](https://spherex-explorer.pages.dev/) publicados.
-- Checkerboard a pantalla completa, ventana flotante, zoom de 100° a 1″ y controles de fechas de prueba; sin imágenes científicas reales conectadas.
+- Datos reales: mosaico espectral HiPS DR1 y recortes de exposiciones FITS DR1/QR3 por coordenadas y año. B/N, superposición de dos canales, color falso y vista dividida sincronizada. Fechas reales, no fixtures en producción.
 - Coordenadas de Iván/GorditoG integradas en el [PR #3](https://github.com/Chompin003/spherex-explorer/pull/3). Su cuenta tiene permiso de escritura.
 - Cuatro ramas del equipo preparadas: `feat/sky-viewer`, `feat/spherex-data`, `feat/drawing-tools`, `feat/interface`. Sus cambios se conservan al sincronizar `main`.
 - Cloudflare Pages conectado con GitHub, producción `main`, build `npm run build`, salida `dist`, Node 24.11.1 y previews de todas las ramas no productivas.
@@ -22,7 +22,7 @@ La automatización ignora ramas sin diferencias de archivos, incluidas sincroniz
 
 Se agregó un entorno Python 3.13 en `.venv` con Astroquery 0.4.11 y el extra `[all]`, Astropy 8.0.2, NumPy 2.5.4, SciPy 1.18.1, Matplotlib 3.11.2, Pillow 13.0.0 y PyVO 1.10.0. Los archivos de requisitos y la comprobación offline están en [tools/astronomy](../tools/astronomy/README.md).
 
-Las herramientas Python no se ejecutan en Cloudflare Pages ni en el navegador. Todavía no hay consultas o descargas de datos SPHEREx, backend de archivos ni credenciales de archivos astronómicos. Se conectarán los datos reales cuando lo indique el propietario.
+Python no se ejecuta en Cloudflare ni en el navegador. `query_spherex.py --verify-first` consulta SIA con Astroquery y verifica el FITS con Astropy. El backend web consulta SIA y recortes mediante HTTP; el navegador usa Aladin. No se necesitan credenciales astronómicas. Véase [cómo funciona](COMO-FUNCIONA.md), incluida la corrección SIP para la vista temporal.
 
 ## Colaboración
 

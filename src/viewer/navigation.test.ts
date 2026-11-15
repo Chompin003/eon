@@ -8,13 +8,13 @@ describe('celestial navigation', () => {
     expect(normalizeView({ ...DEFAULT_VIEW, longitude: 1081 }).longitude).toBe(1);
   });
   it('prevents pole flips and unsafe fields of view', () => {
-    expect(panView(DEFAULT_VIEW, 0, 100000, 500).latitude).toBe(85);
-    expect(panView(DEFAULT_VIEW, 0, -100000, 500).latitude).toBe(-85);
+    expect(panView(DEFAULT_VIEW, 0, 100000, 500).latitude).toBe(90);
+    expect(panView(DEFAULT_VIEW, 0, -100000, 500).latitude).toBe(-90);
     expect(zoomView(DEFAULT_VIEW, 100).fov).toBe(100);
     expect(zoomView(DEFAULT_VIEW, 1e-9).fov).toBe(VIEW_LIMITS.minFov);
   });
   it('scales drag sensitivity with zoom and viewport size', () => {
-    expect(panView({ ...DEFAULT_VIEW, fov: 50 }, 100, 50, 500)).toEqual({
+    expect(panView({ longitude: 180, latitude: 12, fov: 50 }, 100, 50, 500)).toEqual({
       longitude: 170,
       latitude: 17,
       fov: 50,
