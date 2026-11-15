@@ -2,6 +2,8 @@
 
 ## Aplicación e infraestructura
 
+- Regiones normales 1.2′–15′ y ampliadas hasta 60′ con activación explícita. Cuadro móvil/redimensionable, advertencias visibles y escala angular mediante proyección real, incluida en exportaciones con imágenes. Análisis ampliado verificado sobre un IMAGE oficial de 724,402 píxeles. [Uso y límites](REGIONES-AMPLIADAS.md).
+
 - Exportación visual PNG con capas seleccionables y transparencia; GIF local de cuadros preparados, anotaciones/marcadores opcionales, fecha UTC y nombres J2000 sexagesimales. [Uso y límites](EXPORTACION.md).
 
 - Enlaces con coordenadas, zoom, canales y exposición exacta, restauración pausada y actualización limitada a dos escrituras por segundo.

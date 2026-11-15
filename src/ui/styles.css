@@ -166,20 +166,22 @@
   display: grid;
   place-items: center;
   padding: 36px;
-  color: #aaa;
+  color: #eee;
   text-align: center;
-  font-size: 12px;
+  font-size: 14px;
   pointer-events: none;
 }
 .region-coverage {
   position: absolute;
-  bottom: 9px;
-  right: 10px;
-  padding: 3px 6px;
-  color: #ccc;
-  background: #141414c9;
+  bottom: 16px;
+  left: 12px;
+  max-width: calc(100% - 200px);
+  padding: 4px 8px;
+  color: #ffe4b2;
+  background: #211d12ed;
+  border: 1px solid #a88c58;
   border-radius: 3px;
-  font-size: 10px;
+  font-size: 12px;
   pointer-events: none;
 }
 .region-selector {

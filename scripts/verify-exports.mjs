@@ -4,6 +4,12 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Buffer } from 'node:buffer';
 const base = process.env.EON_VERIFY_URL ?? 'http://127.0.0.1:4174';
+async function openControls(page) {
+  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  for (const menu of await page.locator('[data-control-menu]').all()) {
+    if ((await menu.getAttribute('open')) === null) await menu.locator(':scope > summary').click();
+  }
+}
 const output = process.env.EON_EXPORT_OUTPUT ?? 'output/exports';
 mkdirSync(output, { recursive: true });
 const browser = await chromium.launch({
@@ -24,7 +30,7 @@ try {
   await expect(page.locator('.region-canvas')).toHaveAttribute('data-ready', 'true', {
     timeout: 30000,
   });
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await expect(page.getByTestId('buffer-progress')).toHaveAttribute('data-ready', 'true');
   await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
   await expect(page.getByTestId('pixel-summary')).toContainText('3 exposiciones', {
@@ -37,7 +43,7 @@ try {
   await page.mouse.down();
   await page.mouse.move(900, 500, { steps: 10 });
   await page.mouse.up();
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByLabel('Anotar (bloquea arrastre del cielo)').uncheck();
   const panel = page.getByRole('region', { name: 'Descargar vista' });
   await panel.scrollIntoViewIfNeeded();

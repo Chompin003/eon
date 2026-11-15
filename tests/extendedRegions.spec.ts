@@ -1,13 +1,14 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { installArchiveFixtures, provenance } from './archiveFixtures';
+import { openControls } from './controlMenus';
 
 test('the selectable square resizes and moves, blocks normal oversize visibly, then accepts explicit extended mode', async ({
   page,
 }) => {
   await installArchiveFixtures(page);
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Seleccionar región', exact: true }).click();
   const selection = page.getByRole('application', { name: 'Seleccionar región del cielo' });
   await expect(selection).toHaveAttribute('aria-busy', 'false');
@@ -65,7 +66,7 @@ test('a large real cutout animates and is interpreted; the opt-in travels throug
     if (r.url().includes('/api/')) requested.push(new URL(r.url()));
   });
   await page.goto('/?ra=60.8109955&dec=51.3404038&fov=1');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByLabel('Modo ampliado · hasta 60′', { exact: true }).check();
   await page.getByRole('slider', { name: 'Tamaño de región', exact: true }).fill('1');
   await page.getByRole('button', { name: 'Buscar exposiciones aquí' }).click();
@@ -103,7 +104,7 @@ test('a large real cutout animates and is interpreted; the opt-in travels throug
   await page.reload();
   await expect(page.locator('.region-canvas')).toHaveAttribute('data-ready', 'true');
   await expect(page.locator('.sky-notice')).toContainText('Región ampliada');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await expect(page.getByLabel('Modo ampliado · hasta 60′', { exact: true })).toBeChecked();
   await page.getByLabel('Modo ampliado · hasta 60′', { exact: true }).uncheck();
   await expect(page.locator('.region-canvas')).toHaveCount(0);
