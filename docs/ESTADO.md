@@ -2,11 +2,13 @@
 
 ## Aplicación e infraestructura
 
-- [Repositorio](https://github.com/Chompin003/spherex-explorer) y [página de producción](https://spherex-explorer.pages.dev/) publicados.
+- [Repositorio](https://github.com/Chompin003/eon) y [página de producción](https://eon-visualizer.pages.dev/).
 - Datos reales: mosaico espectral HiPS DR1 y recortes de exposiciones FITS DR1/QR3 por coordenadas y año. B/N, superposición de dos canales, color falso y vista dividida sincronizada. Fechas reales, no fixtures en producción.
-- Coordenadas de Iván/GorditoG integradas en el [PR #3](https://github.com/Chompin003/spherex-explorer/pull/3). Su cuenta tiene permiso de escritura.
+- Coordenadas de Iván/GorditoG integradas en el [PR #3](https://github.com/Chompin003/eon/pull/3). Su cuenta tiene permiso de escritura.
 - Cuatro ramas del equipo preparadas: `feat/sky-viewer`, `feat/spherex-data`, `feat/drawing-tools`, `feat/interface`. Sus cambios se conservan al sincronizar `main`.
 - Cloudflare Pages conectado con GitHub, producción `main`, build `npm run build`, salida `dist`, Node 24.11.1 y previews de todas las ramas no productivas.
+- Animación con precarga de recortes, corrección SIP en worker, capas persistentes y reutilización de memoria. No se reconstruye WebGL ni se vuelve a pedir el FITS durante un bucle preparado. Progreso y reintentos explícitos; límite de 96 MB de copias visuales por selección.
+- Paint y comparaciones Hubble/Webb conservados al integrar la optimización. La búsqueda recupera automáticamente las ventanas temporales de respuestas SIA truncadas.
 
 ## Integración sin aprobación humana
 
@@ -14,7 +16,7 @@ Por decisión del propietario, basta hacer push a una rama del mismo repositorio
 
 No se exige aprobación humana ni actualizar la rama por cada merge ajeno. Los errores de build/tests, conflictos de código y PR en borrador detienen la integración. Se conservan protecciones contra force push y borrados, incluso para administradores.
 
-Prueba real: el bot creó el [PR #4](https://github.com/Chompin003/spherex-explorer/pull/4) y habilitó auto-merge; GitHub lo integró a las 15:34 del 14 de noviembre (hora de Los Ángeles), sin aprobación manual. [Workflow del bot](https://github.com/Chompin003/spherex-explorer/actions/runs/43653793038), [CI correcto](https://github.com/Chompin003/spherex-explorer/actions/runs/43653793045), commit de integración `e644a0a3f86306be6dd5d07b9fb3724f387384e2`.
+Prueba real: el bot creó el [PR #4](https://github.com/Chompin003/eon/pull/4) y habilitó auto-merge; GitHub lo integró a las 15:34 del 14 de noviembre (hora de Los Ángeles), sin aprobación manual. [Workflow del bot](https://github.com/Chompin003/eon/actions/runs/43653793038), [CI correcto](https://github.com/Chompin003/eon/actions/runs/43653793045), commit de integración `e644a0a3f86306be6dd5d07b9fb3724f387384e2`.
 
 La automatización ignora ramas sin diferencias de archivos, incluidas sincronizaciones que solo añaden historial. No borra ramas ni ejecuta código de un PR con el token de escritura del integrador.
 

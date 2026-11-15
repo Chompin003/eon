@@ -89,6 +89,11 @@ test('emojis, imported images and annotations share both spectral panes and surv
     .setInputFiles('tests/fixtures/spherex/tile-63.png');
   await expect(page.locator('.study-annotations [data-item]')).toHaveCount(2);
   await page.getByRole('button', { name: 'Pantalla dividida', exact: true }).click();
+  await expect(page.locator('iframe').nth(1).contentFrame().locator('#sky')).toHaveAttribute(
+    'data-ready',
+    'true',
+    { timeout: 30000 },
+  );
   await expect(page.locator('.study-annotations')).toHaveCount(2);
   await expect(page.locator('.study-annotations [data-item]')).toHaveCount(4);
   await page.getByLabel('Mostrar anotaciones', { exact: true }).uncheck();

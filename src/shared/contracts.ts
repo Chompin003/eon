@@ -37,6 +37,19 @@ export interface FITSSource {
   center: Readonly<Pick<ViewState, 'longitude' | 'latitude'>>;
   /** Same-origin cutout endpoint. It serves only the calibrated IMAGE HDU. */
   url: string;
+  /** Stable during playback; changing the selected frame must not rebuild the renderer. */
+  sequence?: { id: string; frames: readonly FITSFrame[]; attempt?: number };
+}
+
+export type FITSFrame = Omit<FITSSource, 'sequence'>;
+export interface BufferStatus {
+  sequenceId?: string;
+  errorMessage?: string;
+  total: number;
+  prepared: number;
+  ready: number;
+  failed: number;
+  bytes: number;
 }
 
 /** Archive previews contain heterogeneous filters and partial sky coverage, not a spectrum. */

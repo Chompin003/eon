@@ -9,10 +9,12 @@ import {
 import {
   DEFAULT_VIEW,
   normalizeView,
+  createImageReadiness,
   type DisplayMode,
   type FITSSource,
   type SurveyMetadata,
   type ViewState,
+  type BufferStatus,
   type ArchiveHiPSSource,
 } from './shared';
 import { SkyViewer } from './viewer';
@@ -31,7 +33,14 @@ export function App() {
   const [displayMode, setDisplayMode] = useState<DisplayMode>('mono');
   const [overlay, setOverlay] = useState(false);
   const [observationSource, setObservationSource] = useState<FITSSource | null>(null);
-  const [imageReady, setImageReady] = useState(false);
+  const [imageReadiness] = useState(createImageReadiness);
+  const [bufferStatus, setBufferStatus] = useState<BufferStatus>({
+    total: 0,
+    prepared: 0,
+    ready: 0,
+    failed: 0,
+    bytes: 0,
+  });
 
   useEffect(() => {
     const controller = new AbortController();
@@ -89,7 +98,8 @@ export function App() {
           view={view}
           onViewChange={updateView}
           onSourceChange={setObservationSource}
-          imageReady={imageReady}
+          imageReadiness={imageReadiness}
+          bufferStatus={bufferStatus}
         />
       }
       coordinateTools={<CoordinatesPanel view={view} onViewChange={updateView} />}
@@ -113,7 +123,8 @@ export function App() {
           secondFrame={secondFrame}
           mode={displayMode}
           overlay={overlay}
-          onReadyChange={setImageReady}
+          onReadyChange={imageReadiness.setReady}
+          onBufferStatus={setBufferStatus}
           view={view}
           layers={CHECKERBOARD_LAYERS}
           onViewChange={updateView}

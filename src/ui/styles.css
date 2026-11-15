@@ -112,6 +112,18 @@ svg {
 .survey-details a {
   color: inherit;
 }
+.buffer-status {
+  display: grid;
+  gap: 7px;
+  margin: 12px 0;
+  font-size: 11px;
+  color: #58666c;
+}
+.buffer-status progress {
+  width: 100%;
+  height: 5px;
+  accent-color: #787774;
+}
 .display-modes {
   display: flex;
   flex-wrap: wrap;

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   normalizeView,
   type DisplayMode,
@@ -7,8 +7,10 @@ import {
   type ViewState,
   type SkyProjection,
   type SkyProjectionWindow,
+  type BufferStatus,
   type ArchiveHiPSSource,
 } from '../shared';
+import { FrameBuffer } from './frameBuffer';
 const CheckerboardViewer = lazy(() =>
   import('./CheckerboardViewer').then((module) => ({ default: module.CheckerboardViewer })),
 );
@@ -23,6 +25,7 @@ interface Props {
   overlay?: boolean;
   onReadyChange?: (ready: boolean) => void;
   renderAnnotations?: (projection: SkyProjection) => ReactNode;
+  onBufferStatus?: (status: BufferStatus) => void;
   comparisonSource?: ArchiveHiPSSource;
 }
 
@@ -31,8 +34,70 @@ export function SkyViewer(props: Props) {
   const mode = props.mode ?? 'mono';
   const comparison = props.comparisonSource;
   const twoPanes = Boolean(comparison) || mode === 'split';
+  const bufferedComparison = mode === 'split' && !comparison;
+  const sequence = props.source.kind === 'fits' ? props.source.sequence : undefined;
+  const bufferKey = `${sequence?.id ?? ''}:${sequence?.attempt ?? 0}`;
+  const buffer = useMemo(
+    () => (sequence ? new FrameBuffer(sequence.frames) : undefined),
+    [bufferKey],
+  );
+  const [preparation, setPreparation] = useState<BufferStatus>({
+    total: 0,
+    prepared: 0,
+    ready: 0,
+    failed: 0,
+    bytes: 0,
+  });
+  const [gpu, setGPU] = useState<Record<string, { key: string; count: number; failed: number }>>(
+    {},
+  );
+  useEffect(() => {
+    if (!buffer) {
+      setPreparation({ total: 0, prepared: 0, ready: 0, failed: 0, bytes: 0 });
+      return;
+    }
+    const controller = new AbortController();
+    const update = () => setPreparation(buffer.status());
+    update();
+    const unsubscribe = buffer.subscribe(update);
+    void buffer.load(controller.signal);
+    return () => {
+      controller.abort();
+      unsubscribe();
+    };
+  }, [buffer]);
+  const mainGPU = gpu.main?.key === bufferKey ? gpu.main.count : 0;
+  const comparisonGPU = gpu.comparison?.key === bufferKey ? gpu.comparison.count : 0;
+  useEffect(() => {
+    props.onBufferStatus?.({
+      ...preparation,
+      sequenceId: sequence?.id,
+      ready: bufferedComparison ? Math.min(mainGPU, comparisonGPU) : mainGPU,
+      failed:
+        preparation.failed +
+        (gpu.main?.key === bufferKey ? gpu.main.failed : 0) +
+        (bufferedComparison && gpu.comparison?.key === bufferKey ? gpu.comparison.failed : 0),
+    });
+  }, [
+    preparation,
+    bufferedComparison,
+    mainGPU,
+    comparisonGPU,
+    gpu,
+    bufferKey,
+    props.onBufferStatus,
+  ]);
+  const progress = (pane: string, count: number, failed: number) =>
+    setGPU((current) =>
+      current[pane]?.key === bufferKey &&
+      current[pane].count === count &&
+      current[pane].failed === failed
+        ? current
+        : { ...current, [pane]: { key: bufferKey, count, failed } },
+    );
   const signature = JSON.stringify([
-    props.source,
+    props.source.id,
+    props.source.kind === 'hips' ? props.source.frame : bufferKey,
     props.secondFrame,
     props.overlay,
     mode,
@@ -56,6 +121,8 @@ export function SkyViewer(props: Props) {
         <HiPSViewer
           {...props}
           mode={mode === 'split' ? 'mono' : mode}
+          buffer={buffer}
+          onGPUProgress={(count, failed) => progress('main', count, failed)}
           onReadyChange={(value) =>
             setReadyPanes((current) =>
               current.main === (value ? signature : '')
@@ -78,6 +145,8 @@ export function SkyViewer(props: Props) {
             {...props}
             source={comparison ?? props.source}
             mode={comparison ? 'mono' : 'color'}
+            buffer={comparison ? undefined : buffer}
+            onGPUProgress={(count, failed) => progress('comparison', count, failed)}
             onReadyChange={(value) =>
               setReadyPanes((current) =>
                 current.comparison === (value ? signature : '')
@@ -108,11 +177,31 @@ function HiPSViewer({
   overlay,
   onReadyChange,
   renderAnnotations,
-}: Props) {
+  buffer,
+  onGPUProgress,
+}: Props & { buffer?: FrameBuffer; onGPUProgress?: (count: number, failed: number) => void }) {
   const documentKey =
-    source.kind === 'fits' || source.kind === 'archive-hips' ? source.url : source.kind;
+    source.kind === 'fits'
+      ? source.sequence
+        ? `${source.sequence.id}:${source.sequence.attempt ?? 0}`
+        : source.url
+      : source.kind === 'archive-hips'
+        ? source.url
+        : source.kind;
   const frame = useRef<HTMLIFrameElement>(null);
-  const current = useRef({ source, view, onViewChange, mode, secondFrame, overlay, onReadyChange });
+  const current = useRef({
+    source,
+    view,
+    onViewChange,
+    mode,
+    secondFrame,
+    overlay,
+    onReadyChange,
+    buffer,
+    onGPUProgress,
+  });
+  const engineReady = useRef(false);
+  const sent = useRef(new Set<string>());
   const [error, setError] = useState('');
   const [connected, setConnected] = useState(false);
   const [projection, setProjection] = useState<SkyProjection>();
@@ -122,20 +211,67 @@ function HiPSViewer({
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    current.current = { source, view, onViewChange, mode, secondFrame, overlay, onReadyChange };
+    current.current = {
+      source,
+      view,
+      onViewChange,
+      mode,
+      secondFrame,
+      overlay,
+      onReadyChange,
+      buffer,
+      onGPUProgress,
+    };
+    const wireSource =
+      source.kind === 'fits' && source.sequence
+        ? { ...source, sequence: { ...source.sequence, frames: [] } }
+        : source;
     frame.current?.contentWindow?.postMessage(
-      { type: 'sky:configure', source, view, mode, secondFrame, overlay },
+      { type: 'sky:configure', source: wireSource, view, mode, secondFrame, overlay },
       location.origin,
     );
-  }, [source, view, onViewChange, mode, secondFrame, overlay, onReadyChange]);
+  }, [
+    source,
+    view,
+    onViewChange,
+    mode,
+    secondFrame,
+    overlay,
+    onReadyChange,
+    buffer,
+    onGPUProgress,
+  ]);
+
+  const flush = () => {
+    if (!engineReady.current) return;
+    const { buffer, source } = current.current;
+    if (!buffer || source.kind !== 'fits' || !source.sequence) return;
+    for (const [id, entry] of buffer.entries) {
+      if (sent.current.has(id)) continue;
+      sent.current.add(id);
+      const bytes = entry.bytes.slice(0);
+      frame.current?.contentWindow?.postMessage(
+        { type: 'sky:cache-frame', sequenceId: source.sequence.id, frame: entry.frame, bytes },
+        location.origin,
+        [bytes],
+      );
+    }
+  };
+  useEffect(() => {
+    flush();
+    return buffer?.subscribe(flush);
+  }, [buffer, attempt]);
 
   useEffect(() => {
     current.current.onReadyChange?.(false);
     setConnected(false);
     setProjection(undefined);
+    engineReady.current = false;
+    sent.current.clear();
+    current.current.onGPUProgress?.(0, 0);
     setCovered(undefined);
     setCoverageError(false);
-  }, [source, mode, secondFrame, overlay, attempt]);
+  }, [documentKey, attempt]);
 
   useEffect(() => {
     const timeout = window.setTimeout(
@@ -151,11 +287,22 @@ function HiPSViewer({
       if (!message || typeof message !== 'object') return;
       if (message.type === 'sky:boot') {
         const { source, view, mode, secondFrame, overlay } = current.current;
+        const wireSource =
+          source.kind === 'fits' && source.sequence
+            ? { ...source, sequence: { ...source.sequence, frames: [] } }
+            : source;
         event.source?.postMessage(
-          { type: 'sky:configure', source, view, mode, secondFrame, overlay },
+          { type: 'sky:configure', source: wireSource, view, mode, secondFrame, overlay },
           { targetOrigin: location.origin },
         );
+      } else if (message.type === 'sky:engine-ready') {
+        if (current.current.source.kind === 'fits') clearTimeout(timeout);
+        engineReady.current = true;
+        flush();
+      } else if (message.type === 'sky:buffer-progress') {
+        current.current.onGPUProgress?.(message.count, message.failed ?? 0);
       } else if (message.type === 'sky:ready') {
+        if (message.frameId && message.frameId !== current.current.source.id) return;
         clearTimeout(timeout);
         setConnected(true);
         setProjection(

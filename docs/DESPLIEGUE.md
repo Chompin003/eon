@@ -18,35 +18,35 @@ Mientras no exista el repositorio, los comandos de publicación inicial son:
 
 ```sh
 gh api user --jq .login
-gh repo create spherex-explorer --public --source . --remote origin --push
+gh repo create eon --public --source . --remote origin --push
 git push -u origin feat/sky-viewer feat/spherex-data feat/drawing-tools feat/interface
 ```
 
 Ejecuta estos comandos solo desde la carpeta de este proyecto y después de que su bootstrap esté completo. Si ya hay un repositorio del mismo nombre o un remoto `origin`, inspecciónalo primero y no lo reemplaces. El repositorio público permite usar las protecciones de rama del plan gratuito; no publiques archivos ajenos o secretos.
 
-En Settings → General → Pull Requests están habilitados **Allow auto-merge** y merge commits; las ramas duraderas no se borran automáticamente. `main` exige cero aprobaciones humanas y los checks `quality` y `Cloudflare Pages`, sin force pushes ni eliminación, incluso para administradores. No se exige actualizar la rama por cada integración ajena; los conflictos reales sí bloquean el merge. No configures pagos.
+En Settings → General → Pull Requests están habilitados **Allow auto-merge** y merge commits; las ramas duraderas no se borran automáticamente. `main` exige cero aprobaciones humanas y los checks `quality` (GitHub Actions) y `Cloudflare Pages: eon-visualizer` (aplicación oficial Cloudflare), sin force pushes ni eliminación, incluso para administradores. Al migrar de proyecto se actualizó el nombre de ese check y se conservó su aplicación emisora. No se exige actualizar la rama por cada integración ajena; los conflictos reales sí bloquean el merge. No configures pagos.
 
 ## Cloudflare: integración oficial de Git
 
 1. Abre [Cloudflare Dashboard](https://dash.cloudflare.com/) e inicia sesión personalmente. Si no tienes cuenta, créala usando el plan gratuito.
 2. Ve a **Workers & Pages → Create application → Pages → Connect to Git** (algunas versiones lo muestran como **Import an existing Git repository**).
-3. Elige **GitHub** y autoriza la aplicación oficial **Cloudflare Workers and Pages**. Limita su acceso a **Only select repositories → spherex-explorer**.
+3. Elige **GitHub** y autoriza la aplicación oficial **Cloudflare Workers and Pages**. Limita su acceso a **Only select repositories → eon**.
 4. Selecciona el repositorio y configura:
 
-| Opción                           | Valor                                                        |
-| -------------------------------- | ------------------------------------------------------------ |
-| Project name                     | `spherex-explorer` (si está ocupado, elegir un nombre libre) |
-| Production branch                | `main`                                                       |
-| Framework preset                 | React (Vite) / Vite                                          |
-| Build command                    | `npm run build`                                              |
-| Build output directory           | `dist`                                                       |
-| Root directory                   | Raíz del repositorio (vacío)                                 |
-| Variable de build, si hace falta | `NODE_VERSION=24.11.1`                                       |
+| Opción                           | Valor                        |
+| -------------------------------- | ---------------------------- |
+| Project name                     | `eon-visualizer`             |
+| Production branch                | `main`                       |
+| Framework preset                 | React (Vite) / Vite          |
+| Build command                    | `npm run build`              |
+| Build output directory           | `dist`                       |
+| Root directory                   | Raíz del repositorio (vacío) |
+| Variable de build, si hace falta | `NODE_VERSION=24.11.1`       |
 
 5. Pulsa **Save and Deploy**. Espera el estado **Success** y abre la URL `*.pages.dev` que Cloudflare asigne (no se da por creada hasta que el panel la confirme).
 6. En Settings → Builds & deployments / Branch control, activa los despliegues automáticos de producción para `main` y previews para todas las ramas no productivas. No excluyas las cuatro ramas de trabajo.
 
-El archivo `.node-version` fija Node; `public/_headers` añade cabeceras básicas y caché de assets. El proyecto existente de Pages se conserva. `functions/api/observations.ts` y `functions/api/cutout.ts` se compilan automáticamente como Pages Functions durante el despliegue Git. `wrangler.jsonc` fija compatibilidad y salida; `public/_routes.json` limita las Functions a `/api/*`, manteniendo estáticos el visor y las teselas de biblioteca. No se necesitan secretos de IRSA ni un servidor Python permanente.
+El archivo `.node-version` fija Node; `public/_headers` añade cabeceras básicas y caché de assets. `eon-visualizer.pages.dev` es el destino conectado a Git. El proyecto anterior, renombrado `eon` en el panel, conserva el hostname `spherex-explorer.pages.dev`; sus builds automáticos se desactivaron al migrar para evitar despliegues duplicados. Cambiar solo el nombre del proyecto en el panel no modifica su hostname. `functions/api/observations.ts` y `functions/api/cutout.ts` se compilan automáticamente como Pages Functions durante el despliegue Git. `wrangler.jsonc` fija compatibilidad y salida; `public/_routes.json` limita las Functions a `/api/*`, manteniendo estáticos el visor y las teselas de biblioteca. No se necesitan secretos de IRSA ni un servidor Python permanente.
 
 ## Comprobar la automatización, con evidencia
 

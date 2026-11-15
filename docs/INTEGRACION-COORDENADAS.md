@@ -43,7 +43,7 @@ La prop sustituye automáticamente el marcador RA/Dec dentro de la ventana; no c
 ## Mensaje para pegar en tu Codex
 
 ```text
-Soy Iván (GorditoG), responsable de coordenadas de SPHEREx Explorer.
+Soy Iván (GorditoG), responsable de coordenadas de eon.
 Lee AGENTS.md, docs/INTEGRACION-COORDENADAS.md y docs/ARQUITECTURA.md.
 Implementa mi módulo en mi rama, sin sustituir la ventana flotante existente.
 Usa CoordinateToolsProps de shared y monta el formulario mediante la prop

@@ -1,4 +1,4 @@
-# Acuerdo de trabajo — SPHEREx Explorer
+# Acuerdo de trabajo — eon
 
 Lee este archivo y `docs/COLABORACION.md` antes de editar. Estas reglas aplican a Codex, Antigravity y personas en todo el repositorio.
 

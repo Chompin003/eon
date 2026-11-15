@@ -1,16 +1,31 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { TIMELINE_LIMITS, type FITSSource, type Observation, type ViewState } from '../shared';
-import { parseObservations } from './observations';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import {
+  TIMELINE_LIMITS,
+  type FITSSource,
+  type Observation,
+  type ViewState,
+  type BufferStatus,
+  type ImageReadiness,
+} from '../shared';
+import { loadAllObservations } from './observations';
 
 interface Props {
   view: ViewState;
   onViewChange: (view: ViewState) => void;
   onSourceChange: (source: FITSSource | null) => void;
-  /** Playback advances only after the current FITS has actually loaded. */
-  imageReady: boolean;
+  /** Whether the selected image has been presented by the viewer. */
+  imageReadiness: ImageReadiness;
+  bufferStatus: BufferStatus;
 }
 
-export function ObservationsPanel({ view, onViewChange, onSourceChange, imageReady }: Props) {
+export function ObservationsPanel({
+  view,
+  onViewChange,
+  onSourceChange,
+  imageReadiness,
+  bufferStatus,
+}: Props) {
+  const imageReady = useSyncExternalStore(imageReadiness.subscribe, imageReadiness.getSnapshot);
   const [observations, setObservations] = useState<Observation[]>([]);
   const [center, setCenter] = useState<ViewState>();
   const [detector, setDetector] = useState('SPHEREx-D4');
@@ -22,7 +37,13 @@ export function ObservationsPanel({ view, onViewChange, onSourceChange, imageRea
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [truncated, setTruncated] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const [queryProgress, setQueryProgress] = useState('');
   const abort = useRef<AbortController | null>(null);
+  const presented = useRef(imageReady);
+  useEffect(() => {
+    presented.current = imageReady;
+  }, [imageReady]);
   const props = useRef({ view, onViewChange, onSourceChange });
   useEffect(() => {
     props.current = { view, onViewChange, onSourceChange };
@@ -33,36 +54,50 @@ export function ObservationsPanel({ view, onViewChange, onSourceChange, imageRea
     [observations, detector],
   );
   const active = matching[Math.min(index, Math.max(0, matching.length - 1))];
+  const frames = useMemo(
+    () =>
+      center
+        ? matching.map((active) => ({
+            kind: 'fits' as const,
+            id: active.id,
+            title: `${active.detector} · ${active.dateUtc}`,
+            dateUtc: active.dateUtc,
+            center: { longitude: center.longitude, latitude: center.latitude },
+            url: `/api/cutout?${new URLSearchParams({ url: active.url, ra: String(center.longitude), dec: String(center.latitude), size: '0.1' })}`,
+          }))
+        : [],
+    [matching, center],
+  );
+  const sequenceId = useMemo(() => crypto.randomUUID(), [frames]);
+  const fullyBuffered =
+    bufferStatus.sequenceId === sequenceId &&
+    bufferStatus.total === matching.length &&
+    bufferStatus.ready === matching.length &&
+    matching.length > 0 &&
+    bufferStatus.failed === 0;
 
   useEffect(() => {
     if (!enabled || !active || !center) {
       props.current.onSourceChange(null);
       return;
     }
-    const params = new URLSearchParams({
-      url: active.url,
-      ra: String(center.longitude),
-      dec: String(center.latitude),
-      size: '0.1',
-    });
     props.current.onSourceChange({
-      kind: 'fits',
-      id: active.id,
-      title: `${active.detector} · ${active.dateUtc}`,
-      dateUtc: active.dateUtc,
-      center: { longitude: center.longitude, latitude: center.latitude },
-      url: `/api/cutout?${params}`,
+      ...frames.find((frame) => frame.id === active.id)!,
+      sequence: { id: sequenceId, frames, attempt },
     });
-  }, [enabled, active, center]);
+  }, [enabled, active, center, frames, sequenceId, attempt]);
 
   useEffect(() => {
-    if (!playing || !enabled || matching.length < 2 || !imageReady) return;
-    const timer = window.setTimeout(
-      () => setIndex((value) => (value + 1) % matching.length),
-      interval,
-    );
-    return () => clearTimeout(timer);
-  }, [playing, enabled, matching.length, interval, imageReady, index]);
+    if (!playing || !enabled || matching.length < 2 || !fullyBuffered) return;
+    const timer = window.setInterval(() => {
+      // Under heavy rendering load, wait for this frame's acknowledgement
+      // instead of silently skipping dates. The prepared sequence needs no I/O.
+      if (!presented.current) return;
+      presented.current = false;
+      setIndex((value) => (value + 1) % matching.length);
+    }, interval);
+    return () => clearInterval(timer);
+  }, [playing, enabled, matching.length, interval, fullyBuffered]);
 
   async function search() {
     abort.current?.abort();
@@ -74,16 +109,7 @@ export function ObservationsPanel({ view, onViewChange, onSourceChange, imageRea
     setEnabled(false);
     const target = { ...view };
     try {
-      const params = new URLSearchParams({
-        ra: String(target.longitude),
-        dec: String(target.latitude),
-      });
-      if (year) params.set('year', year);
-      const response = await fetch(`/api/observations?${params}`, {
-        signal: AbortSignal.any([controller.signal, AbortSignal.timeout(50000)]),
-      });
-      if (!response.ok) throw new Error('IRSA no respondió a la búsqueda. Reintenta.');
-      const result = parseObservations(await response.text());
+      const result = await loadAllObservations(target, year, controller.signal, setQueryProgress);
       setObservations(result.observations);
       setTruncated(result.truncated);
       setCenter(target);
@@ -127,7 +153,7 @@ export function ObservationsPanel({ view, onViewChange, onSourceChange, imageRea
         ))}
       </select>
       <button className="plain-button" disabled={loading} onClick={() => void search()}>
-        {loading ? 'Consultando IRSA…' : 'Buscar exposiciones aquí'}
+        {loading ? queryProgress || 'Consultando IRSA…' : 'Buscar exposiciones aquí'}
       </button>
       {center && (
         <p className="survey-details">
@@ -190,6 +216,45 @@ export function ObservationsPanel({ view, onViewChange, onSourceChange, imageRea
           <button className="plain-button" onClick={activate}>
             Ver exposición / centrar recorte
           </button>
+          {enabled && (
+            <div
+              className="buffer-status"
+              role="status"
+              data-testid="buffer-progress"
+              data-ready={fullyBuffered}
+              data-prepared={bufferStatus.prepared}
+              data-failed={bufferStatus.failed}
+              data-total={matching.length}
+            >
+              <span>
+                {fullyBuffered
+                  ? `${bufferStatus.ready} cuadros listos · reproducción desde memoria`
+                  : `Preparando animación: ${bufferStatus.ready} / ${matching.length} cuadros`}
+              </span>
+              <progress
+                max={matching.length}
+                value={Math.min(matching.length, bufferStatus.ready)}
+                aria-label="Preparación de animación"
+              />
+              {bufferStatus.failed > 0 && (
+                <>
+                  <span>
+                    {bufferStatus.errorMessage ??
+                      `${bufferStatus.failed} cuadros no se pudieron preparar. La secuencia no se reproducirá incompleta.`}
+                  </span>
+                  <button
+                    className="plain-button"
+                    onClick={() => {
+                      setPlaying(false);
+                      setAttempt((value) => value + 1);
+                    }}
+                  >
+                    Reintentar cuadros
+                  </button>
+                </>
+              )}
+            </div>
+          )}
           <p className="survey-details">
             <a href={active.url} target="_blank" rel="noreferrer">
               FITS original completo · IRSA
@@ -208,7 +273,7 @@ export function ObservationsPanel({ view, onViewChange, onSourceChange, imageRea
         </p>
       )}
       <div className="interval-row">
-        <label htmlFor="blink-interval">Intervalo mínimo entre imágenes</label>
+        <label htmlFor="blink-interval">Intervalo entre imágenes</label>
         <output data-testid="interval">{interval} ms</output>
       </div>
       <input
@@ -224,7 +289,7 @@ export function ObservationsPanel({ view, onViewChange, onSourceChange, imageRea
       <div className="time-actions">
         <button
           className="plain-button"
-          disabled={!enabled || matching.length < 2}
+          disabled={!enabled || matching.length < 2 || !fullyBuffered}
           aria-pressed={playing}
           onClick={() => setPlaying(!playing)}
         >
@@ -244,7 +309,8 @@ export function ObservationsPanel({ view, onViewChange, onSourceChange, imageRea
       </div>
       <p className="survey-details">
         SPHEREx empezó en 2025. Se muestran únicamente fechas disponibles en IRSA. El mosaico
-        combinado no representa un año individual. Las imágenes se cargan antes de avanzar.
+        combinado no representa un año individual. La secuencia se prepara una vez antes de
+        reproducir.
       </p>
       {truncated && (
         <p className="survey-details">

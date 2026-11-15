@@ -10,6 +10,23 @@ export async function onRequestGet({ request }: { request: Request }): Promise<R
       url.searchParams.append('COLLECTION', collection);
     url.searchParams.set('MAXREC', '2000');
     const year = params.get('year');
+    if (params.has('start') || params.has('end')) {
+      const start = Number(params.get('start')),
+        end = Number(params.get('end'));
+      const first = Date.UTC(2025, 0, 1) / 86400000 + 40587;
+      const last = Date.UTC(new Date().getUTCFullYear() + 1, 0, 1) / 86400000 + 40587;
+      if (
+        !params.get('start')?.trim() ||
+        !params.get('end')?.trim() ||
+        !Number.isFinite(start) ||
+        !Number.isFinite(end) ||
+        start < first ||
+        end > last ||
+        start >= end
+      )
+        return new Response('Ventana temporal inválida.', { status: 400 });
+      url.searchParams.set('TIME', `${start} ${end}`);
+    }
     if (year) {
       if (
         !/^20\d{2}$/.test(year) ||

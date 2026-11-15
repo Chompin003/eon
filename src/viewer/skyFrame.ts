@@ -5,6 +5,7 @@ import {
   type FITSSource,
   type HiPSSource,
   type ViewState,
+  type FITSFrame,
   type SkyProjectionWindow,
   type ArchiveHiPSSource,
   isArchiveSource,
@@ -63,6 +64,7 @@ interface AladinAPI {
       imgFormat: string;
       colormap: string;
       stretch: string;
+      opacity?: number;
       successCallback: (ra: number, dec: number, fov: number) => void;
       errorCallback: () => void;
     },
@@ -91,6 +93,16 @@ let applying = false;
 let layerKey = '';
 let revision = 0;
 let loading = false;
+let loadingSecond = false;
+let surveyConfigKey = '';
+const cachedFrames = new Map<string, { layer: Layer; ra: number; dec: number; fov: number }>();
+const frameQueue: { frame: FITSFrame; bytes: ArrayBuffer }[] = [];
+const queued = new Set<string>();
+let draining = false;
+let failedFrames = 0;
+let visibleFrame: string | undefined;
+let presentation = '';
+let presentTick = 0;
 const projectionListeners = new Set<() => void>();
 let coverage: CoverageMOC | undefined;
 let coverageFailed = false;
@@ -123,6 +135,9 @@ function publishView(notify = true) {
 function configureSurveys() {
   if (!configuration || configuration.source.kind !== 'hips') return;
   const { source, secondFrame, mode, overlay } = configuration;
+  const key = JSON.stringify([source.frame, secondFrame, mode, overlay, surveys.length]);
+  if (surveyConfigKey === key) return;
+  surveyConfigKey = key;
   const frames = [source.frame, secondFrame];
   surveys.forEach((survey, index) => {
     // Published spectral layers are zero-based; IRSA tile filenames start at 1.
@@ -149,11 +164,111 @@ function configureSurveys() {
   host.dataset.mode = mode;
 }
 
+function presentCachedFrame() {
+  if (!engine || configuration?.source.kind !== 'fits') return;
+  const { source, mode } = configuration;
+  const entry = cachedFrames.get(source.id);
+  if (!entry) return;
+  const key = `${source.id}:${mode}`;
+  if (presentation !== key) {
+    if (visibleFrame && visibleFrame !== source.id)
+      cachedFrames.get(visibleFrame)?.layer.setOptions({ opacity: 0 });
+    entry.layer.setOptions({ opacity: 1, colormap: mode === 'color' ? 'viridis' : 'native' });
+    visibleFrame = source.id;
+    presentation = key;
+    host.dataset.ready = 'true';
+    host.dataset.source = 'fits';
+    host.dataset.frameId = source.id;
+    host.dataset.imageRa = String(entry.ra);
+    host.dataset.imageDec = String(entry.dec);
+    host.dataset.imageFov = String(entry.fov);
+    host.dataset.mode = mode;
+  }
+  // A layout change can require a fresh readiness acknowledgement even when
+  // the same image remains visible (e.g. opening the comparison pane).
+  cancelAnimationFrame(presentTick);
+  presentTick = requestAnimationFrame(() => {
+    if (configuration?.source.id === source.id) send({ type: 'sky:ready', frameId: source.id });
+  });
+}
+
+async function drainFrames() {
+  if (draining || !engine) return;
+  draining = true;
+  while (frameQueue.length) {
+    const { frame, bytes } = frameQueue.shift()!;
+    const imageUrl = URL.createObjectURL(new Blob([bytes], { type: 'application/fits' }));
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const layer = A.image(imageUrl, {
+          name: frame.title,
+          imgFormat: 'fits',
+          stretch: 'asinh',
+          opacity: 0,
+          colormap: 'native',
+          successCallback: (ra, dec, fov) => {
+            cachedFrames.set(frame.id, { layer, ra, dec, fov });
+            resolve();
+          },
+          errorCallback: () => reject(new Error('No se pudo interpretar el FITS.')),
+        });
+        engine!.setOverlayImageLayer(layer, `epoch-${queued.size}-${cachedFrames.size}`);
+      });
+      presentCachedFrame();
+    } catch (error) {
+      failedFrames++;
+      console.error(error);
+    } finally {
+      URL.revokeObjectURL(imageUrl);
+    }
+    host.dataset.buffered = String(cachedFrames.size);
+    send({ type: 'sky:buffer-progress', count: cachedFrames.size, failed: failedFrames });
+    // Let navigation and the current image paint during the initial preparation.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  }
+  draining = false;
+}
+
 async function updateLayers() {
   if (!engine || !configuration) return;
   const config = configuration;
+  if (config.source.kind === 'fits' && config.source.sequence) {
+    presentCachedFrame();
+    return;
+  }
   const key = config.source.kind === 'hips' ? 'hips' : config.source.url;
   if (key === layerKey) {
+    if (
+      config.source.kind === 'hips' &&
+      (config.mode === 'color' || config.overlay) &&
+      !surveys[1] &&
+      !loadingSecond &&
+      !loading
+    ) {
+      loadingSecond = true;
+      const layer = A.HiPS('spherex-1', {
+        url: config.source.url,
+        name: config.source.title,
+        successCallback: (loaded) => {
+          surveys[1] = loaded;
+          loadingSecond = false;
+          configureSurveys();
+          send({ type: 'sky:ready' });
+        },
+        errorCallback: () => {
+          loadingSecond = false;
+          send({ type: 'sky:error', message: 'No se pudo cargar el segundo canal.' });
+        },
+      });
+      try {
+        await layer.query;
+        layer.creatorDid = `${layer.creatorDid}#spherex-channel-1`;
+        engine.setOverlayImageLayer(layer, 'spherex-B');
+      } catch (error) {
+        loadingSecond = false;
+        console.error(error);
+      }
+    }
     configureSurveys();
     if (config.source.kind === 'fits')
       engine
@@ -172,7 +287,7 @@ async function updateLayers() {
   for (const id of ['spherex-A', 'spherex-B', 'exposure', 'archive']) engine.removeImageLayer(id);
   try {
     if (config.source.kind === 'hips') {
-      for (let index = 0; index < 2; index++) {
+      for (let index = 0; index < (config.mode === 'color' || config.overlay ? 2 : 1); index++) {
         const source = config.source;
         let loadedCallback: () => void;
         let rejectCallback: () => void;
@@ -358,6 +473,8 @@ async function start() {
     for (const event of ['positionChanged', 'zoomChanged', 'resizeChanged'])
       engine.on(event, () => publishView());
     applyConfiguration();
+    send({ type: 'sky:engine-ready' });
+    void drainFrames();
   } catch (error) {
     console.error(error);
     send({
@@ -368,6 +485,25 @@ async function start() {
 }
 
 window.addEventListener('message', (event: MessageEvent) => {
+  if (
+    event.source === parent &&
+    event.origin === location.origin &&
+    event.data?.type === 'sky:cache-frame'
+  ) {
+    const { sequenceId, frame, bytes } = event.data;
+    if (
+      configuration?.source.kind !== 'fits' ||
+      configuration.source.sequence?.id !== sequenceId ||
+      typeof frame?.id !== 'string' ||
+      !(bytes instanceof ArrayBuffer) ||
+      queued.has(frame.id)
+    )
+      return;
+    queued.add(frame.id);
+    frameQueue.push({ frame, bytes });
+    void drainFrames();
+    return;
+  }
   if (
     event.source !== parent ||
     event.origin !== location.origin ||

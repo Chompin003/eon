@@ -79,7 +79,7 @@ export function ExplorerLayout({
   }, [open]);
 
   return (
-    <main className="viewer-workspace" aria-label="SPHEREx Explorer">
+    <main className="viewer-workspace" aria-label="eon">
       <div className="viewer-surface">{children}</div>
       <p className="sr-only" id="navigation-help">
         Arrastra para girar. Rueda o pellizco para zoom. Flechas para navegar, + y − para zoom y

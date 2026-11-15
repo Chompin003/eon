@@ -46,7 +46,8 @@ test('real HiPS source has deep zoom, keyboard navigation and exact HMS/DMS targ
   await sky.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);
   expect(tileFrames.has('63')).toBe(true);
-  expect(tileFrames.has('85')).toBe(true);
+  // The hidden second channel is no longer fetched during monochrome startup.
+  expect(tileFrames.has('85')).toBe(false);
   expect(errors).toEqual([]);
 });
 
