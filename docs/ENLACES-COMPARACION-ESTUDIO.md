@@ -23,3 +23,7 @@ Coordinación previa: App compondrá un estado URL validado (ICRS, FOV, canales,
 La comparación añadirá modo split/overlay y transparencia independiente de la superposición espectral. Aladin deberá proyectar ambas fuentes HiPS con una misma cámara; para regiones TAN se alineará explícitamente la proyección del archivo con la cuadrícula temporal, sin atribuir épocas iguales a mosaicos heterogéneos. No se inventarán fechas de Hubble/Webb ni se sustituirá una ausencia de cobertura por imágenes.
 
 El estudio se implementará después de comprobar datos, hardware y herramientas existentes. Se diferenciarán identificaciones de catálogo, detecciones sin clasificar y predicciones. No se habilitarán servicios facturables, descargas masivas ni eliminación de archivos. Cualquier endpoint de catálogo nuevo se documentará con un origen oficial fijo y límites explícitos.
+
+## Recuperación ante fallos de archivo
+
+Coordinación previa: App y ObservationsPanel añadirán estado explícito de restauración y un contador de reintento. La exposición solicitada se mantendrá en el URL mientras falle IRSA; solo el éxito o la elección explícita de volver al mosaico la retirarán del estado pendiente. App compondrá un aviso accesible fuera del panel. No cambia ViewState, coordinateTools ni las fuentes permitidas. Se comprobarán fallo transitorio, reintento exacto y cancelación de solicitudes pendientes.
