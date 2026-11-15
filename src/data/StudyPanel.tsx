@@ -16,6 +16,7 @@ import { studyRegion } from './study';
 import { PixelResults } from './PixelResults';
 import { RegionReport } from './interpretation/RegionReport';
 interface Props {
+  onPrepareImages?: (region: SkyRegion) => void;
   onOpenExample: () => void;
   imageSource?: FITSSource;
   analyzePixels: (
@@ -53,6 +54,12 @@ export function StudyPanel(props: Props) {
     setLoading(false);
     setProgress(undefined);
   }, [props.imageSource?.sequence?.id]);
+  const analysisRegion = props.imageSource?.sequence?.region ??
+    props.region ?? {
+      longitude: props.view.longitude,
+      latitude: props.view.latitude,
+      sizeDeg: Math.max(0.02, Math.min(0.25, props.view.fov)),
+    };
   async function run() {
     abort.current?.abort();
     const controller = new AbortController();
@@ -60,11 +67,7 @@ export function StudyPanel(props: Props) {
     setLoading(true);
     setError('');
     props.onSelected(undefined);
-    const region = props.region ?? {
-      longitude: props.view.longitude,
-      latitude: props.view.latitude,
-      sizeDeg: Math.max(0.02, Math.min(0.25, props.view.fov)),
-    };
+    const region = analysisRegion;
     try {
       const result = await studyRegion(region, controller.signal, props.imageSource?.dataset);
       if (!controller.signal.aborted) {
@@ -100,16 +103,37 @@ export function StudyPanel(props: Props) {
     }
   }
   const result = props.result,
-    selected = props.selected;
+    selected = props.selected,
+    hasImages = Boolean(props.imageSource?.sequence?.region);
   return (
     <section className="control-section" aria-labelledby="study-heading">
       <div className="section-title">
         <h2 id="study-heading">Estudiar región</h2>
         <span>Gaia · SIMBAD</span>
       </div>
-      <button className="plain-button" disabled={loading} onClick={() => void run()}>
-        {loading ? (progress?.message ?? 'Consultando catálogos…') : 'Interpretar región'}
-      </button>
+      {hasImages ? (
+        <button className="plain-button" disabled={loading} onClick={() => void run()}>
+          {loading ? (progress?.message ?? 'Consultando catálogos…') : 'Interpretar región'}
+        </button>
+      ) : (
+        <div className="analysis-prerequisite" data-testid="analysis-prerequisite">
+          <strong>Primero carga las imágenes de la región</strong>
+          <p>
+            En Animación: busca exposiciones y pulsa Animar región. Después vuelve a Análisis para
+            interpretar los píxeles.
+          </p>
+          <button
+            className="plain-button"
+            disabled={loading || !props.onPrepareImages}
+            onClick={() => props.onPrepareImages?.(analysisRegion)}
+          >
+            Preparar imágenes para analizar
+          </button>
+          <button className="text-button" disabled={loading} onClick={() => void run()}>
+            {loading ? 'Consultando catálogos…' : 'Consultar solo catálogos'}
+          </button>
+        </div>
+      )}
       {loading && (
         <button
           className="text-button"
@@ -159,20 +183,14 @@ export function StudyPanel(props: Props) {
       )}
       {!loading && (result || props.pixelStudy) && (
         <RegionReport
-          region={
-            props.imageSource?.sequence?.region ??
-            props.region ?? {
-              longitude: props.view.longitude,
-              latitude: props.view.latitude,
-              sizeDeg: Math.max(0.02, Math.min(0.25, props.view.fov)),
-            }
-          }
+          region={analysisRegion}
           source={props.imageSource}
           pixels={props.pixelStudy}
           catalog={result}
           selected={props.selectedTrack}
           onSelect={props.onTrackSelected}
           onFrame={props.onFrame}
+          onPrepareImages={props.onPrepareImages}
         />
       )}
       {props.pixelStudy && (

@@ -11,6 +11,7 @@ import { ControlMenu } from './ControlMenu';
 import { FloatingPanel } from './FloatingPanel';
 
 interface Props {
+  animationToolsRequest?: number;
   selectingRegion?: boolean;
   view: ViewState;
   onViewChange: (next: ViewState) => void;
@@ -44,6 +45,7 @@ export function formatFieldOfView(fov: number): string {
 }
 
 export function ExplorerLayout({
+  animationToolsRequest = 0,
   selectingRegion = false,
   view,
   onViewChange,
@@ -70,6 +72,18 @@ export function ExplorerLayout({
 }: Props) {
   const [open, setOpen] = useState(false);
   const toggle = useRef<HTMLButtonElement>(null);
+  const animationMenu = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (!animationToolsRequest) return;
+    setOpen(true);
+    const menu = animationMenu.current;
+    if (menu) menu.open = true;
+    const frame = requestAnimationFrame(() => {
+      menu?.querySelector('summary')?.focus();
+      menu?.scrollIntoView({ block: 'start' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [animationToolsRequest]);
   const close = () => {
     setOpen(false);
     toggle.current?.focus();
@@ -296,7 +310,12 @@ export function ExplorerLayout({
             </details>
           </section>
         </ControlMenu>
-        <ControlMenu icon="animation" title="Animación" description="Región, fechas y velocidad">
+        <ControlMenu
+          menuRef={animationMenu}
+          icon="animation"
+          title="Animación"
+          description="Región, fechas y velocidad"
+        >
           <section className="control-section" aria-labelledby="time-heading">
             <div className="section-title">
               <h2 id="time-heading">Tiempo · exposiciones reales</h2>

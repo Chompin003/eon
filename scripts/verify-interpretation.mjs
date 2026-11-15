@@ -2,9 +2,15 @@
 import { chromium, expect } from '@playwright/test';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { URLSearchParams } from 'node:url';
 const base = process.env.EON_VERIFY_URL ?? 'http://127.0.0.1:4174';
 const output = process.env.EON_REPORT_OUTPUT ?? 'output/interpretation';
 const live = process.env.EON_REPORT_LIVE === '1';
+const livePosition = {
+  ra: process.env.EON_REPORT_RA ?? '60.8109955',
+  dec: process.env.EON_REPORT_DEC ?? '51.3404038',
+  size: process.env.EON_REPORT_SIZE ?? '.05',
+};
 mkdirSync(output, { recursive: true });
 const browser = await chromium.launch({
   headless: true,
@@ -17,7 +23,8 @@ try {
   await page.goto(
     base +
       (live
-        ? '/?ra=60.8109955&dec=51.3404038&fov=.1&size=.05'
+        ? '/?' +
+          new URLSearchParams({ ...livePosition, fov: String(Number(livePosition.size) * 2) })
         : '/?example=ngc1491&ra=60.8109955&dec=51.3404038&fov=.1&size=.1&epoch=2025W34_2B_0099_1%3ASPHEREx-D4'),
     { waitUntil: 'domcontentloaded' },
   );
@@ -29,9 +36,16 @@ try {
         has: page.locator(':scope > summary strong', { hasText: new RegExp('^' + title + '$') }),
       })
       .locator(':scope > summary');
+  const openMenu = async (title) => {
+    if ((await menu(title).locator('..').getAttribute('open')) === null) await menu(title).click();
+  };
   if (live) {
-    await menu('Animación').click();
-    await page.getByLabel('Año de búsqueda').selectOption('2025');
+    await openMenu('Análisis');
+    await page
+      .getByRole('button', { name: 'Preparar imágenes para analizar', exact: true })
+      .click();
+    await expect(menu('Animación').locator('..')).toHaveAttribute('open', '');
+    await page.getByLabel('Año de búsqueda').selectOption(process.env.EON_REPORT_YEAR ?? '2025');
     await page.getByRole('button', { name: 'Buscar exposiciones aquí', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Animar región', exact: true })).toBeVisible({
       timeout: 90000,
@@ -43,7 +57,7 @@ try {
   });
   if (await page.getByRole('button', { name: 'Pausar', exact: true }).isVisible())
     await page.getByRole('button', { name: 'Pausar', exact: true }).click();
-  await menu('Análisis').click();
+  await openMenu('Análisis');
   await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
   await expect(page.getByTestId('pixel-summary')).toBeVisible({ timeout: 180000 });
   await expect(page.getByTestId('interpretation-summary')).toContainText('detecciones retenidas', {
@@ -94,7 +108,7 @@ try {
   await report.scrollIntoViewIfNeeded();
   await report.screenshot({ path: join(output, 'mobile.png') });
   await page.setViewportSize({ width: 1440, height: 1000 });
-  if (!live) await menu('Animación').click();
+  if (!live) await openMenu('Animación');
   await page.getByLabel('Intervalo entre fechas', { exact: true }).fill('100');
   await page.evaluate(() => {
     window.eonReportPresentations = [];
