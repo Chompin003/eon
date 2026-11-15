@@ -1,4 +1,4 @@
-# Estado del proyecto — 14 de noviembre de 2026
+# Estado del proyecto — 15 de noviembre de 2026
 
 ## Aplicación e infraestructura
 
@@ -7,7 +7,7 @@
 - Coordenadas de Iván/GorditoG integradas en el [PR #3](https://github.com/Chompin003/eon/pull/3). Su cuenta tiene permiso de escritura.
 - Cuatro ramas del equipo preparadas: `feat/sky-viewer`, `feat/spherex-data`, `feat/drawing-tools`, `feat/interface`. Sus cambios se conservan al sincronizar `main`.
 - Cloudflare Pages conectado con GitHub, producción `main`, build `npm run build`, salida `dist`, Node 24.11.1 y previews de todas las ramas no productivas.
-- Animación con precarga de recortes, corrección SIP en worker, capas persistentes y reutilización de memoria. No se reconstruye WebGL ni se vuelve a pedir el FITS durante un bucle preparado. Progreso y reintentos explícitos; límite de 96 MB de copias visuales por selección.
+- Animación de regiones seleccionables de 1.2′–15′, registro TAN-SIP en worker y reproducción Canvas 2D. Empieza con fechas disponibles y mantiene explícitas las que no tienen cobertura o fallan. Caché persistente local, pan/zoom, Paint y vista dividida. No se reconstruye WebGL ni se pide el FITS durante un bucle preparado. [Implementación y mediciones](ANIMACION-REGIONES.md).
 - Paint y comparaciones Hubble/Webb conservados al integrar la optimización. La búsqueda recupera automáticamente las ventanas temporales de respuestas SIA truncadas.
 
 ## Integración sin aprobación humana

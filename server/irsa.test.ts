@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { imageHdu, position } from './irsa';
+import { imageHdu, position, streamedImageHdu } from './irsa';
 import { onRequestGet as cutout } from '../functions/api/cutout';
 import { onRequestGet as observations } from '../functions/api/observations';
 
@@ -19,6 +19,41 @@ function concat(...buffers: Uint8Array[]) {
 }
 
 describe('IRSA science image boundary', () => {
+  it('stops downloading after IMAGE without reading the large PSF tail', async () => {
+    const primary = header([card('SIMPLE', 'T'), card('BITPIX', '8'), card('NAXIS', '0')]);
+    const image = header([
+      card('XTENSION', "'IMAGE   '"),
+      card('BITPIX', '-32'),
+      card('NAXIS', '2'),
+      card('NAXIS1', '2'),
+      card('NAXIS2', '2'),
+      card('EXTNAME', "'IMAGE'"),
+    ]);
+    const pixels = new Uint8Array(2880);
+    new DataView(pixels.buffer).setFloat32(0, 12.5, false);
+    const chunks = [primary, image, pixels];
+    let read = 0,
+      cancelled = false;
+    const stream = new ReadableStream<Uint8Array>(
+      {
+        pull(controller) {
+          if (read < chunks.length) controller.enqueue(chunks[read++]);
+          else throw new Error('PSF tail must not be consumed');
+        },
+        cancel() {
+          cancelled = true;
+        },
+      },
+      { highWaterMark: 0 },
+    );
+    const result = await streamedImageHdu(
+      new Response(stream, { headers: { 'content-length': '100000000' } }),
+      12 * 1024 * 1024,
+    );
+    expect(result).toEqual(imageHdu(concat(...chunks)));
+    expect(read).toBe(3);
+    expect(cancelled).toBe(true);
+  });
   it('selects flux IMAGE instead of variance, preserving WCS cards and pixel bytes', () => {
     const primary = header([card('SIMPLE', 'T'), card('BITPIX', '8'), card('NAXIS', '0')]);
     const axes = [

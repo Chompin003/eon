@@ -38,7 +38,14 @@ export interface FITSSource {
   /** Same-origin cutout endpoint. It serves only the calibrated IMAGE HDU. */
   url: string;
   /** Stable during playback; changing the selected frame must not rebuild the renderer. */
-  sequence?: { id: string; frames: readonly FITSFrame[]; attempt?: number };
+  sequence?: { id: string; frames: readonly FITSFrame[]; attempt?: number; region?: SkyRegion };
+}
+
+/** Square footprint, centered in ICRS. sizeDeg is the full angular side. */
+export interface SkyRegion {
+  longitude: number;
+  latitude: number;
+  sizeDeg: number;
 }
 
 export type FITSFrame = Omit<FITSSource, 'sequence'>;
@@ -50,6 +57,12 @@ export interface BufferStatus {
   ready: number;
   failed: number;
   bytes: number;
+  readyFrameIds?: readonly string[];
+  failedFrameIds?: readonly string[];
+  coverage?: number;
+  complete?: boolean;
+  cacheHits?: number;
+  unavailableFrames?: readonly { id: string; reason: string; retryable: boolean }[];
 }
 
 /** Archive previews contain heterogeneous filters and partial sky coverage, not a spectrum. */

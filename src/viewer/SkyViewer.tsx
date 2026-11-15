@@ -9,8 +9,11 @@ import {
   type SkyProjectionWindow,
   type BufferStatus,
   type ArchiveHiPSSource,
+  type SkyRegion,
 } from '../shared';
 import { FrameBuffer } from './frameBuffer';
+import { TimelapseViewer } from './TimelapseViewer';
+import { RegionSelector } from './RegionSelector';
 const CheckerboardViewer = lazy(() =>
   import('./CheckerboardViewer').then((module) => ({ default: module.CheckerboardViewer })),
 );
@@ -27,6 +30,9 @@ interface Props {
   renderAnnotations?: (projection: SkyProjection) => ReactNode;
   onBufferStatus?: (status: BufferStatus) => void;
   comparisonSource?: ArchiveHiPSSource;
+  selectingRegion?: boolean;
+  onRegionSelected?: (region: SkyRegion) => void;
+  onCancelRegion?: () => void;
 }
 
 export function SkyViewer(props: Props) {
@@ -38,7 +44,7 @@ export function SkyViewer(props: Props) {
   const sequence = props.source.kind === 'fits' ? props.source.sequence : undefined;
   const bufferKey = `${sequence?.id ?? ''}:${sequence?.attempt ?? 0}`;
   const buffer = useMemo(
-    () => (sequence ? new FrameBuffer(sequence.frames) : undefined),
+    () => (sequence && !sequence.region ? new FrameBuffer(sequence.frames) : undefined),
     [bufferKey],
   );
   const [preparation, setPreparation] = useState<BufferStatus>({
@@ -69,6 +75,7 @@ export function SkyViewer(props: Props) {
   const mainGPU = gpu.main?.key === bufferKey ? gpu.main.count : 0;
   const comparisonGPU = gpu.comparison?.key === bufferKey ? gpu.comparison.count : 0;
   useEffect(() => {
+    if (sequence?.region) return;
     props.onBufferStatus?.({
       ...preparation,
       sequenceId: sequence?.id,
@@ -107,6 +114,7 @@ export function SkyViewer(props: Props) {
     readyPanes.main === signature &&
     (Boolean(comparison) || mode !== 'split' || readyPanes.comparison === signature);
   useEffect(() => {
+    if (sequence?.region) return;
     props.onReadyChange?.(Boolean(ready));
   }, [props.onReadyChange, ready]);
   if (props.source.kind === 'checkerboard')
@@ -115,6 +123,11 @@ export function SkyViewer(props: Props) {
         <CheckerboardViewer {...props} source={props.source} />
       </Suspense>
     );
+  if (props.source.kind === 'fits' && sequence?.region) return <TimelapseViewer
+    {...props} source={props.source} mode={mode}
+    comparisonTitle={comparison?.title}
+    comparisonPane={comparison ? <HiPSViewer {...props} source={comparison} mode="mono" selectingRegion={false} /> : undefined}
+  />;
   return (
     <div className={twoPanes ? 'sky-split' : 'sky-single'}>
       <div className="sky-pane">
@@ -144,6 +157,7 @@ export function SkyViewer(props: Props) {
           <HiPSViewer
             {...props}
             source={comparison ?? props.source}
+            selectingRegion={false}
             mode={comparison ? 'mono' : 'color'}
             buffer={comparison ? undefined : buffer}
             onGPUProgress={(count, failed) => progress('comparison', count, failed)}
@@ -179,6 +193,9 @@ function HiPSViewer({
   renderAnnotations,
   buffer,
   onGPUProgress,
+  selectingRegion,
+  onRegionSelected,
+  onCancelRegion,
 }: Props & { buffer?: FrameBuffer; onGPUProgress?: (count: number, failed: number) => void }) {
   const documentKey =
     source.kind === 'fits'
@@ -350,6 +367,9 @@ function HiPSViewer({
         className="hips-frame"
       />
       {connected && projection && renderAnnotations?.(projection)}
+      {selectingRegion && connected && projection && onRegionSelected && onCancelRegion && <RegionSelector
+        projection={projection} view={view} onViewChange={onViewChange} onSelect={onRegionSelected} onCancel={onCancelRegion}
+      />}
       {archive && connected && (covered === false || coverageError) && (
         <div className="coverage-notice" role="status">
           {covered === false

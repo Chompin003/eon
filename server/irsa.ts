@@ -60,6 +60,74 @@ export async function boundedBody(response: Response, maxBytes: number): Promise
   return result;
 }
 
+/** Stop the upstream transfer after IMAGE. IRSA cutouts also contain an uncut
+ * PSF table, which can dwarf a small image and is not used by the visualizer. */
+export async function streamedImageHdu(response: Response, maxBytes: number): Promise<Uint8Array> {
+  if (!response.body) throw new Error('IRSA devolvió un archivo vacío.');
+  const reader = response.body.getReader(),
+    decoder = new TextDecoder('ascii');
+  let bytes = new Uint8Array(32768),
+    length = 0;
+  const imageEnd = () => {
+    let offset = 0;
+    while (offset < length) {
+      const keys: Record<string, string> = {};
+      let cursor = offset,
+        found = false;
+      for (; cursor + 80 <= length; cursor += 80) {
+        const card = decoder.decode(bytes.subarray(cursor, cursor + 80)),
+          key = card.slice(0, 8).trim();
+        if (key === 'END') {
+          cursor += 80;
+          found = true;
+          break;
+        }
+        if (card[8] === '=')
+          keys[key] = card.slice(10).split('/')[0].trim().replace(/^'|'$/g, '').trim();
+      }
+      if (!found) return;
+      const headerSize = Math.ceil((cursor - offset) / 2880) * 2880,
+        naxis = Number(keys.NAXIS),
+        bitpix = Math.abs(Number(keys.BITPIX));
+      if (!Number.isInteger(naxis) || naxis < 0 || naxis > 9 || ![8, 16, 32, 64].includes(bitpix))
+        throw new Error('Estructura FITS no admitida.');
+      let count = naxis === 0 ? 0 : 1;
+      for (let axis = 1; axis <= naxis; axis++) count *= Number(keys[`NAXIS${axis}`]);
+      const dataSize = (bitpix / 8) * (count + Number(keys.PCOUNT ?? 0)) * Number(keys.GCOUNT ?? 1);
+      if (!Number.isSafeInteger(dataSize) || dataSize < 0) throw new Error('Tamaño FITS inválido.');
+      const end = offset + headerSize + Math.ceil(dataSize / 2880) * 2880;
+      if (end > maxBytes) throw new Error('El recorte excede el tamaño permitido.');
+      if (keys.EXTNAME === 'IMAGE' && naxis === 2) return end;
+      if (end > length) return;
+      offset = end;
+    }
+  };
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      const take = Math.min(value.byteLength, maxBytes - length);
+      if (length + take > bytes.length) {
+        const grown = new Uint8Array(Math.min(maxBytes, Math.max(length + take, bytes.length * 2)));
+        grown.set(bytes.subarray(0, length));
+        bytes = grown;
+      }
+      bytes.set(value.subarray(0, take), length);
+      length += take;
+      const end = imageEnd();
+      if (end !== undefined && length >= end) {
+        await reader.cancel().catch(() => {});
+        return imageHdu(bytes.subarray(0, end));
+      }
+      if (length >= maxBytes) throw new Error('El recorte excede el tamaño permitido.');
+    }
+    return imageHdu(bytes.subarray(0, length));
+  } finally {
+    await reader.cancel().catch(() => {});
+    reader.releaseLock();
+  }
+}
+
 /** Extract the IMAGE HDU byte-for-byte, preserving its celestial WCS and SIP.
  * Other extensions (variance/flags/zodiacal model) must never be shown as flux.
  * This is FITS block framing only; no astrometry or pixel resampling here.

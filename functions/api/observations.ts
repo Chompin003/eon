@@ -5,7 +5,10 @@ export async function onRequestGet({ request }: { request: Request }): Promise<R
     const params = new URL(request.url).searchParams;
     const { ra, dec } = position(params);
     const url = new URL('https://irsa.ipac.caltech.edu/SIA');
-    url.searchParams.set('POS', `CIRCLE ${ra} ${dec} 0.0000001`);
+    const radius = Number(params.get('radius') ?? 0.0000001);
+    if (!Number.isFinite(radius) || radius <= 0 || radius > 0.18)
+      return new Response('Región inválida.', { status: 400 });
+    url.searchParams.set('POS', `CIRCLE ${ra} ${dec} ${radius}`);
     for (const collection of ['spherex_dr1', 'spherex_qr3', 'spherex_dr1_deep', 'spherex_qr3_deep'])
       url.searchParams.append('COLLECTION', collection);
     url.searchParams.set('MAXREC', '2000');

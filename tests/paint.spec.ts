@@ -103,8 +103,8 @@ test('emojis, imported images and annotations share both spectral panes and surv
   }
   await page.getByRole('button', { name: 'Blanco y negro', exact: true }).click();
   await page.getByRole('button', { name: 'Buscar exposiciones aquí' }).click();
-  await page.getByRole('button', { name: 'Ver exposición / centrar recorte' }).click();
-  await expect(page.frameLocator('iframe').locator('#sky')).toHaveAttribute('data-source', 'fits');
+  await page.getByRole('button', { name: 'Animar región' }).click();
+  await expect(page.locator('.region-canvas')).toHaveAttribute('data-source', 'fits');
   await expect(page.locator('.study-annotations')).toHaveAttribute('data-annotation-count', '2');
   await page.getByLabel('Mostrar anotaciones', { exact: true }).check();
   await expect(page.locator('.study-annotations')).toHaveCSS('visibility', 'visible');

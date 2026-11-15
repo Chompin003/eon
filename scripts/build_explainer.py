@@ -24,7 +24,7 @@ def para(text,y,x=44,width=507,size=10.5,leading=15):
 def heading(text,y):txt(text,44,y,12,'Bold');return y-23
 def page(number,title,sub):
  c.setFillColor(white);c.rect(0,0,W,H,fill=1,stroke=0)
- txt('eon  /  NOTA TÉCNICA',44,H-40,9,'Bold',ACCENT);txt('14 noviembre 2026',442,H-40,8,color=MUTED)
+ txt('eon  /  NOTA TÉCNICA',44,H-40,9,'Bold',ACCENT);txt('15 noviembre 2026',442,H-40,8,color=MUTED)
  txt(title,44,H-83,22,'Bold')
  para(sub,H-109,size=10)
  c.setStrokeColor(LINE);c.line(44,42,W-44,42);txt('Funcionamiento, datos y límites de interpretación',44,28,8,color=MUTED);txt(f'{number:02d} / 07',510,28,8,color=MUTED)
@@ -46,7 +46,7 @@ def link(label,url,y):
 page(1,'Cómo funciona eon','Guía para explicar el sistema a una persona que conoce el proyecto, aunque no conozca su código.')
 y=para('eon permite explorar imágenes infrarrojas reales de SPHEREx, orientar el cielo con coordenadas y comparar exposiciones obtenidas en fechas distintas. La interfaz es un visor grande y una ventana de controles móvil. No genera imágenes del cielo con IA.',H-157)
 y=heading('Mapa del sistema',y-8)
-box(44,445,225,125,'Navegador','React + TypeScript: estado, coordenadas, fechas y controles. Aladin Lite: proyección astronómica y capas. Paint: anotaciones ancladas al cielo.')
+box(44,445,225,125,'Navegador','React: estado y controles. Aladin: exploración HiPS. Canvas 2D: animación de regiones registradas. Paint: anotaciones ancladas al cielo.')
 box(326,445,225,125,'Archivo oficial IRSA','NASA/SPHEREx y Caltech/IPAC publican mosaicos HiPS, metadatos de observaciones y archivos FITS calibrados.')
 arrow(269,535,326,535,'HiPS')
 box(44,285,225,100,'Preparación temporal','Recortes FITS, corrección visual de distorsión y cuadros preparados. La fecha pertenece a la exposición, no al canal espectral.')
@@ -64,8 +64,8 @@ y=para('Canal A y canal B son selecciones espectrales. En blanco y negro puede v
 y=para('El mosaico mezcla observaciones de distintas fechas. No permite afirmar que toda la imagen corresponde a un año concreto. Su muestreo publicado es aproximadamente 12.88 segundos de arco por píxel. Ampliar hasta 1 segundo de arco no crea detalle nuevo.',y)
 rule(y-5)
 box(44,281,507,113,'Exposiciones individuales FITS','Una consulta por RA/Dec devuelve las imágenes que cubren esa posición. El resultado incluye identificador, detector, colección, URL y tiempo de observación t_min. La aplicación ordena esas filas cronológicamente.')
-y=para('Al seleccionar una exposición se solicita un recorte de 0.1 grados. Solo se muestra la extensión IMAGE, cuya señal está en MJy/sr. FLAGS describe calidad, VARIANCE estima incertidumbre y ZODI modela luz zodiacal: ninguna debe confundirse con la imagen de señal.',253)
-y=para('En una exposición, Color es pseudocolor viridis de una sola imagen. Las exposiciones de un detector pueden medir longitudes de onda distintas por su filtro variable. Un cambio de brillo al parpadear no demuestra por sí solo variabilidad física.',y)
+y=para('Se elige una región de 1.2 a 15 minutos de arco y se solicitan recortes con margen. Solo se muestra IMAGE, en MJy/sr. FLAGS describe calidad, VARIANCE estima incertidumbre y ZODI modela luz zodiacal: no se confunden con señal. La transferencia termina al completar IMAGE.',253)
+y=para('En una región, Color es pseudocolor de una sola imagen. Los cuadros comparten el estiramiento visual. Las exposiciones de un detector pueden medir longitudes de onda distintas por su filtro variable. Un cambio de brillo al parpadear no demuestra por sí solo variabilidad física.',y)
 c.showPage()
 
 page(3,'Coordenadas y registro del cielo','La imagen debe conservar su posición al cambiar de fecha, ampliar o dibujar.')
@@ -79,9 +79,9 @@ y=heading('Qué aportan WCS y SIP',y-8)
 y=para('WCS es la información de la cabecera FITS que relaciona píxeles y coordenadas del cielo. SIP representa la distorsión geométrica del detector. Colocar una imagen como una textura cualquiera sobre una esfera no resuelve esa calibración.',y)
 box(44,305,145,75,'FITS original','Se conserva señal y cabecera científica.')
 box(225,305,145,75,'Copia para visualizar','Se corrige SIP con interpolación bilineal.')
-box(406,305,145,75,'Proyección TAN','Aladin presenta la copia con coordenadas coherentes.')
+box(406,305,145,75,'Cuadrícula TAN','Todos los cuadros comparten coordenadas y píxeles.')
 arrow(189,343,225,343);arrow(370,343,406,343)
-y=para('El adaptador SIP cubre una incompatibilidad observada en Aladin Lite 3.8.2 con estos recortes. Se contrastó con Astropy/WCSLIB y SciPy. La copia interpolada sirve para visualizar; para fotometría se debe volver al FITS científico original.',275)
+y=para('El registro invierte TAN-SIP y remuestrea una sola vez en un Web Worker. Se contrasta con Astropy/WCSLIB y SciPy. Canvas 2D presenta los cuadros sin capas WebGL por fecha. La copia interpolada sirve para visualizar; para fotometría se debe volver al FITS científico original.',275)
 y=heading('Anotaciones y vista dividida',y-7)
 para('Paint ya forma parte del proyecto. Sus trazos se anclan a coordenadas del cielo y usan la proyección del visor para volver a dibujarse. En modo dividido, ambas vistas reciben el mismo centro y campo angular; no se sincronizan copiando posiciones de pantalla.',y)
 c.showPage()
@@ -93,11 +93,11 @@ for x,title,body in [(44,'Seleccionar','Elegir la fecha'),(216,'Esperar','Red + 
 arrow(207,512,216,512);arrow(379,512,388,512)
 txt('Este recorrido se repetía en cada fecha.',44,454,9,color=MUTED)
 y=heading('Flujo implementado',416)
-box(44,272,225,107,'1. Preparar una vez','Consultar fechas; descargar recortes con concurrencia limitada; corregir distorsión; conservar los cuadros y crear las capas necesarias.')
-box(326,272,225,107,'2. Reproducir desde memoria','Mantener el visor abierto y alternar únicamente el cuadro visible. Pausar, repetir o cambiar velocidad sin otra descarga.')
+box(44,272,225,107,'1. Preparar la región','Seleccionar el cuadrado; consultar fechas; descargar recortes; registrar WCS/SIP en una cuadrícula común y conservar los cuadros.')
+box(326,272,225,107,'2. Reproducir en Canvas 2D','Empezar con las fechas disponibles mientras llegan las demás. Dibujar cuadros desde memoria, sin WebGL por fecha ni descargas en el bucle preparado.')
 arrow(269,326,326,326)
-y=para('La preparación debe indicar avance y errores. Reproducir se habilita cuando la secuencia está lista. Ninguna exposición fallida se elimina en silencio. La memoria debe tener un límite y los cambios de región o detector deben cancelar el trabajo anterior.',242)
-para('La corrección SIP se ejecuta en un Web Worker. La caché de copias visuales y la selección activa tienen un límite de 96 MB cada una; Aladin añade sus recursos por panel. El modo dividido comparte las descargas y prepara sus dos vistas antes de reproducir.',y)
+y=para('Un cuadro fallido no bloquea los demás: se indica su fecha y razón. Los errores de descarga pueden reintentarse; la ausencia de cobertura se conserva vacía. La preferencia de movimiento reducido desactiva el arranque automático.',242)
+para('La caché de regiones usa hasta 96 MB en memoria y 96 MB en IndexedDB, con expulsión de entradas antiguas. Cada panel limita a 16 MB sus imágenes de visualización. La última selección se recuerda; si el navegador no permite guardar, se mantiene la reproducción en memoria.',y)
 c.showPage()
 
 page(5,'Del código a la página pública','Los cambios del equipo se integran mediante ramas y comprobaciones automáticas.')
@@ -124,11 +124,11 @@ for label,url in [('SPHEREx en IRSA','https://irsa.ipac.caltech.edu/Missions/sph
 c.showPage()
 
 page(7,'Verificación y rendimiento','Esta página distingue los resultados comprobados de los objetivos de la optimización.')
-y=para('La base científica se comprobó con datos reales: en la región inicial, la consulta devolvió 395 filas y 60 exposiciones D4 entre agosto de 2025 y septiembre de 2026. Un recorte de 58 x 58 píxeles conservó su WCS/SIP. La distorsión y el remuestreo se contrastaron con Astropy y SciPy.',680)
+y=para('La región inicial devolvió 423 registros y 63 exposiciones D4 candidatas: 61 con píxeles válidos y dos sin cobertura útil. El registro se contrasta con Astropy/WCSLIB y SciPy, usando tres recortes oficiales. Los FITS científicos conservan sus píxeles y WCS/SIP.',680)
 y=heading('Criterios de aceptación de la mejora',y-8)
-for text in ['La secuencia se prepara antes de reproducir y muestra avance.', 'Un bucle ya preparado no descarga de nuevo los FITS.', 'El visor no se reconstruye en cada fecha.', 'La fecha visible corresponde al cuadro presentado.', 'Cambiar velocidad, B/N o color reutiliza los cuadros preparados.', 'Una búsqueda truncada recupera ventanas temporales adicionales.', 'Coordenadas, Paint y sincronización siguen funcionando.']:
+for text in ['La región es seleccionable; la animación muestra avance y errores.', 'Las fechas disponibles se reproducen aunque alguna no esté lista.', 'Un bucle preparado no descarga FITS ni reconstruye WebGL.', 'La fecha visible corresponde al cuadro presentado.', 'Cambiar velocidad, B/N o color reutiliza los cuadros preparados.', 'La caché local conserva regiones entre visitas.', 'Coordenadas, Paint y sincronización siguen funcionando.']:
  txt('•',46,y,10,color=ACCENT);y=para(text,y,x=61,width=490,size=10,leading=14)
-report=ROOT/'docs/performance.json'
+report=ROOT/'docs/region-performance.json'
 y=heading('Resultado de la implementación',y-12)
 if report.exists():
  r=json.loads(report.read_text(encoding='utf-8'));y=para(r['summary'],y)

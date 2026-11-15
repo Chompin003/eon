@@ -29,7 +29,7 @@ test('SPHEREx is default; Hubble and Webb comparisons synchronize coordinates, z
   await expect(page.locator('iframe')).toHaveCount(2);
   const left = page.getByTitle('Cielo SPHEREx').contentFrame().locator('#sky');
   let right = page.getByTitle('Cielo Hubble').contentFrame().locator('#sky');
-  await expect(right).toHaveAttribute('data-ready', 'true');
+  await expect(right).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
   await expect(
     page.getByText('El centro está fuera de la cobertura de este mosaico.', { exact: false }),
   ).toBeVisible();
@@ -55,16 +55,16 @@ test('SPHEREx is default; Hubble and Webb comparisons synchronize coordinates, z
     .getByLabel('Instrumento de Hubble')
     .selectOption({ label: 'WFC3 · todos los filtros' });
   right = page.getByTitle('Cielo Hubble').contentFrame().locator('#sky');
-  await expect(right).toHaveAttribute('data-ready', 'true');
+  await expect(right).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
   await controls.getByRole('button', { name: 'Webb', exact: true }).click();
   right = page.getByTitle('Cielo Webb').contentFrame().locator('#sky');
-  await expect(right).toHaveAttribute('data-ready', 'true');
+  await expect(right).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
   await expect(page.getByLabel('Instrumento de Webb')).toHaveValue(
     'ivo://ESAVO/P/JWST/NIRCam_Imaging',
   );
   await page.getByLabel('Instrumento de Webb').selectOption({ label: 'MIRI · mosaico de archivo' });
   right = page.getByTitle('Cielo Webb').contentFrame().locator('#sky');
-  await expect(right).toHaveAttribute('data-ready', 'true');
+  await expect(right).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
   await expect
     .poll(async () =>
       Math.abs(

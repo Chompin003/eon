@@ -25,3 +25,15 @@ Para los FITS SPHEREx TAN-SIP, el adaptador de visualización `viewer/sip.ts` cr
 `ImageReadiness` comunica la presentación del cuadro mediante suscripción. Solo la línea temporal se suscribe: una confirmación del motor no vuelve a renderizar todos los controles de App. Si el renderizado tarda más que el intervalo, la reproducción espera esa confirmación antes de avanzar; no salta fechas para aparentar más velocidad.
 
 Detalles, fuentes, límites y herramientas del documento del equipo: [COMO-FUNCIONA.md](COMO-FUNCIONA.md).
+
+## Reproductor de regiones (sustituye la ruta temporal de capas Aladin)
+
+`FITSSource.sequence.region` activa `TimelapseViewer` y `RegionCanvas`. La ruta anterior continúa disponible para fuentes sin región. `SkyRegion` fija centro ICRS y lado de 0.02–0.25°. `RegionSelector` usa la proyección real de Aladin para convertir el cuadrado dibujado a coordenadas. App compone estos callbacks con los controles.
+
+`registerFits` interpreta PC/CDELT o CD, invierte TAN-SIP y remuestrea una sola vez la señal a una cuadrícula norte-arriba común. Se verifica contra Astropy/WCSLIB y SciPy, con fixtures oficiales. El render de cada época consiste en un `drawImage` de Canvas 2D; no se mantienen capas FITS/WebGL por fecha. `SkyProjection` conserva su API para Paint; el campo horizontal se mantiene angularmente correcto al desplazar la cámara dentro de la cuadrícula.
+
+`RegionBuffer` prepara tres exposiciones en paralelo, empieza a reproducir con las disponibles, reintenta solo fallos recuperables y publica identificadores y razones de fechas no disponibles. La consulta SIA usa un círculo que contiene el cuadrado: algunos candidatos pueden no tener píxeles válidos en él; se identifican como ausencia de cobertura, se cachean y no se reintentan como fallos de red. La barra mide preparación terminada, no inventa cobertura ni cuadros.
+
+La caché de copias registradas tiene presupuestos independientes de 96 MB en memoria y 96 MB en IndexedDB, con expulsión LRU. Cada panel limita a 16 MB sus imágenes de visualización. IndexedDB es opcional; si el navegador no permite guardar, la animación funciona en memoria. No hay servicios de pago. `streamedImageHdu` cancela la transferencia de IRSA al terminar IMAGE para no descargar la PSF completa ni las extensiones que no se muestran.
+
+Detalles y mediciones nuevas en [ANIMACION-REGIONES.md](ANIMACION-REGIONES.md).

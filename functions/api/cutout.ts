@@ -1,4 +1,4 @@
-import { boundedBody, fetchIrsa, imageHdu, position } from '../../server/irsa';
+import { fetchIrsa, streamedImageHdu, position } from '../../server/irsa';
 import { cachedCutout, storeCutout } from '../../server/cache';
 
 export async function onRequestGet({
@@ -21,7 +21,7 @@ export async function onRequestGet({
     )
       return new Response('Archivo no permitido.', { status: 400 });
     const size = Number(params.get('size') ?? 0.1);
-    if (!Number.isFinite(size) || size < 0.02 || size > 0.25)
+    if (!Number.isFinite(size) || size < 0.02 || size > 0.4)
       return new Response('Campo de recorte inválido.', { status: 400 });
     const url = new URL(input);
     url.searchParams.set('center', `${ra},${dec}d`);
@@ -30,7 +30,7 @@ export async function onRequestGet({
     if (existing) return existing;
     const response = await fetchIrsa(url, 60000);
     if (!response.ok) return new Response('IRSA no pudo preparar el recorte.', { status: 502 });
-    const image = imageHdu(await boundedBody(response, 12 * 1024 * 1024));
+    const image = await streamedImageHdu(response, 12 * 1024 * 1024);
     const output = new Response(image.buffer as ArrayBuffer, {
       headers: {
         'content-type': 'application/fits',
