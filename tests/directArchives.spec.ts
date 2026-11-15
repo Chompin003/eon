@@ -70,3 +70,18 @@ test('HLA searches explicitly; its bounded cutout is reused during pan and resto
   await expect.poll(() => fitsRequests.length).toBe(3);
   expect(new URL(fitsRequests[2]).searchParams.get('red')).toBe('hst_10188_10_acs_wfc_f435w');
 });
+
+test('verified fields can be found on the sphere and opened directly', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await page.getByText('Explorar campos observados', { exact: true }).click();
+  await page.getByRole('button', { name: 'Ver campos en la esfera' }).click();
+  await page.getByRole('button', { name: 'Ocultar controles' }).click();
+  await expect(page.getByRole('button', { name: '⊕ Hubble · Antenas', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '⊕ Webb · centro galáctico', exact: true }).click();
+  const sky = page.getByTitle('Cielo SPHEREx').contentFrame().locator('#sky');
+  await expect(sky).toHaveAttribute('data-comparison-ready', 'true');
+  await expect
+    .poll(async () => Number(await sky.getAttribute('data-ra')))
+    .toBeCloseTo(266.5875292125761, 7);
+});
