@@ -79,6 +79,34 @@ export function TelescopeComparison({
           </button>
         ))}
       </div>
+      <details>
+        <summary>Explorar campos observados</summary>
+        <p className="survey-details">
+          Accesos verificados, no un catálogo completo ni cobertura de todo el cielo. Pulsa un campo
+          para cargar sus datos.
+        </p>
+        <button
+          className="plain-button"
+          onClick={() => {
+            onSourceChange(undefined);
+            onViewChange({ longitude: 225, latitude: -25, fov: 100 });
+          }}
+        >
+          Ver campos en la esfera
+        </button>
+        {ARCHIVE_SURVEYS.filter((item) => item.provider).map((item) => (
+          <button
+            className="plain-button"
+            key={item.id}
+            onClick={() => {
+              onSourceChange(item);
+              onViewChange(item.target!);
+            }}
+          >
+            Abrir {item.title}
+          </button>
+        ))}
+      </details>
       {source && (
         <>
           <div className="display-modes" role="group" aria-label="Distribución de telescopios">

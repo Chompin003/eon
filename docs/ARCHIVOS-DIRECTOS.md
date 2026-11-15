@@ -1,5 +1,9 @@
 # Comparación sin almacenar mosaicos en Cloudflare
 
+## Encontrar las regiones
+
+Controles → Explorar campos observados ofrece accesos directos a Hubble/Antenas y los dos mosaicos Webb del centro galáctico. «Ver campos en la esfera» vuelve a SPHEREx y muestra marcadores pulsables en sus posiciones; no descarga nuevos archivos hasta elegir un campo. Los marcadores son puntos de acceso verificados, no polígonos de cobertura ni un inventario completo del archivo. A escala grande, una capa regional muestra además un acceso a su posición para evitar quedarse mirando un campo vacío.
+
 ## Uso
 
 En Controles → Comparar telescopios, SPHEREx sigue siendo la referencia inicial.

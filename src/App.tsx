@@ -26,7 +26,7 @@ import {
   type StudyObject,
   type PixelStudy,
 } from './shared';
-import { SkyViewer, analyzePixels } from './viewer';
+import { ArchiveRegions, SkyViewer, analyzePixels } from './viewer';
 import { ExplorerLayout } from './ui';
 import { PaintTools, PaintSurface, usePaintSession } from './drawing';
 import { useShareLink } from './useShareLink';
@@ -372,6 +372,17 @@ function ExplorerApp() {
             renderAnnotations={(projection) => (
               <>
                 <PaintSurface session={paint} projection={projection} />
+                <ArchiveRegions
+                  projection={projection}
+                  source={comparisonSource}
+                  onOpen={(field) => {
+                    setComparisonSource(field);
+                    setObservationSource(null);
+                    setRestoreState('none');
+                    setRestoring(false);
+                    updateView(field.target!);
+                  }}
+                />
                 {pixelStudy && showPixels && observationSource && (
                   <DetectionMarkers
                     result={pixelStudy}
