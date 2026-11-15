@@ -1,3 +1,4 @@
+import { openControls } from './controlMenus';
 import { expect, test } from '@playwright/test';
 import type { SkyProjectionWindow } from '../src/shared';
 import { installArchiveFixtures } from './archiveFixtures';
@@ -21,7 +22,7 @@ test('study annotations preserve sky pixels/navigation, erase partially and foll
   const anchor = await frame.evaluate(() =>
     (window as SkyProjectionWindow).spherexProjection!.pixelToWorld(600, 500)!,
   );
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.locator('spherex-paint').locator('summary').first().click();
   await page.getByLabel('Anotar (bloquea arrastre del cielo)').check();
   await page.getByRole('button', { name: 'Cerrar controles' }).click();
@@ -33,7 +34,7 @@ test('study annotations preserve sky pixels/navigation, erase partially and foll
   await expect(sky).toHaveAttribute('data-ra', before!);
   await expect(board.locator('[data-item]')).toHaveCount(1);
   const originalPath = await board.locator('[data-item]').getAttribute('d');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Borrador parcial', exact: true }).click();
   await page.getByRole('slider', { name: 'Grosor', exact: true }).fill('50');
   await page.getByRole('button', { name: 'Cerrar controles' }).click();
@@ -48,7 +49,7 @@ test('study annotations preserve sky pixels/navigation, erase partially and foll
   await expect(board.locator('mask')).toHaveCount(0);
   await board.press('Control+y');
   await expect(board.locator('mask')).toHaveCount(1);
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Exportar PNG' }).click();
   expect((await download).suggestedFilename()).toContain('.png');
@@ -77,7 +78,7 @@ test('emojis, imported images and annotations share both spectral panes and surv
 }) => {
   await page.goto('/');
   await expect(page.frameLocator('iframe').locator('#sky')).toHaveAttribute('data-ready', 'true');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.locator('spherex-paint').locator('summary').first().click();
   await page.locator('spherex-paint').locator('#emoji-picker > summary').click();
   await page.getByRole('searchbox', { name: 'Buscar emoji' }).fill('cohete');

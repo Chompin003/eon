@@ -1,3 +1,4 @@
+import { openControls } from './controlMenus';
 import { expect, test } from '@playwright/test';
 import { installArchiveFixtures } from './archiveFixtures';
 
@@ -7,7 +8,7 @@ test.beforeEach(async ({ page }) => {
 
 test('text and space symbols edit, undo, follow the sky and share both panes', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.locator('spherex-paint').locator('summary').first().click();
   await page.getByRole('button', { name: 'T + Texto / símbolos' }).click();
   await page.getByRole('textbox', { name: 'Texto', exact: true }).fill('Centauri\nλ = 2 μm');
@@ -37,7 +38,7 @@ test('text and space symbols edit, undo, follow the sky and share both panes', a
       y: box.y + box.height / 2 - boardBox.y,
     },
   });
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await expect(page.getByRole('textbox', { name: 'Texto', exact: true })).toHaveValue(
     'α Centauri\nΔ = ±5°',
   );

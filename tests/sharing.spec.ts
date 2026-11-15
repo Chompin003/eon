@@ -1,3 +1,4 @@
+import { openControls } from './controlMenus';
 import { expect, test } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { installArchiveFixtures } from './archiveFixtures';
@@ -55,7 +56,7 @@ test('leaving a pending shared exposure aborts restoration and leaves the mosaic
     await expect(page.locator('.link-restore-notice')).toHaveCount(0);
     await expect.poll(() => new URL(page.url()).searchParams.get('epoch')).toBeNull();
     release();
-    await page.getByRole('button', { name: 'Mostrar controles' }).click();
+    await openControls(page);
     await expect(page.getByRole('button', { name: 'Buscar exposiciones aquí' })).toBeEnabled();
     await expect(page.locator('.region-canvas')).toHaveCount(0);
   } finally {
@@ -105,7 +106,7 @@ test('shared coordinates override local selection and copy the current location 
   await expect.poll(async () => Number(await sky.getAttribute('data-ra'))).toBeCloseTo(359.99, 7);
   const historyLength = await page.evaluate(() => history.length);
   for (let i = 0; i < 15; i++) await sky.press('ArrowRight');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Copiar enlace', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Enlace copiado' })).toBeVisible();
   const copied = await page.evaluate(() => navigator.clipboard.readText());
@@ -132,7 +133,7 @@ test('an exposure link restores the exact recorded date paused and preserves its
   const canvas = page.locator('.region-canvas');
   await expect(canvas).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
   await expect(canvas).toHaveAttribute('data-frame-id', '2026W07_2A_0374_3:SPHEREx-D4');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await expect(page.getByTestId('observation-year')).toHaveText('2026');
   await expect(page.getByRole('button', { name: 'Reproducir', exact: true })).toBeVisible();
   await page.getByRole('slider', { name: 'Fecha', exact: true }).press('End');
