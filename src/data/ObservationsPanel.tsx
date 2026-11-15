@@ -16,6 +16,7 @@ interface Props {
   exampleRequest?: number;
   restoreExample?: boolean;
   frameRequest?: { id: string; nonce: number };
+  onIntervalChange?: (milliseconds: number) => void;
   view: ViewState;
   onViewChange: (view: ViewState) => void;
   onSourceChange: (source: FITSSource | null) => void;
@@ -46,6 +47,7 @@ export function ObservationsPanel({
   exampleRequest,
   restoreExample,
   frameRequest,
+  onIntervalChange,
   view,
   onViewChange,
   onSourceChange,
@@ -66,6 +68,7 @@ export function ObservationsPanel({
   const [year, setYear] = useState('');
   const [index, setIndex] = useState(0);
   const [interval, setIntervalMs] = useState(200);
+  useEffect(() => onIntervalChange?.(interval), [interval, onIntervalChange]);
   const [playing, setPlaying] = useState(false);
   const [enabled, setEnabled] = useState(false);
   const [loading, setLoading] = useState(false);

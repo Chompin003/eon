@@ -14,6 +14,8 @@ Se consultan todos los años publicados desde 2025; las respuestas SIA truncadas
 
 **Copiar enlace** comparte ubicación, zoom, canales, comparación y exposición exacta; se restaura pausada. Hubble/Webb admiten solapado con transparencia o pantalla dividida y conservan sus épocas de archivo. [Enlaces y comparación](docs/ENLACES-COMPARACION-ESTUDIO.md).
 
+**Descargar vista** exporta PNG con espacio, anotaciones y marcadores seleccionables, o GIF de las fechas preparadas con anotaciones/marcadores opcionales. PNG permite transparencia; GIF conserva siempre las imágenes. Los nombres incluyen coordenadas J2000 sexagesimales y, en GIF, el rango UTC. [Uso y límites](docs/EXPORTACION.md).
+
 **Interpretar región** detecta fuentes en los FITS originales con SEP/WebAssembly, mide centroides, forma y señal en apertura por exposición, y propone asociaciones con Gaia/SIMBAD. Incluye marcas, tabla/gráfica temporal y exportación JSON/CSV; las coincidencias ambiguas permanecen sin clasificar. Para probarlo sin depender del archivo externo: **Abrir ejemplo real NGC 1491 → Interpretar región**. Son tres exposiciones oficiales guardadas, nunca un sustituto automático de una consulta fallida. [Método, uso y límites](docs/ANALISIS-PIXELES.md), [catálogos y evaluación de entrenamiento](docs/ESTUDIO-REGIONES.md).
 
 El mosaico mezcla fechas y tiene muestreo aproximado de 12.88″/píxel; ampliar hasta 1″ no añade resolución. Las exposiciones individuales se obtienen como recortes FITS de 0.1° y se corrigen para visualización usando su WCS/SIP. Las longitudes de onda de un detector pueden variar entre exposiciones: el parpadeo no constituye una medición fotométrica a longitud de onda fija.

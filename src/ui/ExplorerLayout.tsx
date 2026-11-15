@@ -30,6 +30,7 @@ interface Props {
   drawingTools?: ReactNode;
   telescopeTools?: ReactNode;
   shareTools?: ReactNode;
+  exportTools?: ReactNode;
   studyTools?: ReactNode;
   children: ReactNode;
 }
@@ -60,6 +61,7 @@ export function ExplorerLayout({
   drawingTools,
   telescopeTools,
   shareTools,
+  exportTools,
   studyTools,
   children,
 }: Props) {
@@ -104,6 +106,7 @@ export function ExplorerLayout({
       </button>
       <FloatingPanel open={open} onClose={close} observationDate={observationDate}>
         {shareTools}
+        {exportTools}
         {telescopeTools}
         {studyTools}
         <section className="control-section" aria-labelledby="survey-heading">

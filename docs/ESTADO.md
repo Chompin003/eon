@@ -2,6 +2,8 @@
 
 ## Aplicación e infraestructura
 
+- Exportación visual PNG con capas seleccionables y transparencia; GIF local de cuadros preparados, anotaciones/marcadores opcionales, fecha UTC y nombres J2000 sexagesimales. [Uso y límites](EXPORTACION.md).
+
 - Enlaces con coordenadas, zoom, canales y exposición exacta, restauración pausada y actualización limitada a dos escrituras por segundo.
 - Hubble/Webb solapados con transparencia y misma proyección, además de comparación dividida. Las épocas son independientes.
 - Detección real sobre IMAGE con SEP 1.4.1/WASM en Worker: centroides ICRS, forma, señal en apertura, candidaturas Gaia/SIMBAD, enlaces entre exposiciones y exportación JSON/CSV. Ejemplo NGC 1491 con tres exposiciones oficiales guardadas, abierto solo explícitamente; nunca reemplaza una consulta fallida. [Método y límites](ANALISIS-PIXELES.md). No se entrenó un clasificador propio ni se promete identificar toda emisión.
