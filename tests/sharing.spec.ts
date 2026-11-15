@@ -3,6 +3,26 @@ import { installArchiveFixtures } from './archiveFixtures';
 test.beforeEach(async ({ page }) => {
   await installArchiveFixtures(page);
 });
+
+test('browser history restores its sky location instead of overwriting it with the previous view', async ({
+  page,
+}) => {
+  await page.goto('/?ra=12&dec=-3&fov=.2');
+  const sky = page.getByTitle('Cielo SPHEREx').contentFrame().locator('#sky');
+  await expect(sky).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
+  await page.evaluate(() => {
+    history.pushState({}, '', '?ra=80&dec=22&fov=.1');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  });
+  await expect
+    .poll(async () => Number(await sky.getAttribute('data-ra')), { timeout: 30000 })
+    .toBeCloseTo(80, 7);
+  await page.goBack();
+  await expect
+    .poll(async () => Number(await sky.getAttribute('data-ra')), { timeout: 30000 })
+    .toBeCloseTo(12, 7);
+  await expect.poll(async () => Number(await sky.getAttribute('data-dec'))).toBeCloseTo(-3, 7);
+});
 test('shared coordinates override local selection and copy the current location without flooding history', async ({
   page,
   context,

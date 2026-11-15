@@ -2,6 +2,10 @@
 
 ## Aplicación e infraestructura
 
+- Enlaces con coordenadas, zoom, canales y exposición exacta, restauración pausada y actualización limitada a dos escrituras por segundo.
+- Hubble/Webb solapados con transparencia y misma proyección, además de comparación dividida. Las épocas son independientes.
+- Estudio de regiones con Gaia DSC publicado y SIMBAD, marcas por categoría y movimiento propio de catálogo. [Alcance](ESTUDIO-REGIONES.md). Photutils y scikit-learn instalados; no se inició entrenamiento sin datos de validación.
+
 - [Repositorio](https://github.com/Chompin003/eon) y [página de producción](https://eon-visualizer.pages.dev/).
 - Datos reales: mosaico espectral HiPS DR1 y recortes de exposiciones FITS DR1/QR3 por coordenadas y año. B/N, superposición de dos canales, color falso y vista dividida sincronizada. Fechas reales, no fixtures en producción.
 - Coordenadas de Iván/GorditoG integradas en el [PR #3](https://github.com/Chompin003/eon/pull/3). Su cuenta tiene permiso de escritura.

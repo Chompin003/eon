@@ -114,12 +114,14 @@ let comparisonKey = '';
 let comparisonMoc: CoverageMOC | undefined;
 let comparisonMocFailed = false;
 let comparisonFailed = false;
+let comparisonLoaded = false;
 function publishComparison() {
   if (!configuration?.overlayComparison || !engine) return;
   const [ra, dec] = engine.getRaDec();
   send({
     type: 'sky:comparison',
     id: configuration.overlayComparison.id,
+    loaded: comparisonLoaded,
     covered: comparisonMoc
       ? comparisonMoc.contains(ra, dec)
       : comparisonMocFailed
@@ -171,6 +173,7 @@ async function updateComparison() {
   comparisonMoc = undefined;
   comparisonMocFailed = false;
   comparisonFailed = false;
+  comparisonLoaded = false;
   engine.removeImageLayer('extra-telescope');
   if (!source) return;
   host.dataset.comparisonReady = 'false';
@@ -178,7 +181,13 @@ async function updateComparison() {
     const layer = A.HiPS(source.id, {
       url: source.url,
       name: source.title,
-      successCallback: () => {},
+      successCallback: () => {
+        if (comparisonKey === key) {
+          comparisonLoaded = true;
+          host.dataset.comparisonReady = 'true';
+          publishComparison();
+        }
+      },
       errorCallback: () => {
         if (comparisonKey === key) {
           comparisonFailed = true;
@@ -195,7 +204,6 @@ async function updateComparison() {
       colormap: 'native',
     });
     engine.setOverlayImageLayer(layer, 'extra-telescope');
-    host.dataset.comparisonReady = 'true';
     host.dataset.comparisonId = key;
     const moc = A.MOCFromURL(
       source.url + 'Moc.fits',
@@ -343,7 +351,10 @@ async function updateLayers() {
           surveys[1] = loaded;
           loadingSecond = false;
           configureSurveys();
-          if(comparisonLayer){engine!.removeImageLayer('extra-telescope');engine!.setOverlayImageLayer(comparisonLayer,'extra-telescope');}
+          if (comparisonLayer) {
+            engine!.removeImageLayer('extra-telescope');
+            engine!.setOverlayImageLayer(comparisonLayer, 'extra-telescope');
+          }
           send({ type: 'sky:ready' });
         },
         errorCallback: () => {

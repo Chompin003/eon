@@ -31,7 +31,7 @@ Lee este archivo y `docs/COLABORACION.md` antes de editar. Estas reglas aplican 
 - Los módulos no se importan entre sí; `App.tsx` compone sus API públicas (`index.ts`).
 - React posee la navegación ecuatorial ICRS en grados y FOV horizontal. Aladin Lite proyecta HiPS y FITS individuales compatibles; cada instancia vive en un documento aislado que libera WASM, eventos y WebGL al desmontar. La animación de regiones usa Canvas 2D y una cuadrícula TAN común: transforma WCS/SIP en un Web Worker, contrastado con Astropy/WCSLIB y SciPy. No crea una instancia/capa WebGL por fecha. Three.js se conserva solo para la referencia checkerboard, cargada bajo demanda.
 - Los canales espectrales del mosaico no son fechas. Las fechas individuales vienen de `t_min` (MJD UTC) de SIA; `DATE` del FITS puede ser procesamiento. Las exposiciones de un detector pueden tener longitudes de onda distintas.
-- `functions/api` consulta únicamente IRSA y sirve únicamente la extensión IMAGE de recortes FITS limitados; `server` contiene helpers compartidos del backend. Conserva la WCS/SIP y los píxeles originales.
+- `functions/api` consulta únicamente IRSA y el espejo oficial Harvard de CDS SIMBAD. Los catálogos usan orígenes fijos, regiones de hasta 0.25° y respuestas limitadas; nunca aceptan SQL ni URLs arbitrarios del cliente. Los recortes FITS sirven únicamente IMAGE; `server` contiene helpers compartidos del backend. Conserva la WCS/SIP y los píxeles originales. Gaia DSC aporta probabilidades publicadas, no un modelo entrenado por eon ni una precisión validada sobre SPHEREx; no confundas marcas de catálogo con detecciones en los píxeles.
 - Mantén soporte mouse, teclado y táctil, accesibilidad y diseño responsivo.
 
 ## Verificación y entrega

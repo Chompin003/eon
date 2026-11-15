@@ -4,6 +4,37 @@ import { regionGrid, gridCamera } from '../src/viewer/tangent';
 test.beforeEach(async ({ page }) => {
   await installTelescopeFixtures(page);
 });
+
+test('an unresponsive archive times out explicitly without blocking SPHEREx', async ({ page }) => {
+  await page.goto('/');
+  const sky = page.getByTitle('Cielo SPHEREx').contentFrame().locator('#sky');
+  await expect(sky).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
+  let release: () => void = () => {};
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route('https://skies.esac.esa.int/JWST/**', async (route) => {
+    await gate;
+    await route.abort();
+  });
+  await page.clock.install();
+  try {
+    await page.getByRole('button', { name: 'Mostrar controles' }).click();
+    await page
+      .getByRole('group', { name: 'Telescopio de comparación' })
+      .getByRole('button', { name: 'Webb', exact: true })
+      .click();
+    await expect(
+      page.getByText('Cargando Webb · NIRCam desde ESA… SPHEREx sigue disponible.'),
+    ).toBeVisible();
+    await page.clock.fastForward(31000);
+    await expect(page.getByRole('alert')).toContainText('ESA tardó demasiado');
+    await expect(page.getByRole('button', { name: 'Reintentar comparación' })).toBeVisible();
+    await expect(sky).toHaveAttribute('data-ready', 'true');
+  } finally {
+    release();
+  }
+});
 test('HiPS telescopes share a single camera, offer both layouts and preserve the base on failure', async ({
   page,
 }) => {

@@ -2,6 +2,8 @@ import type { SkySource } from '../shared';
 
 export { demoEpochs } from './demoEpochs';
 export { TelescopeComparison } from './TelescopeComparison';
+export { StudyPanel } from './StudyPanel';
+export { StudyMarkers } from './StudyMarkers';
 export { CoordinatesPanel } from './coordinates/CoordinatesPanel';
 export { spherexSource, loadSurveyMetadata } from './spherex';
 export { ObservationsPanel } from './ObservationsPanel';

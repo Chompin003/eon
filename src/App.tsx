@@ -3,6 +3,8 @@ import {
   CoordinatesPanel,
   ObservationsPanel,
   TelescopeComparison,
+  StudyPanel,
+  StudyMarkers,
   loadSurveyMetadata,
   spherexSource,
 } from './data';
@@ -19,6 +21,8 @@ import {
   type SkyRegion,
   readLocation,
   ARCHIVE_SURVEYS,
+  type RegionStudy,
+  type StudyObject,
 } from './shared';
 import { SkyViewer } from './viewer';
 import { ExplorerLayout } from './ui';
@@ -37,6 +41,9 @@ export function App() {
 function ExplorerApp() {
   const [initial] = useState(() => readLocation(new URL(location.href)));
   const [restoring, setRestoring] = useState(Boolean(initial?.exposure));
+  const [study, setStudy] = useState<RegionStudy>();
+  const [showStudy, setShowStudy] = useState(true);
+  const [selectedObject, setSelectedObject] = useState<StudyObject>();
   const paint = usePaintSession();
   const [comparisonSource, setComparisonSource] = useState<ArchiveHiPSSource | undefined>(() =>
     ARCHIVE_SURVEYS.find((s) => s.id === initial?.telescope),
@@ -169,6 +176,20 @@ function ExplorerApp() {
       overlay={overlay}
       onOverlayChange={setOverlay}
       showingObservation={Boolean(observationSource)}
+      studyTools={
+        <StudyPanel
+          date={observationSource?.dateUtc}
+          region={observationSource?.sequence?.region ?? region}
+          view={view}
+          onViewChange={updateView}
+          result={study}
+          visible={showStudy}
+          onVisibleChange={setShowStudy}
+          onResult={setStudy}
+          selected={selectedObject}
+          onSelected={setSelectedObject}
+        />
+      }
       shareTools={
         <div className="control-section">
           <button className="plain-button" onClick={() => void share.copy()}>
@@ -249,7 +270,18 @@ function ExplorerApp() {
           layers={CHECKERBOARD_LAYERS}
           onViewChange={updateView}
           renderAnnotations={(projection) => (
-            <PaintSurface session={paint} projection={projection} />
+            <>
+              <PaintSurface session={paint} projection={projection} />
+              {study && showStudy && (
+                <StudyMarkers
+                  result={study}
+                  projection={projection}
+                  date={observationSource?.dateUtc}
+                  selected={selectedObject?.id}
+                  onSelect={setSelectedObject}
+                />
+              )}
+            </>
           )}
         />
       ) : dataError ? (

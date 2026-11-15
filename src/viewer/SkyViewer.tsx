@@ -47,6 +47,17 @@ export function SkyViewer(props: Props) {
   const twoPanes = comparison ? !overlayComparison : mode === 'split';
   const bufferedComparison = mode === 'split' && !comparison;
   const sequence = props.source.kind === 'fits' ? props.source.sequence : undefined;
+  const archiveRegionView = useMemo(
+    () =>
+      sequence?.region
+        ? {
+            longitude: sequence.region.longitude,
+            latitude: sequence.region.latitude,
+            fov: sequence.region.sizeDeg,
+          }
+        : undefined,
+    [sequence?.region],
+  );
   const bufferKey = `${sequence?.id ?? ''}:${sequence?.attempt ?? 0}`;
   const buffer = useMemo(
     () => (sequence && !sequence.region ? new FrameBuffer(sequence.frames) : undefined),
@@ -143,17 +154,10 @@ export function SkyViewer(props: Props) {
               mode="mono"
               selectingRegion={false}
               renderAnnotations={overlayComparison ? undefined : props.renderAnnotations}
+              onReadyChange={undefined}
               projectionType={overlayComparison ? 'TAN' : undefined}
-              view={
-                overlayComparison
-                  ? {
-                      longitude: sequence.region.longitude,
-                      latitude: sequence.region.latitude,
-                      fov: sequence.region.sizeDeg,
-                    }
-                  : props.view
-              }
-              onViewChange={overlayComparison ? () => {} : props.onViewChange}
+              view={overlayComparison ? archiveRegionView! : props.view}
+              onViewChange={overlayComparison ? ignoreView : props.onViewChange}
             />
           ) : undefined
         }
@@ -217,6 +221,8 @@ export function SkyViewer(props: Props) {
   );
 }
 
+const ignoreView = () => {};
+
 function HiPSViewer({
   source,
   view,
@@ -266,13 +272,29 @@ function HiPSViewer({
   const [covered, setCovered] = useState<boolean>();
   const [coverageError, setCoverageError] = useState(false);
   const [comparisonError, setComparisonError] = useState('');
+  const [loadedComparison, setLoadedComparison] = useState('');
   useEffect(() => {
     setCovered(undefined);
     setCoverageError(false);
     setComparisonError('');
+    setLoadedComparison('');
   }, [overlayComparison?.id]);
   const archive = source.kind === 'archive-hips';
   const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    if (
+      !overlayComparison ||
+      !connected ||
+      comparisonError ||
+      loadedComparison === overlayComparison.id
+    )
+      return;
+    const timeout = setTimeout(
+      () => setComparisonError('ESA tardó demasiado en responder. Reintenta la comparación.'),
+      30000,
+    );
+    return () => clearTimeout(timeout);
+  }, [overlayComparison?.id, connected, loadedComparison, attempt, comparisonError]);
 
   useEffect(() => {
     current.current = {
@@ -428,7 +450,11 @@ function HiPSViewer({
       ) {
         setCovered(typeof message.covered === 'boolean' ? message.covered : undefined);
         setCoverageError(message.covered === null);
-        setComparisonError(typeof message.error === 'string' ? message.error : '');
+        if (typeof message.error === 'string') setComparisonError(message.error);
+        else if (message.loaded === true) {
+          setLoadedComparison(message.id);
+          setComparisonError('');
+        }
       } else if (message.type === 'sky:escape') {
         window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
       }
@@ -476,9 +502,27 @@ function HiPSViewer({
       )}
       {overlayComparison && comparisonError && (
         <div className="coverage-notice" role="alert">
-          {comparisonError} SPHEREx sigue disponible.
+          {comparisonError} SPHEREx sigue disponible.{' '}
+          <button
+            className="plain-button"
+            onClick={() => {
+              setComparisonError('');
+              setLoadedComparison('');
+              setAttempt((n) => n + 1);
+            }}
+          >
+            Reintentar comparación
+          </button>
         </div>
       )}
+      {overlayComparison &&
+        connected &&
+        loadedComparison !== overlayComparison.id &&
+        !comparisonError && (
+          <div className="coverage-notice" role="status">
+            Cargando {overlayComparison.title} desde ESA… SPHEREx sigue disponible.
+          </div>
+        )}
       {!connected && !error && (
         <div className="viewer-loading" role="status">
           {archive ? `Conectando con ${source.title} / ESA…` : 'Conectando con SPHEREx / IRSA…'}

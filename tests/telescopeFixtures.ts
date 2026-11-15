@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import type { Page } from '@playwright/test';
-import { installArchiveFixtures } from './archiveFixtures';
+import { installArchiveFixtures } from './archiveFixtures.ts';
 
 /** Recorded ESA metadata/MOCs and one real M74 tile per instrument.
  * Repeated tiles are UI fixtures only, never runtime fallbacks or science validation.

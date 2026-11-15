@@ -10,6 +10,16 @@ const browser = await chromium.launch({
 try {
   const page = await browser.newPage({ viewport: { width: 900, height: 650 } });
   if (!live) await installArchiveFixtures(page);
+  if (process.env.EON_MEASURE_STUDY === '1')
+    await page.route('**/api/catalog?**', (route) => {
+      const provider = new URL(route.request().url()).searchParams.get('provider');
+      return route.fulfill({
+        body: readFileSync(
+          `tests/fixtures/spherex/${provider === 'gaia' ? 'gaia-dr3-region.xml' : 'simbad-region.json'}`,
+        ),
+        contentType: provider === 'gaia' ? 'application/x-votable+xml' : 'application/json',
+      });
+    });
   if (process.env.EON_METADATA)
     await page.route('**/api/observations?**', (route) =>
       route.fulfill({
@@ -70,6 +80,10 @@ try {
     )
     .toBe('true');
   const preparedAt = await page.evaluate(() => performance.now());
+  if (process.env.EON_MEASURE_STUDY === '1') {
+    await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
+    await expect(page.getByTestId('study-count')).toBeVisible();
+  }
   const firstFrame = await page.evaluate(() => window.__regionFrames[0]);
   const total = Number(await progress.getAttribute('data-total')),
     ready = Number(await progress.getAttribute('data-prepared')),
@@ -110,6 +124,7 @@ try {
     playbackCutoutRequests: cutouts - before.cutouts,
     playbackDocumentNavigations: navigations - before.navigations,
     remainingWebGLPanes: await page.locator('iframe').count(),
+    studyMarkers: await page.locator('.study-markers [data-object-id]').count(),
   };
   writeFileSync(
     process.env.EON_REPORT ?? 'data-cache/region-performance.json',

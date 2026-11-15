@@ -1,0 +1,28 @@
+{
+  "retrieved": "2026-11-15",
+  "coordinate_frame": "ICRS",
+  "center": {
+    "ra": 60.8109955,
+    "dec": 51.3404038
+  },
+  "gaia": {
+    "provider": "ESA Gaia DR3 via NASA/IPAC IRSA Gator",
+    "radius_arcsec": 150,
+    "catalog": "gaia_dr3_source",
+    "reference_epoch": 2016
+  },
+  "simbad": {
+    "provider": "CDS SIMBAD Harvard official mirror",
+    "radius_deg": 0.071,
+    "reference_epoch": 2000
+  },
+  "files": {
+    "gaia-dr3-region.xml": {
+      "sha256": "cb9deb77e4581c303051d7ed85723d36403895f93b7d0055077dd56334f82c63"
+    },
+    "simbad-region.json": {
+      "sha256": "83f9bfebd6083cea63fe69567d5d8a0a8120cb33bed41a5ed2f6f7d9269b6e5a"
+    }
+  },
+  "notes": "Catalog entries are not detections in the FITS. Provider rows can refer to the same object. Gaia DSC probabilities are published pretrained-model outputs."
+}
