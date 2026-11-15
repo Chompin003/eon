@@ -9,7 +9,8 @@ import {
   type SkyRegion,
 } from '../../shared';
 import { formatSexagesimal } from '../coordinates/convert';
-import { buildInterpretation, countText, exportInterpretation, interpretGroup } from './engine';
+import { buildInterpretation, countText, interpretGroup } from './engine';
+import { createShareReport } from './share';
 import './report.css';
 
 interface Props {
@@ -79,19 +80,32 @@ export function RegionReport({
     (f) =>
       !['instrument-quality', 'spectral-comparability', 'motion-not-measured'].includes(f.rule),
   );
-  const download = () => {
+  const download = (format: 'json' | 'txt' | 'html') => {
     setExportError('');
     try {
-      const data = {
+      const data = createShareReport(report, {
         createdAtUtc: new Date().toISOString(),
-        ...exportInterpretation(report, selected),
-      };
+        origin: window.location.origin,
+        selected,
+      });
+      const content =
+        format === 'json'
+          ? JSON.stringify(data.snapshot, null, 2)
+          : format === 'txt'
+            ? data.text
+            : data.html;
       const url = URL.createObjectURL(
-        new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }),
+        new Blob([content], {
+          type: {
+            json: 'application/json',
+            txt: 'text/plain;charset=utf-8',
+            html: 'text/html;charset=utf-8',
+          }[format],
+        }),
       );
       const link = document.createElement('a');
       link.href = url;
-      link.download = exportFilename(region).replace(/\.png$/, '_informe.json');
+      link.download = exportFilename(report.region).replace(/\.png$/, `_informe.${format}`);
       link.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch {
@@ -390,7 +404,54 @@ export function RegionReport({
           Método científico de referencia · IRSA
         </a>
       </details>
-      <button className="plain-button" disabled={report.mode === 'unavailable'} onClick={download}>
+      <details className="report-details report-share">
+        <summary>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            aria-hidden="true"
+          >
+            <path d="M12 16V3m-5 5 5-5 5 5M5 14v6h14v-6" />
+          </svg>{' '}
+          Compartir informe
+        </summary>
+        <p>
+          Texto para leer, HTML para imprimir o guardar como PDF, y JSON con las tablas y mediciones
+          completas. Incluyen coordenadas y pasos para repetir el análisis.
+        </p>
+        <div className="report-share-actions">
+          <button
+            className="plain-button"
+            disabled={report.mode === 'unavailable'}
+            onClick={() => download('txt')}
+          >
+            Descargar informe TXT
+          </button>
+          <button
+            className="plain-button"
+            disabled={report.mode === 'unavailable'}
+            onClick={() => download('html')}
+          >
+            Descargar informe HTML / PDF
+          </button>
+        </div>
+        <p>
+          Para PDF: abre el HTML descargado → menú del navegador → Imprimir → Guardar como PDF.
+          Comparte también el JSON para conservar los catálogos usados.
+        </p>
+        <a href="/docs/eon-metodo-e-interpretacion.pdf" target="_blank" rel="noreferrer">
+          Cómo funciona la interpretación · guía PDF
+        </a>
+      </details>
+      <button
+        className="plain-button"
+        disabled={report.mode === 'unavailable'}
+        onClick={() => download('json')}
+      >
         Descargar informe JSON
       </button>
       {exportError && <p role="alert">{exportError}</p>}

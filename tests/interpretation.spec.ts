@@ -55,6 +55,9 @@ test('real FITS evidence produces a traceable report and reviewing it adds no ar
     multiDateGroups: 1,
   });
   expect(json.selectedGroup.measurements).toBe(3);
+  expect(json.groupReports).toHaveLength(json.counts.groups);
+  expect(json.groupMeasurements).toHaveLength(json.counts.detections);
+  expect(json.groupReports.flatMap((g: { evidence: unknown[] }) => g.evidence)).toHaveLength(21);
   expect(json.catalog.records).toHaveLength(json.catalog.entries);
   expect(json.limits).toMatchObject({
     physicalMotion: 'not-evaluated',
@@ -67,6 +70,36 @@ test('real FITS evidence produces a traceable report and reviewing it adds no ar
       f.archiveUrl.startsWith('https://irsa.ipac.caltech.edu/ibe/data/spherex/'),
     ),
   ).toBe(true);
+  await report.getByText('Compartir informe', { exact: true }).click();
+  for (const format of ['TXT', 'HTML / PDF']) {
+    const pending = page.waitForEvent('download');
+    await report.getByRole('button', { name: `Descargar informe ${format}`, exact: true }).click();
+    const download = await pending;
+    const content = readFileSync((await download.path())!, 'utf8');
+    expect(download.suggestedFilename()).toContain(
+      'J2000_RA04h03m14.64s_Dec+51d20m25.45s_informe.',
+    );
+    expect(content).toContain('21 detecciones retenidas');
+    expect(content).toContain('Umbral SEP: 5');
+    expect(content).toContain('Instrucciones de reproducción');
+    expect(content).toContain('No restaura el informe');
+    expect(content).toContain('epoch-0.fits');
+    expect(content).toContain('SIN EVALUAR');
+    expect(content).toContain('Grupo D0019');
+    if (format === 'HTML / PDF') {
+      const offline = await page.context().newPage();
+      await offline.route('**/*', (r) => r.abort());
+      await offline.setContent(content);
+      await expect(
+        offline.getByRole('heading', {
+          name: 'eon · Informe de interpretación de región',
+          exact: true,
+        }),
+      ).toBeVisible();
+      await expect(offline.locator('script,img,iframe')).toHaveCount(0);
+      await offline.close();
+    }
+  }
   const sourceReport = page.getByTestId('source-interpretation');
   await sourceReport.locator('summary').click();
   await sourceReport
