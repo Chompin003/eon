@@ -1,3 +1,4 @@
+import { openControls } from './controlMenus';
 import { expect, test } from '@playwright/test';
 import { installArchiveFixtures, provenance } from './archiveFixtures';
 
@@ -20,7 +21,7 @@ test('real HiPS source has deep zoom, keyboard navigation and exact HMS/DMS targ
   await expect(sky).toHaveAttribute('data-ready', 'true');
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.getByRole('button')).toHaveCount(1);
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await expect(page.getByTestId('control-fov')).toHaveText('10.00°');
   const slider = page.getByRole('slider', { name: 'Zoom', exact: true });
   await slider.press('End');
@@ -55,7 +56,7 @@ test('two spectra support monochrome overlay, color and synchronized split panes
   page,
 }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await expect(page.locator('#spectral-channel option')).toHaveCount(100);
   await expect(page.locator('#spectral-channel option[value="50"]')).toHaveCount(0);
   await page.getByLabel('Superponer A y B en blanco y negro').check();
@@ -87,7 +88,7 @@ test('actual FITS epochs show their year, preserve WCS and survive closing the p
   page,
 }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Buscar exposiciones aquí' }).click();
   await expect(page.getByTestId('observation-year')).toHaveText('2025');
   await expect(page.getByTestId('epoch-date')).toContainText('2025-08-22');
@@ -108,7 +109,7 @@ test('actual FITS epochs show their year, preserve WCS and survive closing the p
   await expect(sky).toHaveAttribute('data-source', 'fits');
   await expect(page.getByTestId('epoch-date')).toContainText('2026-09-02');
   await page.getByRole('button', { name: 'Cerrar controles' }).click();
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await expect(page.getByTestId('observation-year')).toHaveText('2026');
   await page.getByRole('slider', { name: 'Intervalo entre fechas' }).press('Home');
   await expect(page.getByTestId('interval')).toHaveText('100 ms');
@@ -121,7 +122,7 @@ test('actual FITS epochs show their year, preserve WCS and survive closing the p
 
 test('tool window moves, resizes and remains reachable on a small screen', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   const panel = page.getByRole('dialog', { name: 'Controles del visor' });
   const original = (await panel.boundingBox())!;
   const handle = (await page

@@ -1,3 +1,4 @@
+import { openControls } from './controlMenus';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { installArchiveFixtures } from './archiveFixtures';
@@ -19,7 +20,7 @@ test('real catalog classes are explicit, missing astrometry stays unknown and ma
   await page.goto('/?ra=60.8109955&dec=51.3404038&fov=.1&size=.1');
   const sky = page.getByTitle('Cielo SPHEREx').contentFrame().locator('#sky');
   await expect(sky).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
   await expect(page.getByTestId('study-count')).toContainText('entradas catalogadas');
   const marks = page.locator('.study-markers [data-object-id]');
@@ -44,7 +45,7 @@ test('a failed catalog stays explicit while the other provider remains useful', 
     return route.fallback();
   });
   await page.goto('/?ra=60.8109955&dec=51.3404038&fov=.1&size=.1');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText('Gaia DR3 no está disponible');
   await expect(page.getByTestId('study-count')).toContainText('entradas catalogadas');
@@ -62,7 +63,7 @@ test('catalog marks stay with a changing epoch and never turn playback into netw
   );
   const canvas = page.locator('.region-canvas');
   await expect(canvas).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
   await expect(page.getByTestId('study-count')).toBeVisible();
   const marker = page.locator('.study-markers [data-provider="Gaia DR3"]').first();

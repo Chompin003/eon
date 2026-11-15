@@ -1,3 +1,4 @@
+import { openControls } from './controlMenus';
 import { test, expect } from '@playwright/test';
 import { installTelescopeFixtures } from './telescopeFixtures';
 import { regionGrid, gridCamera } from '../src/viewer/tangent';
@@ -17,7 +18,7 @@ test('a temporal archive failure can be retried through the non-interactive over
   );
   const canvas = page.locator('.region-canvas');
   await expect(canvas).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page
     .getByRole('group', { name: 'Telescopio de comparación' })
     .getByRole('button', { name: 'Webb', exact: true })
@@ -49,7 +50,7 @@ test('an unresponsive archive times out explicitly without blocking SPHEREx', as
   });
   await page.clock.install();
   try {
-    await page.getByRole('button', { name: 'Mostrar controles' }).click();
+    await openControls(page);
     await page
       .getByRole('group', { name: 'Telescopio de comparación' })
       .getByRole('button', { name: 'Webb', exact: true })
@@ -71,7 +72,7 @@ test('HiPS telescopes share a single camera, offer both layouts and preserve the
   page,
 }) => {
   await page.goto('/?ra=24.173958&dec=15.783667&fov=.14');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page
     .getByRole('group', { name: 'Telescopio de comparación' })
     .getByRole('button', { name: 'Webb', exact: true })
@@ -104,7 +105,7 @@ test('archive TAN stays registered with the temporal grid while dates, pan and z
   );
   const canvas = page.locator('.region-canvas');
   await expect(canvas).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page
     .getByRole('group', { name: 'Telescopio de comparación' })
     .getByRole('button', { name: 'Webb', exact: true })

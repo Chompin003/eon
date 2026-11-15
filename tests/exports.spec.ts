@@ -1,3 +1,4 @@
+import { openControls } from './controlMenus';
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 import { installArchiveFixtures } from './archiveFixtures';
@@ -8,7 +9,7 @@ async function openExample(page: Page) {
   await page.route('https://**/*', (r) => r.abort());
   await page.goto(example);
   await expect(page.locator('.region-canvas')).toHaveAttribute('data-ready', 'true');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await expect(page.getByTestId('buffer-progress')).toHaveAttribute('data-ready', 'true');
 }
 async function download(page: Page, format: 'PNG' | 'GIF', info: TestInfo, label = 'export') {
@@ -80,7 +81,7 @@ test('PNG exports real space without controls, then annotations with transparenc
   await page.mouse.move(1000, 500, { steps: 20 });
   await page.mouse.up();
   await expect(page.locator('.study-annotations')).toHaveAttribute('data-annotation-count', '1');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Borrador parcial', exact: true }).click();
   await page.getByRole('slider', { name: 'Grosor', exact: true }).fill('50');
   await page.getByRole('button', { name: 'Cerrar controles' }).click();
@@ -89,7 +90,7 @@ test('PNG exports real space without controls, then annotations with transparenc
   await page.mouse.move(800, 550, { steps: 10 });
   await page.mouse.up();
   await expect(page.locator('.study-annotations mask')).toHaveCount(1);
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByLabel('Imagen del espacio', { exact: true }).uncheck();
   await page.getByLabel('Anotaciones', { exact: true }).check();
   const annotation = await download(page, 'PNG', info, 'annotations');
@@ -238,7 +239,7 @@ test('HiPS PNG uses the real Aladin export API and split panes are composed', as
   await installArchiveFixtures(page);
   await page.goto('/');
   await expect(page.locator('.sky-canvas').first()).toHaveAttribute('data-connected', 'true');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   const file = await download(page, 'PNG', info, 'hips');
   const stats = await pngPixels(page, file.bytes);
   expect(stats.width).toBeGreaterThan(stats.height);

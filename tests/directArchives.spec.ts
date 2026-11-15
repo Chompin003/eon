@@ -1,3 +1,4 @@
+import { openControls } from './controlMenus';
 import { expect, test } from '@playwright/test';
 import { installTelescopeFixtures } from './telescopeFixtures';
 
@@ -11,7 +12,7 @@ test('Florida layers use direct tiles without Cloudflare or ESA and keep the sam
   const requests: string[] = [];
   page.on('request', (request) => requests.push(request.url()));
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page
     .getByRole('group', { name: 'Telescopio de comparación' })
     .getByRole('button', { name: 'Webb', exact: true })
@@ -41,7 +42,7 @@ test('HLA searches explicitly; its bounded cutout is reused during pan and resto
     if (r.url().includes('fitscut.cgi')) fitsRequests.push(r.url());
   });
   await page.goto('/?ra=180.471267&dec=-18.882101&fov=.015');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page
     .getByRole('group', { name: 'Telescopio de comparación' })
     .getByRole('button', { name: 'Hubble', exact: true })
@@ -73,7 +74,7 @@ test('HLA searches explicitly; its bounded cutout is reused during pan and resto
 
 test('verified fields can be found on the sphere and opened directly', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByText('Explorar campos observados', { exact: true }).click();
   await page.getByRole('button', { name: 'Ver campos en la esfera' }).click();
   await page.getByRole('button', { name: 'Ocultar controles' }).click();
