@@ -25,6 +25,15 @@ export function RegionSelector({
   const [, refresh] = useState(0);
   useEffect(() => projection.subscribe(() => refresh((n) => n + 1)), [projection]);
   const [width, height] = projection.getSize();
+  // The iframe applies navigation asynchronously. Do not measure the old zoom
+  // if a selection is confirmed before the new projection has arrived.
+  const actualView = projection.getView();
+  const selectionReady =
+    width > 1 &&
+    height > 1 &&
+    Math.abs(((actualView.longitude - view.longitude + 540) % 360) - 180) < 1e-6 &&
+    Math.abs(actualView.latitude - view.latitude) < 1e-6 &&
+    Math.abs(actualView.fov - view.fov) < Math.max(1e-8, view.fov * 1e-5);
   const centered = {
     x: width / 2 - Math.min(width, height) * 0.15,
     y: height / 2 - Math.min(width, height) * 0.15,
@@ -35,6 +44,7 @@ export function RegionSelector({
     host.current?.focus({ preventScroll: true });
   }, []);
   function commit(candidate: Box) {
+    if (!selectionReady) return;
     const center = projection.pixelToWorld(
       candidate.x + candidate.side / 2,
       candidate.y + candidate.side / 2,
@@ -63,10 +73,11 @@ export function RegionSelector({
       className="region-selector"
       role="application"
       aria-label="Seleccionar región del cielo"
+      aria-busy={!selectionReady}
       ref={host}
       tabIndex={0}
       onPointerDown={(event) => {
-        if (event.button !== 0 || event.target !== event.currentTarget) return;
+        if (!selectionReady || event.button !== 0 || event.target !== event.currentTarget) return;
         const r = event.currentTarget.getBoundingClientRect();
         start.current = { x: event.clientX - r.left, y: event.clientY - r.top };
         setError('');
@@ -127,10 +138,12 @@ export function RegionSelector({
       />
       <div className="region-selection-help">
         <span>
-          {error ||
-            'Arrastra un cuadrado · rueda para zoom · Enter para confirmar · Esc para cancelar'}
+          {!selectionReady
+            ? 'Preparando la selección…'
+            : error ||
+              'Arrastra un cuadrado · rueda para zoom · Enter para confirmar · Esc para cancelar'}
         </span>
-        <button className="plain-button" onClick={() => commit(shown)}>
+        <button className="plain-button" disabled={!selectionReady} onClick={() => commit(shown)}>
           Usar esta región
         </button>
         <button className="plain-button" onClick={onCancel}>

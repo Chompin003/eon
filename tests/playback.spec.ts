@@ -218,6 +218,8 @@ test.describe('mobile region navigation', () => {
     await expect(page.getByTestId('control-fov')).toHaveText('10.00°');
     await page.getByRole('button', { name: 'Seleccionar región', exact: true }).click();
     selection = page.getByRole('application', { name: 'Seleccionar región del cielo' });
+    await expect(selection).toHaveAttribute('aria-busy', 'false');
+    await expect(page.getByRole('button', { name: 'Usar esta región' })).toBeEnabled();
     await selection.press('Enter');
     await expect(selection).toHaveCount(0);
     await page.getByRole('button', { name: 'Buscar exposiciones aquí' }).click();
