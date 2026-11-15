@@ -1,0 +1,49 @@
+{
+  "dataset": "ngc1491-example",
+  "label": "NGC 1491 \u00b7 tres exposiciones SPHEREx reales guardadas",
+  "capturedAt": "2026-11-15",
+  "region": {
+    "longitude": 60.8109955,
+    "latitude": 51.3404038,
+    "sizeDeg": 0.1
+  },
+  "frames": [
+    {
+      "id": "2025W34_2B_0099_1:SPHEREx-D4",
+      "dateUtc": "2025-08-22T00:38:48.048Z",
+      "mjd": 60909.026945,
+      "file": "epoch-0.fits",
+      "originalUrl": "https://irsa.ipac.caltech.edu/ibe/data/spherex/dr1/level2/2025W34_2B/l2b-v27-2026-229/4/level2_2025W34_2B_0099_1D4_spx_l2b-v27-2026-229.fits",
+      "sha256": "4a0b079e22146595bf8064c4e94b75d96da295f093220033a953dd6d9de3dcd8"
+    },
+    {
+      "id": "2026W07_2A_0374_3:SPHEREx-D4",
+      "dateUtc": "2026-02-14T11:18:16.992Z",
+      "mjd": 61085.47103,
+      "file": "epoch-1.fits",
+      "originalUrl": "https://irsa.ipac.caltech.edu/ibe/data/spherex/dr1/level2/2026W07_2A/l2b-v27-2026-226/4/level2_2026W07_2A_0374_3D4_spx_l2b-v27-2026-226.fits",
+      "sha256": "c20ef18a321aca31fdb72128ac96067b23cd4d790957d7823860a7778126d134"
+    },
+    {
+      "id": "2026W36_1A_0557_1:SPHEREx-D4",
+      "dateUtc": "2026-09-02T10:36:30.700Z",
+      "mjd": 61285.442022,
+      "file": "epoch-2.fits",
+      "originalUrl": "https://irsa.ipac.caltech.edu/ibe/data/spherex/qr3/level2/2026W36_1A/l2b-v27-2026-252/4/level2_2026W36_1A_0557_1D4_spx_l2b-v27-2026-252.fits",
+      "sha256": "3f7a22a56ef2ca6e54131dfdba944124caf5779e23b81a2fd54e0a8ff9e118c3"
+    }
+  ],
+  "catalogs": [
+    {
+      "provider": "Gaia DR3 via IRSA Gator",
+      "file": "gaia.xml",
+      "sha256": "41b95dc4d010de230d631ff1989a01c330eaeb25e1611475f01955ff388c70f4"
+    },
+    {
+      "provider": "CDS SIMBAD via official Harvard mirror",
+      "file": "simbad.json",
+      "sha256": "83f9bfebd6083cea63fe69567d5d8a0a8120cb33bed41a5ed2f6f7d9269b6e5a"
+    }
+  ],
+  "notes": "Recorded real data, explicitly selected as an example. Not a live archive query or fallback. IMAGE pixels and WCS/SIP preserved; no per-source wavelength table supplied."
+}

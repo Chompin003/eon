@@ -33,6 +33,7 @@ Lee este archivo y `docs/COLABORACION.md` antes de editar. Estas reglas aplican 
 - Los canales espectrales del mosaico no son fechas. Las fechas individuales vienen de `t_min` (MJD UTC) de SIA; `DATE` del FITS puede ser procesamiento. Las exposiciones de un detector pueden tener longitudes de onda distintas.
 - `functions/api` consulta únicamente IRSA y el espejo oficial Harvard de CDS SIMBAD. Los catálogos usan orígenes fijos, regiones de hasta 0.25° y respuestas limitadas; nunca aceptan SQL ni URLs arbitrarios del cliente. Los recortes FITS sirven únicamente IMAGE; `server` contiene helpers compartidos del backend. Conserva la WCS/SIP y los píxeles originales. Gaia DSC aporta probabilidades publicadas, no un modelo entrenado por eon ni una precisión validada sobre SPHEREx; no confundas marcas de catálogo con detecciones en los píxeles.
 - Mantén soporte mouse, teclado y táctil, accesibilidad y diseño responsivo.
+- La detección de píxeles usa SEP 1.4.1/WASM en un Worker cancelable sobre IMAGE original, nunca sobre la cuadrícula interpolada de pantalla. Conserva candidaturas ambiguas/desconocidas, banderas SEP y límites de fotometría. No interpretes enlaces posicionales como movimiento físico ni distintas bandas como curva de luz. El ejemplo NGC 1491 contiene tres exposiciones reales con manifiesto; se abre solo explícitamente, nunca como fallback de un error. Mantén el origen FITS acotado a `/api/cutout` y a sus tres rutas estáticas conocidas.
 
 ## Verificación y entrega
 

@@ -7,9 +7,28 @@ import {
   type SkyRegion,
   type StudyObject,
   type ViewState,
+  type FITSSource,
+  type PixelStudy,
+  type PixelStudyRequest,
+  type PixelProgress,
 } from '../shared';
 import { studyRegion } from './study';
+import { PixelResults } from './PixelResults';
 interface Props {
+  onOpenExample: () => void;
+  imageSource?: FITSSource;
+  analyzePixels: (
+    request: PixelStudyRequest,
+    signal: AbortSignal,
+    onProgress: (progress: PixelProgress) => void,
+  ) => Promise<PixelStudy>;
+  pixelStudy?: PixelStudy;
+  onPixelStudy: (study: PixelStudy) => void;
+  selectedTrack?: string;
+  onTrackSelected: (id: string) => void;
+  showPixels: boolean;
+  onShowPixels: (show: boolean) => void;
+  onFrame: (id: string) => void;
   date?: string;
   region?: SkyRegion;
   view: ViewState;
@@ -25,7 +44,14 @@ export function StudyPanel(props: Props) {
   const [loading, setLoading] = useState(false),
     [error, setError] = useState('');
   const abort = useRef<AbortController | undefined>(undefined);
+  const [threshold, setThreshold] = useState(5),
+    [progress, setProgress] = useState<PixelProgress>();
   useEffect(() => () => abort.current?.abort(), []);
+  useEffect(() => {
+    abort.current?.abort();
+    setLoading(false);
+    setProgress(undefined);
+  }, [props.imageSource?.sequence?.id]);
   async function run() {
     abort.current?.abort();
     const controller = new AbortController();
@@ -39,10 +65,31 @@ export function StudyPanel(props: Props) {
       sizeDeg: Math.max(0.02, Math.min(0.25, props.view.fov)),
     };
     try {
-      const result = await studyRegion(region, controller.signal);
+      const result = await studyRegion(region, controller.signal, props.imageSource?.dataset);
       if (!controller.signal.aborted) {
         props.onResult(result);
         props.onVisibleChange(true);
+        const image = props.imageSource;
+        if (image?.sequence?.region) {
+          const measured = await props.analyzePixels(
+            {
+              frames: image.sequence.frames,
+              dataset: image.dataset,
+              catalogQueriedAt: result.queriedAt,
+              activeFrameId: image.id,
+              region: image.sequence.region,
+              catalog: result.objects,
+              threshold,
+            },
+            controller.signal,
+            setProgress,
+          );
+          if (!controller.signal.aborted) {
+            props.onPixelStudy(measured);
+            props.onShowPixels(true);
+            props.onVisibleChange(false);
+          }
+        }
       }
     } catch (problem) {
       if (!controller.signal.aborted)
@@ -60,7 +107,7 @@ export function StudyPanel(props: Props) {
         <span>Gaia · SIMBAD</span>
       </div>
       <button className="plain-button" disabled={loading} onClick={() => void run()}>
-        {loading ? 'Consultando catálogos…' : 'Interpretar región'}
+        {loading ? (progress?.message ?? 'Consultando catálogos…') : 'Interpretar región'}
       </button>
       {loading && (
         <button
@@ -74,10 +121,48 @@ export function StudyPanel(props: Props) {
         </button>
       )}
       <p className="survey-details">
-        Usa la región seleccionada o un cuadrado de hasta 15′ en el centro actual. Gaia aporta
-        clases de un modelo ya entrenado; SIMBAD aporta tipos catalogados.
+        {props.imageSource?.sequence?.region
+          ? 'Detecta fuentes en los FITS originales, cruza los catálogos y mide cada exposición sin bloquear el visor.'
+          : 'Consulta catálogos en la región. Para analizar píxeles y fechas, activa primero las exposiciones de esa región.'}
       </p>
+      <button className="text-button" disabled={loading} onClick={props.onOpenExample}>
+        Abrir ejemplo real · NGC 1491
+      </button>
+      {props.imageSource?.sequence?.region && (
+        <>
+          <label htmlFor="pixel-threshold">Umbral de detección · {threshold}σ</label>
+          <input
+            id="pixel-threshold"
+            aria-label="Umbral de detección"
+            type="range"
+            min="3"
+            max="10"
+            step=".5"
+            value={threshold}
+            disabled={loading}
+            onChange={(e) => setThreshold(Number(e.target.value))}
+          />
+        </>
+      )}
+      {loading && progress && (
+        <progress
+          aria-label="Avance del análisis"
+          value={progress.completed}
+          max={progress.total}
+        />
+      )}
       {error && <p role="alert">{error}</p>}
+      {props.pixelStudy && (
+        <PixelResults
+          result={props.pixelStudy}
+          source={props.imageSource}
+          selected={props.selectedTrack}
+          onSelected={props.onTrackSelected}
+          visible={props.showPixels}
+          onVisible={props.onShowPixels}
+          onFrame={props.onFrame}
+        />
+      )}
       {result && (
         <>
           <p className="survey-details" data-testid="study-count">

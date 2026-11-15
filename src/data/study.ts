@@ -158,7 +158,11 @@ export function parseSimbad(text: string): { objects: StudyObject[]; truncated: 
   }
   return { objects, truncated: data.data.length > 1000 };
 }
-export async function studyRegion(region: SkyRegion, signal: AbortSignal): Promise<RegionStudy> {
+export async function studyRegion(
+  region: SkyRegion,
+  signal: AbortSignal,
+  dataset?: 'ngc1491-example',
+): Promise<RegionStudy> {
   const errors: string[] = [];
   let truncated = false;
   const parts = await Promise.all(
@@ -170,9 +174,14 @@ export async function studyRegion(region: SkyRegion, signal: AbortSignal): Promi
           dec: region.latitude.toFixed(9),
           size: region.sizeDeg.toFixed(6),
         });
-        const response = await fetch('/api/catalog?' + query, {
-          signal: AbortSignal.any([signal, AbortSignal.timeout(35000)]),
-        });
+        const response = await fetch(
+          dataset === 'ngc1491-example'
+            ? '/examples/spherex/' + (provider === 'gaia' ? 'gaia.xml' : 'simbad.json')
+            : '/api/catalog?' + query,
+          {
+            signal: AbortSignal.any([signal, AbortSignal.timeout(35000)]),
+          },
+        );
         if (!response.ok)
           throw Error(
             `${provider === 'gaia' ? 'Gaia DR3' : 'SIMBAD'} no está disponible; reintenta o reduce la región.`,
