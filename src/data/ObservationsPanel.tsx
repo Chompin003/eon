@@ -304,7 +304,9 @@ export function ObservationsPanel({
             {enabled
               ? imageReady
                 ? 'Imagen visible'
-                : 'Cargando esta exposición…'
+                : readyIds.includes(active.id)
+                  ? 'Cuadro preparado'
+                  : 'Cargando esta exposición…'
               : 'Exposición seleccionada'}{' '}
             · {active.collection} · {index + 1}/{matching.length}
           </p>

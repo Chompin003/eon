@@ -132,6 +132,14 @@ export function RegionCanvas(props: Props) {
         }
       }
       const camera = gridCamera(grid, view);
+      if (
+        !camera ||
+        camera.center[0] + camera.span / 2 <= 0 ||
+        camera.center[0] - camera.span / 2 >= grid.size ||
+        camera.center[1] + camera.span / 2 <= 0 ||
+        camera.center[1] - camera.span / 2 >= grid.size
+      )
+        return;
       if (camera) {
         const { center, span } = camera;
         const ratio = element.width / span;
@@ -191,6 +199,13 @@ export function RegionCanvas(props: Props) {
     }
   };
   const frame = buffer.entries.get(frameId);
+  const currentCamera = gridCamera(grid, view);
+  const outside =
+    !currentCamera ||
+    currentCamera.center[0] + currentCamera.span / 2 <= 0 ||
+    currentCamera.center[0] - currentCamera.span / 2 >= grid.size ||
+    currentCamera.center[1] + currentCamera.span / 2 <= 0 ||
+    currentCamera.center[1] - currentCamera.span / 2 >= grid.size;
   return (
     <div className="region-stage" ref={host}>
       <canvas
@@ -271,6 +286,12 @@ export function RegionCanvas(props: Props) {
       {!frame && (
         <div className="region-message" role="status">
           {buffer.errors.get(frameId) ?? 'Preparando esta fecha…'}
+        </div>
+      )}
+      {frame && outside && (
+        <div className="region-message" role="status">
+          Fuera de la región preparada. Restablece la vista o vuelve al mosaico para elegir otra
+          región.
         </div>
       )}
       {frame && frame.coverage < 0.995 && (
