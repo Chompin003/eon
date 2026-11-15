@@ -443,6 +443,9 @@ export function RegionReport({
           Para PDF: abre el HTML descargado → menú del navegador → Imprimir → Guardar como PDF.
           Comparte también el JSON para conservar los catálogos usados.
         </p>
+        <a href="/docs/eon-metodo-e-interpretacion.pdf" target="_blank" rel="noreferrer">
+          Cómo funciona la interpretación · guía PDF
+        </a>
       </details>
       <button
         className="plain-button"

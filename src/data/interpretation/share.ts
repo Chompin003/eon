@@ -66,7 +66,7 @@ export function createShareReport(
         `Origen: ${report.dataset ? 'ejemplo real NGC 1491 guardado; no es una consulta en vivo' : 'consulta de archivos y catálogos'}.`,
         `Alcance: ${report.mode === 'pixels' ? 'mediciones de píxeles originales IMAGE' : report.mode === 'catalog' ? 'solo catálogos; NO hay imágenes analizadas' : 'sin datos analizables'}.`,
         `Vista de la región: ${viewUrl}`,
-        'Este enlace recupera centro, tamaño y una exposición de referencia. No restaura el informe, los catálogos históricos ni la selección exacta de todas las imágenes. Comparte también el JSON.',
+        `Este enlace recupera centro y tamaño${report.exposures.length ? ', más una exposición de referencia' : ''}. No restaura el informe, los catálogos históricos ni la selección exacta de todas las imágenes. Comparte también el JSON.`,
       ],
     },
     {
@@ -74,10 +74,10 @@ export function createShareReport(
       paragraphs: [
         report.summary,
         `${c.analyzed} exposiciones analizadas de ${c.inSequence}; ${c.failed} fallidas; ${c.omitted} omitidas por el límite del analizador.`,
-        `${c.detections} detecciones retenidas; ${c.groups} grupos posicionales; ${c.multiDateGroups} grupos en varias fechas. No son recuentos de objetos únicos confirmados.`,
+        `${c.groups} grupos posicionales en total; no son objetos únicos confirmados.`,
         `Por detección: ${c.candidate} asociaciones candidatas, ${c.ambiguous} ambiguas y ${c.unmatched} sin coincidencia en las respuestas usadas.`,
         `${c.sepFlagged} detecciones con banderas SEP y ${c.apertureFlagged} con banderas de apertura; pueden coincidir.`,
-        ...report.observations.map((f) => `[${f.rule}] ${f.text}`),
+        ...report.observations.filter((f) => f.rule === 'catalog-entries').map((f) => f.text),
       ],
     },
     {
