@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-14",
+  "summary": "Reproductor regional Canvas 2D: selección de área, registro TAN/SIP, reproducción progresiva, reintentos y caché persistente local. Se verificaron coordenadas y píxeles contra Astropy/WCSLIB y SciPy.",
+  "measurements": [
+    "Prueba controlada: tres FITS oficiales guardados, retardo artificial de red de 150 ms, intervalo de 100 ms y viewport 900 x 650. Treinta cuadros: mediana 99.9 ms; p95 116.4 ms.",
+    "Prueba real: consulta SIA de la región inicial, 423 registros y 63 exposiciones D4 candidatas. Hubo 61 con píxeles válidos y dos sin cobertura útil. Primer cuadro en 3.58 s; preparación en 20.36 s en esta ejecución.",
+    "Dos vueltas: 122 cuadros, 61 fechas distintas, mediana 99.9 ms y p95 117.3 ms. Cero solicitudes FITS y cero documentos WebGL durante el bucle. La consulta fue real y se guardó su XML para repetir la prueba; los recortes se obtuvieron mediante las Functions locales.",
+    "La caché local evita repetir descargas y reproyecciones al volver a la misma región. Los tiempos dependen de la red y el equipo; no son una garantía universal."
+  ],
+  "controlled": {
+    "player": "registered TAN/SIP + Canvas 2D",
+    "source": "three recorded official IRSA FITS",
+    "recordedMetadata": false,
+    "controlledLatencyMs": 150,
+    "viewport": "900x650",
+    "intervalMs": 100,
+    "total": 3,
+    "ready": 3,
+    "failed": 0,
+    "firstUsableMs": 995,
+    "preparationMs": 1572.7000000001863,
+    "frames": 30,
+    "uniqueDates": 3,
+    "medianGapMs": 99.8999999994412,
+    "p95GapMs": 116.40000000037253,
+    "playbackCutoutRequests": 0,
+    "playbackDocumentNavigations": 0,
+    "remainingWebGLPanes": 0
+  },
+  "live": {
+    "player": "registered TAN/SIP + Canvas 2D",
+    "source": "IRSA cutouts via Pages Functions",
+    "recordedMetadata": true,
+    "viewport": "900x650",
+    "intervalMs": 100,
+    "total": 63,
+    "ready": 61,
+    "failed": 2,
+    "firstUsableMs": 3582.600000000559,
+    "preparationMs": 20357.5,
+    "frames": 122,
+    "uniqueDates": 61,
+    "medianGapMs": 99.90000000037253,
+    "p95GapMs": 117.29999999981374,
+    "playbackCutoutRequests": 0,
+    "playbackDocumentNavigations": 0,
+    "remainingWebGLPanes": 0
+  }
+}

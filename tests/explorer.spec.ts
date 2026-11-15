@@ -91,20 +91,20 @@ test('actual FITS epochs show their year, preserve WCS and survive closing the p
   await page.getByRole('button', { name: 'Buscar exposiciones aquí' }).click();
   await expect(page.getByTestId('observation-year')).toHaveText('2025');
   await expect(page.getByTestId('epoch-date')).toContainText('2025-08-22');
-  await page.getByRole('button', { name: 'Ver exposición / centrar recorte' }).click();
-  let sky = page.frameLocator('iframe').locator('#sky');
+  await page.getByRole('button', { name: 'Animar región' }).click();
+  let sky = page.locator('.region-canvas');
   await expect(sky).toHaveAttribute('data-source', 'fits');
   // Renderer-derived FITS footprint agrees with an independent Astropy WCS read.
   await expect
     .poll(async () => Number(await sky.getAttribute('data-image-ra')))
-    .toBeCloseTo(provenance.exposures[0].linearCenterRa, 6);
+    .toBeCloseTo(provenance.sky.ra, 6);
   await expect
     .poll(async () => Number(await sky.getAttribute('data-image-dec')))
-    .toBeCloseTo(provenance.exposures[0].linearCenterDec, 6);
+    .toBeCloseTo(provenance.sky.dec, 6);
   await page.getByRole('slider', { name: 'Fecha', exact: true }).press('End');
   await expect(page.getByTestId('observation-year')).toHaveText('2026');
   await expect(page.locator('.panel-observation-date')).toContainText('2026');
-  sky = page.frameLocator('iframe').locator('#sky');
+  sky = page.locator('.region-canvas');
   await expect(sky).toHaveAttribute('data-source', 'fits');
   await expect(page.getByTestId('epoch-date')).toContainText('2026-09-02');
   await page.getByRole('button', { name: 'Cerrar controles' }).click();

@@ -61,10 +61,12 @@ export async function loadAllObservations(
   year: string,
   signal: AbortSignal,
   onProgress: (text: string) => void,
+  sizeDeg?: number,
 ) {
   let queries = 0;
   const request = async (start?: number, end?: number) => {
     const params = new URLSearchParams({ ra: String(view.longitude), dec: String(view.latitude) });
+    if (sizeDeg !== undefined) params.set('radius', String(sizeDeg / Math.SQRT2));
     if (start !== undefined && end !== undefined) {
       params.set('start', String(start));
       params.set('end', String(end));

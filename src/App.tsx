@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   CoordinatesPanel,
   ObservationsPanel,
@@ -16,6 +16,7 @@ import {
   type ViewState,
   type BufferStatus,
   type ArchiveHiPSSource,
+  type SkyRegion,
 } from './shared';
 import { SkyViewer } from './viewer';
 import { ExplorerLayout } from './ui';
@@ -24,7 +25,29 @@ import { PaintTools, PaintSurface, usePaintSession } from './drawing';
 export function App() {
   const paint = usePaintSession();
   const [comparisonSource, setComparisonSource] = useState<ArchiveHiPSSource>();
-  const [view, setView] = useState<ViewState>({ ...DEFAULT_VIEW });
+  const [region, setRegion] = useState<SkyRegion | undefined>(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('eon:last-region:v1') ?? 'null');
+      if (
+        saved &&
+        [saved.longitude, saved.latitude, saved.sizeDeg].every(Number.isFinite) &&
+        saved.longitude >= 0 &&
+        saved.longitude < 360 &&
+        Math.abs(saved.latitude) <= 90 &&
+        saved.sizeDeg >= 0.02 &&
+        saved.sizeDeg <= 0.25
+      )
+        return { longitude: saved.longitude, latitude: saved.latitude, sizeDeg: saved.sizeDeg };
+    } catch {
+      /* Storage is optional. */
+    }
+    return undefined;
+  });
+  const [view, setView] = useState<ViewState>(
+    region
+      ? { longitude: region.longitude, latitude: region.latitude, fov: region.sizeDeg * 2.5 }
+      : { ...DEFAULT_VIEW },
+  );
   const [metadata, setMetadata] = useState<SurveyMetadata>();
   const [dataError, setDataError] = useState('');
   const [dataAttempt, setDataAttempt] = useState(0);
@@ -33,6 +56,8 @@ export function App() {
   const [displayMode, setDisplayMode] = useState<DisplayMode>('mono');
   const [overlay, setOverlay] = useState(false);
   const [observationSource, setObservationSource] = useState<FITSSource | null>(null);
+  const [selectingRegion, setSelectingRegion] = useState(false);
+  const selectionPreviousView = useRef(view);
   const [imageReadiness] = useState(createImageReadiness);
   const [bufferStatus, setBufferStatus] = useState<BufferStatus>({
     total: 0,
@@ -41,6 +66,14 @@ export function App() {
     failed: 0,
     bytes: 0,
   });
+  useEffect(() => {
+    try {
+      if (region) localStorage.setItem('eon:last-region:v1', JSON.stringify(region));
+      else localStorage.removeItem('eon:last-region:v1');
+    } catch {
+      /* Playback does not require persistent storage. */
+    }
+  }, [region]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -76,7 +109,12 @@ export function App() {
       onViewChange={updateView}
       onReset={() =>
         setView(
-          observationSource ? { ...observationSource.center, fov: 0.08 } : { ...DEFAULT_VIEW },
+          observationSource
+            ? {
+                ...observationSource.center,
+                fov: observationSource.sequence?.region?.sizeDeg ?? 0.08,
+              }
+            : { ...DEFAULT_VIEW },
         )
       }
       observationDate={observationSource?.dateUtc}
@@ -100,6 +138,13 @@ export function App() {
           onSourceChange={setObservationSource}
           imageReadiness={imageReadiness}
           bufferStatus={bufferStatus}
+          selectedRegion={region}
+          onSelectRegion={() => {
+            selectionPreviousView.current = view;
+            setSelectingRegion(true);
+            setView((current) => ({ ...current, fov: 0.5 }));
+          }}
+          onClearRegion={() => setRegion(undefined)}
         />
       }
       coordinateTools={<CoordinatesPanel view={view} onViewChange={updateView} />}
@@ -125,6 +170,20 @@ export function App() {
           overlay={overlay}
           onReadyChange={imageReadiness.setReady}
           onBufferStatus={setBufferStatus}
+          selectingRegion={selectingRegion}
+          onRegionSelected={(value) => {
+            setRegion(value);
+            setSelectingRegion(false);
+            setView({
+              longitude: value.longitude,
+              latitude: value.latitude,
+              fov: value.sizeDeg * 2.5,
+            });
+          }}
+          onCancelRegion={() => {
+            setSelectingRegion(false);
+            setView(selectionPreviousView.current);
+          }}
           view={view}
           layers={CHECKERBOARD_LAYERS}
           onViewChange={updateView}

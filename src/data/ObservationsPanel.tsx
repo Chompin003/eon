@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { memo, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import {
   TIMELINE_LIMITS,
   type FITSSource,
@@ -6,6 +6,7 @@ import {
   type ViewState,
   type BufferStatus,
   type ImageReadiness,
+  type SkyRegion,
 } from '../shared';
 import { loadAllObservations } from './observations';
 
@@ -16,14 +17,31 @@ interface Props {
   /** Whether the selected image has been presented by the viewer. */
   imageReadiness: ImageReadiness;
   bufferStatus: BufferStatus;
+  selectedRegion?: SkyRegion;
+  onSelectRegion: () => void;
+  onClearRegion: () => void;
 }
+const EMPTY_IDS: readonly string[] = [];
+const EMPTY_BUFFER: BufferStatus = {
+  total: 0,
+  prepared: 0,
+  ready: 0,
+  failed: 0,
+  bytes: 0,
+  readyFrameIds: EMPTY_IDS,
+  failedFrameIds: EMPTY_IDS,
+  complete: false,
+};
 
 export function ObservationsPanel({
   view,
   onViewChange,
   onSourceChange,
   imageReadiness,
-  bufferStatus,
+  bufferStatus: incomingBufferStatus,
+  selectedRegion,
+  onSelectRegion,
+  onClearRegion,
 }: Props) {
   const imageReady = useSyncExternalStore(imageReadiness.subscribe, imageReadiness.getSnapshot);
   const [observations, setObservations] = useState<Observation[]>([]);
@@ -31,7 +49,7 @@ export function ObservationsPanel({
   const [detector, setDetector] = useState('SPHEREx-D4');
   const [year, setYear] = useState('');
   const [index, setIndex] = useState(0);
-  const [interval, setIntervalMs] = useState(500);
+  const [interval, setIntervalMs] = useState(200);
   const [playing, setPlaying] = useState(false);
   const [enabled, setEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -39,6 +57,8 @@ export function ObservationsPanel({
   const [truncated, setTruncated] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const [queryProgress, setQueryProgress] = useState('');
+  const [regionSize, setRegionSize] = useState(0.1);
+  const [queryRegion, setQueryRegion] = useState<SkyRegion>();
   const abort = useRef<AbortController | null>(null);
   const presented = useRef(imageReady);
   useEffect(() => {
@@ -49,6 +69,17 @@ export function ObservationsPanel({
     props.current = { view, onViewChange, onSourceChange };
   });
   useEffect(() => () => abort.current?.abort(), []);
+  useEffect(() => {
+    if (selectedRegion) {
+      abort.current?.abort();
+      setLoading(false);
+      setEnabled(false);
+      setPlaying(false);
+      setObservations([]);
+      setCenter(undefined);
+      setRegionSize(selectedRegion.sizeDeg);
+    }
+  }, [selectedRegion]);
   const matching = useMemo(
     () => observations.filter((observation) => observation.detector === detector),
     [observations, detector],
@@ -63,18 +94,21 @@ export function ObservationsPanel({
             title: `${active.detector} · ${active.dateUtc}`,
             dateUtc: active.dateUtc,
             center: { longitude: center.longitude, latitude: center.latitude },
-            url: `/api/cutout?${new URLSearchParams({ url: active.url, ra: String(center.longitude), dec: String(center.latitude), size: '0.1' })}`,
+            url: `/api/cutout?${new URLSearchParams({ url: active.url, ra: String(center.longitude), dec: String(center.latitude), size: ((queryRegion?.sizeDeg ?? 0.1) * 1.5).toFixed(6) })}`,
           }))
         : [],
-    [matching, center],
+    [matching, center, queryRegion],
   );
   const sequenceId = useMemo(() => crypto.randomUUID(), [frames]);
+  const bufferStatus =
+    incomingBufferStatus.sequenceId === sequenceId ? incomingBufferStatus : EMPTY_BUFFER;
   const fullyBuffered =
     bufferStatus.sequenceId === sequenceId &&
     bufferStatus.total === matching.length &&
-    bufferStatus.ready === matching.length &&
+    bufferStatus.complete &&
+    bufferStatus.ready + bufferStatus.failed === matching.length &&
     matching.length > 0 &&
-    bufferStatus.failed === 0;
+    bufferStatus.ready > 0;
 
   useEffect(() => {
     if (!enabled || !active || !center) {
@@ -83,21 +117,46 @@ export function ObservationsPanel({
     }
     props.current.onSourceChange({
       ...frames.find((frame) => frame.id === active.id)!,
-      sequence: { id: sequenceId, frames, attempt },
+      sequence: { id: sequenceId, frames, attempt, region: queryRegion },
     });
-  }, [enabled, active, center, frames, sequenceId, attempt]);
+  }, [enabled, active, center, frames, sequenceId, attempt, queryRegion]);
+
+  const readyIds = bufferStatus.readyFrameIds ?? EMPTY_IDS;
+  const readyIndexes = useMemo(() => {
+    const ids = new Set(readyIds);
+    return matching.flatMap((frame, index) => (ids.has(frame.id) ? [index] : []));
+  }, [matching, readyIds]);
+  const playback = useRef(readyIndexes);
+  playback.current = readyIndexes;
+  useEffect(() => {
+    if (enabled && playing && readyIds.length && active && !readyIds.includes(active.id)) {
+      const next = matching.findIndex((frame) => readyIds.includes(frame.id));
+      if (next >= 0) setIndex(next);
+    }
+  }, [enabled, playing, readyIds, active, matching]);
+  useEffect(() => {
+    if (
+      enabled &&
+      bufferStatus.sequenceId === sequenceId &&
+      bufferStatus.complete &&
+      readyIds.length < 2
+    )
+      setPlaying(false);
+  }, [enabled, bufferStatus.sequenceId, sequenceId, bufferStatus.complete, readyIds.length]);
 
   useEffect(() => {
-    if (!playing || !enabled || matching.length < 2 || !fullyBuffered) return;
+    if (!playing || !enabled || matching.length < 2) return;
     const timer = window.setInterval(() => {
       // Under heavy rendering load, wait for this frame's acknowledgement
       // instead of silently skipping dates. The prepared sequence needs no I/O.
       if (!presented.current) return;
+      const available = playback.current;
+      if (available.length < 2) return;
       presented.current = false;
-      setIndex((value) => (value + 1) % matching.length);
+      setIndex((value) => available.find((index) => index > value) ?? available[0]);
     }, interval);
     return () => clearInterval(timer);
-  }, [playing, enabled, matching.length, interval, fullyBuffered]);
+  }, [playing, enabled, matching.length, interval]);
 
   async function search() {
     abort.current?.abort();
@@ -107,12 +166,24 @@ export function ObservationsPanel({
     setError('');
     setPlaying(false);
     setEnabled(false);
-    const target = { ...view };
+    const region = selectedRegion ?? {
+      longitude: view.longitude,
+      latitude: view.latitude,
+      sizeDeg: regionSize,
+    };
+    const target = { longitude: region.longitude, latitude: region.latitude, fov: region.sizeDeg };
     try {
-      const result = await loadAllObservations(target, year, controller.signal, setQueryProgress);
+      const result = await loadAllObservations(
+        target,
+        year,
+        controller.signal,
+        setQueryProgress,
+        region.sizeDeg,
+      );
       setObservations(result.observations);
       setTruncated(result.truncated);
       setCenter(target);
+      setQueryRegion(region);
       setIndex(0);
       if (!result.observations.length)
         setError('No hay exposiciones publicadas que cubran estas coordenadas y este año.');
@@ -126,12 +197,52 @@ export function ObservationsPanel({
 
   function activate() {
     if (!center || !active) return;
-    props.current.onViewChange({ ...center, fov: 0.08 });
+    props.current.onViewChange({ ...center, fov: queryRegion?.sizeDeg ?? 0.1 });
     setEnabled(true);
+    setPlaying(!window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
 
   return (
     <div className="observation-tools">
+      <div className="time-actions">
+        <button
+          className="plain-button"
+          onClick={() => {
+            setEnabled(false);
+            setPlaying(false);
+            onSelectRegion();
+          }}
+        >
+          Seleccionar región
+        </button>
+        {selectedRegion && (
+          <button className="plain-button" onClick={onClearRegion}>
+            Usar centro actual
+          </button>
+        )}
+      </div>
+      <label htmlFor="region-size">Lado de la región · {(regionSize * 60).toFixed(1)}′</label>
+      <input
+        id="region-size"
+        aria-label="Tamaño de región"
+        type="range"
+        min="0.02"
+        max="0.25"
+        step="0.001"
+        value={regionSize}
+        onChange={(event) => {
+          onClearRegion();
+          setRegionSize(Number(event.target.value));
+          setPlaying(false);
+          setEnabled(false);
+        }}
+      />
+      {selectedRegion && (
+        <p className="survey-details">
+          Región seleccionada: RA {selectedRegion.longitude.toFixed(6)}° · Dec{' '}
+          {selectedRegion.latitude.toFixed(6)}°.
+        </p>
+      )}
       <label htmlFor="observation-year">Año de búsqueda</label>
       <select
         id="observation-year"
@@ -158,7 +269,8 @@ export function ObservationsPanel({
       {center && (
         <p className="survey-details">
           Zona consultada: RA {center.longitude.toFixed(6)}° · Dec {center.latitude.toFixed(6)}°.
-          Recorte: 0.1°.
+          Región: {((queryRegion?.sizeDeg ?? 0.1) * 60).toFixed(1)}′ ×{' '}
+          {((queryRegion?.sizeDeg ?? 0.1) * 60).toFixed(1)}′.
         </p>
       )}
       <label htmlFor="observation-detector">Detector de las exposiciones</label>
@@ -214,7 +326,7 @@ export function ObservationsPanel({
             <span>{matching.at(-1)?.dateUtc.slice(0, 10)}</span>
           </div>
           <button className="plain-button" onClick={activate}>
-            Ver exposición / centrar recorte
+            Animar región
           </button>
           {enabled && (
             <div
@@ -225,32 +337,42 @@ export function ObservationsPanel({
               data-prepared={bufferStatus.prepared}
               data-failed={bufferStatus.failed}
               data-total={matching.length}
+              data-complete={bufferStatus.complete ?? false}
+              data-cache-hits={bufferStatus.cacheHits ?? 0}
             >
               <span>
                 {fullyBuffered
                   ? `${bufferStatus.ready} cuadros listos · reproducción desde memoria`
-                  : `Preparando animación: ${bufferStatus.ready} / ${matching.length} cuadros`}
+                  : `${bufferStatus.ready} / ${matching.length} cuadros disponibles${bufferStatus.complete ? '' : ' · preparando el resto…'}`}
               </span>
               <progress
                 max={matching.length}
-                value={Math.min(matching.length, bufferStatus.ready)}
+                value={Math.min(matching.length, bufferStatus.ready + bufferStatus.failed)}
                 aria-label="Preparación de animación"
               />
               {bufferStatus.failed > 0 && (
                 <>
                   <span>
-                    {bufferStatus.errorMessage ??
-                      `${bufferStatus.failed} cuadros no se pudieron preparar. La secuencia no se reproducirá incompleta.`}
+                    {bufferStatus.failed}{' '}
+                    {bufferStatus.failed === 1 ? 'fecha no disponible' : 'fechas no disponibles'}.
+                    Se pueden reproducir los cuadros cargados. {bufferStatus.errorMessage}
                   </span>
-                  <button
-                    className="plain-button"
-                    onClick={() => {
-                      setPlaying(false);
-                      setAttempt((value) => value + 1);
-                    }}
-                  >
-                    Reintentar cuadros
-                  </button>
+                  {(!bufferStatus.unavailableFrames ||
+                    bufferStatus.unavailableFrames.some((frame) => frame.retryable)) && (
+                    <button
+                      className="plain-button"
+                      onClick={() => {
+                        setAttempt((value) => value + 1);
+                      }}
+                    >
+                      Reintentar cuadros
+                    </button>
+                  )}
+                  <MissingDates
+                    observations={matching}
+                    ids={bufferStatus.failedFrameIds}
+                    failures={bufferStatus.unavailableFrames}
+                  />
                 </>
               )}
             </div>
@@ -289,7 +411,7 @@ export function ObservationsPanel({
       <div className="time-actions">
         <button
           className="plain-button"
-          disabled={!enabled || matching.length < 2 || !fullyBuffered}
+          disabled={!enabled || (!playing && readyIds.length < 2)}
           aria-pressed={playing}
           onClick={() => setPlaying(!playing)}
         >
@@ -309,8 +431,9 @@ export function ObservationsPanel({
       </div>
       <p className="survey-details">
         SPHEREx empezó en 2025. Se muestran únicamente fechas disponibles en IRSA. El mosaico
-        combinado no representa un año individual. La secuencia se prepara una vez antes de
-        reproducir.
+        combinado no representa un año individual. La animación empieza con las fechas disponibles y
+        continúa mientras se preparan las demás. Las fechas fallidas aparecen en la lista; las zonas
+        sin cobertura permanecen vacías.
       </p>
       {truncated && (
         <p className="survey-details">
@@ -326,3 +449,29 @@ export function ObservationsPanel({
     </div>
   );
 }
+
+const MissingDates = memo(function MissingDates({
+  observations,
+  ids,
+  failures,
+}: {
+  observations: readonly Observation[];
+  ids?: readonly string[];
+  failures?: BufferStatus['unavailableFrames'];
+}) {
+  return (
+    <details>
+      <summary>Ver fechas no disponibles</summary>
+      <ul className="missing-dates">
+        {observations
+          .filter((frame) => ids?.includes(frame.id))
+          .map((frame) => (
+            <li key={frame.id}>
+              {frame.dateUtc.slice(0, 19).replace('T', ' ')} UTC ·{' '}
+              {failures?.find((error) => error.id === frame.id)?.reason}
+            </li>
+          ))}
+      </ul>
+    </details>
+  );
+});

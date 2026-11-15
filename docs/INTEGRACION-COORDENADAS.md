@@ -15,6 +15,8 @@ interface CoordinateToolsProps {
 
 `ViewState` mantiene `longitude`, `latitude` y `fov` en **grados decimales**. Para la integración ecuatorial, `longitude` corresponde a RA y `latitude` a Dec. El estado actual corresponde al centro real ICRS del visor HiPS/FITS de Aladin. `fov` es ahora horizontal; las imágenes se proyectan con su WCS. Tu módulo sigue consumiendo exactamente `CoordinateToolsProps`.
 
+El modo de región temporal también conserva este contrato. Usa una cuadrícula TAN registrada y Canvas 2D; `SkyProjection` transforma sus coordenadas para Paint. Al navegar fuera de la región no se descargan imágenes nuevas: hay que volver al mosaico y seleccionar otra región. La selección gráfica y su tamaño pertenecen al visor/controles; no cambian tu conversor.
+
 El formulario debe mostrar/aceptar RA h:m:s y Dec ±d:m:s, siguiendo la convención J2000 del documento E-STAR. Convierte a grados antes de llamar al callback. Conserva `view.fov` para que una búsqueda no reinicie el zoom. Los grados decimales son un formato de almacenamiento, no un cambio de sistema de coordenadas.
 
 ## Archivos y conexión
