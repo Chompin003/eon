@@ -25,3 +25,9 @@ Cada proyección muestra una barra en la esquina inferior derecha. Su longitud s
 Se descargó de IRSA un IMAGE de 826×877 píxeles (724,402), 2,923,200 bytes, con recorte de 1.5° alrededor de NGC 1491. URL y momento de captura: `tests/fixtures/spherex/wide-provenance.json`. SHA-256 y referencia independiente: `wide-sep-reference.json`. Python SEP + Astropy detectaron 4,137 grupos en el recorte, 1,820 dentro del cuadrado de 1°. eon conserva 500 de mayor pico y declara el resultado parcial. Los centroides, banderas y coordenadas se contrastan con esa referencia; los bytes científicos quedan intactos. Este fixture de prueba no sustituye ninguna consulta de producción.
 
 Las pruebas verifican límites normales/ampliados en los tres endpoints, conservación de bytes IMAGE, enlaces con opt-in, selección/movimiento/redimensionado, aviso visible, análisis sobre el recorte grande, desactivación del modo, escala esférica a alta declinación/cruce RA=0, zoom móvil y fallos visibles con el panel cerrado.
+
+Verificación reproducible: `node scripts/verify-extended-regions.mjs` con un preview en 4174, o `EON_VERIFY_URL` para otro sitio. La interfaz usa recortes y metadatos oficiales grabados de forma controlada, no un inventario vivo. `EON_LIVE_CUTOUT=1` añade una petición HTTP independiente al endpoint real y contrasta todos los bytes con el recorte oficial de referencia. El modo de verificación no forma parte de la aplicación publicada y nunca sustituye un error de un proveedor.
+
+![Modo ampliado y advertencia visible](extended-region.png)
+
+![Escala angular de 5 minutos de arco en el campo de 60 minutos](angular-scale.png)
