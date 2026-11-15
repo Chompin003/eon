@@ -1,0 +1,5 @@
+# Detección sobre píxeles y evolución entre exposiciones
+
+Coordinación previa: se integrará SEP (Source Extraction and Photometry, LGPL-3.0-or-later) compilado a WebAssembly en un Web Worker. Se analizarán los IMAGE FITS originales, con máscara y WCS/SIP preservadas; los resultados incluirán centroides, morfología, señal y banderas. Las asociaciones con catálogos se distinguirán de detecciones y se mantendrán ambiguas cuando corresponda. La evolución temporal se basará en detecciones por exposición, sin interpretar cambios de longitud de onda como variabilidad física.
+
+shared contendrá contratos de PixelStudy, detecciones, asociaciones y mediciones; viewer expondrá un análisis asíncrono de una secuencia FITS por su API pública. App compondrá esa función con StudyPanel y las marcas de data, sin importaciones entre módulos. Se conservarán ViewState, coordinateTools, drawingTools y los archivos científicos. El análisis será explícito, cancelable, fuera del hilo principal y con límites de cuadros/memoria; no se activarán servicios pagados ni se publicará un modelo sin evaluación.
