@@ -22,7 +22,9 @@ interface Props {
   onSelectRegion: () => void;
   onClearRegion: () => void;
   restoreExposure?: SharedExposure;
-  onRestoreSettled?: () => void;
+  onRestoreSuccess?: () => void;
+  restoreAttempt?: number;
+  onRestoreStatus?: (state: 'loading' | 'ready' | 'error', message?: string) => void;
 }
 const EMPTY_IDS: readonly string[] = [];
 const EMPTY_BUFFER: BufferStatus = {
@@ -46,7 +48,9 @@ export function ObservationsPanel({
   onSelectRegion,
   onClearRegion,
   restoreExposure,
-  onRestoreSettled,
+  onRestoreSuccess,
+  restoreAttempt = 0,
+  onRestoreStatus,
 }: Props) {
   const imageReady = useSyncExternalStore(imageReadiness.subscribe, imageReadiness.getSnapshot);
   const [observations, setObservations] = useState<Observation[]>([]);
@@ -90,13 +94,17 @@ export function ObservationsPanel({
     [observations, detector],
   );
   useEffect(() => {
-    if (!restoreExposure) return;
+    if (!restoreExposure) {
+      setLoading(false);
+      return;
+    }
     const controller = new AbortController();
     abort.current = controller;
     const region = restoreExposure.region;
     const target = { ...region, fov: region.sizeDeg };
     setLoading(true);
     setError('');
+    onRestoreStatus?.('loading');
     void loadAllObservations(target, '', controller.signal, setQueryProgress, region.sizeDeg)
       .then((result) => {
         if (controller.signal.aborted) return;
@@ -118,21 +126,24 @@ export function ObservationsPanel({
         setTruncated(result.truncated);
         setEnabled(true);
         setPlaying(false);
+        onRestoreStatus?.('ready');
+        onRestoreSuccess?.();
       })
       .catch((problem) => {
-        if (!controller.signal.aborted)
-          setError(
-            problem instanceof Error ? problem.message : 'No se pudo restaurar la exposición.',
-          );
+        if (!controller.signal.aborted) {
+          const message =
+            problem instanceof Error ? problem.message : 'No se pudo restaurar la exposición.';
+          setError(message);
+          onRestoreStatus?.('error', message);
+        }
       })
       .finally(() => {
         if (!controller.signal.aborted) {
           setLoading(false);
-          onRestoreSettled?.();
         }
       });
     return () => controller.abort();
-  }, [restoreExposure]);
+  }, [restoreExposure, restoreAttempt]);
   const active = matching[Math.min(index, Math.max(0, matching.length - 1))];
   const frames = useMemo(
     () =>
@@ -312,7 +323,11 @@ export function ObservationsPanel({
           </option>
         ))}
       </select>
-      <button className="plain-button" disabled={loading} onClick={() => void search()}>
+      <button
+        className="plain-button"
+        disabled={loading || Boolean(restoreExposure)}
+        onClick={() => void search()}
+      >
         {loading ? queryProgress || 'Consultando IRSA…' : 'Buscar exposiciones aquí'}
       </button>
       {center && (
