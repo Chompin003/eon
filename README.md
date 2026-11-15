@@ -22,6 +22,8 @@ El selector permite mover y redimensionar el cuadro antes de confirmarlo. Modo n
 
 El mosaico mezcla fechas y tiene muestreo aproximado de 12.88″/píxel; ampliar hasta 1″ no añade resolución. Las exposiciones individuales se obtienen como recortes FITS de 0.1° y se corrigen para visualización usando su WCS/SIP. Las longitudes de onda de un detector pueden variar entre exposiciones: el parpadeo no constituye una medición fotométrica a longitud de onda fija.
 
+**Informe de región** explica los resultados mediante reglas locales versionadas: detecciones, grupos por fecha, contrapartes candidatas, límites y evidencias con acceso a cada exposición. Permite descargar un JSON trazable y mantiene sin evaluar movimiento, variabilidad y calidad instrumental que los datos actuales no sustentan. No entrena un modelo ni usa inferencia generativa. [Uso y reglas](docs/INTERPRETACION-REGION.md).
+
 [Cómo funciona, qué se usó del documento y evaluación de Astroquery](docs/COMO-FUNCIONA.md). [Licencias y procedencia](docs/THIRD-PARTY.md).
 
 ## Desarrollo local

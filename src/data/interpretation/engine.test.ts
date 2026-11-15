@@ -205,6 +205,19 @@ describe('traceable interpretation, without scientific claims beyond the inputs'
     expect(report.summary).toContain('Aún no hay mediciones de píxeles');
     expect(report.groups).toHaveLength(0);
   });
+  it('does not attach old measurements to another cutout URL with the same observation ID', () => {
+    const changedSources = sources.map((f, i) => (i === 0 ? { ...f, url: f.url + '&size=1' } : f));
+    const report = buildInterpretation({
+      region,
+      frames: changedSources,
+      pixels: pixels(),
+      catalog: catalog(),
+    });
+    expect(report.counts.analyzed).toBe(1);
+    expect(report.exposures.map((f) => f.id)).toEqual(['f2']);
+    expect(report.counts.multiDateGroups).toBe(0);
+    expect(report.cautions.map((f) => f.rule)).toContain('partial-measurements');
+  });
   it('does not describe an empty extraction as an empty sky', () => {
     const report = build(pixels({ frames: [measured(0, [])], tracks: [] }));
     expect(report.counts.detections).toBe(0);
@@ -279,6 +292,20 @@ describe('traceable interpretation, without scientific claims beyond the inputs'
     expect(report.counts).toMatchObject({ sepFlagged: 1, apertureFlagged: 1 });
     expect(report.cautions.find((f) => f.rule === 'sep-flags')?.text).toContain('pueden coincidir');
   });
+  it('prioritizes extraction problems before treating a consistent catalog candidate as interpretable', () => {
+    const p = pixels({
+      frames: [
+        measured(0, [
+          detection('d0', { flags: 8, association: 'candidate', candidates: [candidate] }),
+        ]),
+        measured(1, [detection('d1', { association: 'candidate', candidates: [candidate] })]),
+      ],
+    });
+    const group = interpretGroup(build(p), 'D0001')!;
+    expect(group.counterpart).toBe('candidate');
+    expect(group.nextStep).toContain('primero las exposiciones con banderas');
+    expect(group.limits.instrumentQuality).toBe('not-evaluated');
+  });
   it('exports rules, evidence and limits without mutating or duplicating input results', () => {
     const p = pixels(),
       original = JSON.stringify(p);
@@ -286,7 +313,8 @@ describe('traceable interpretation, without scientific claims beyond the inputs'
       b = build(p);
     expect(JSON.stringify(a)).toBe(JSON.stringify(b));
     const exported = exportInterpretation(a, 'D0001');
-    expect(exported.groups[0]).toEqual({ id: 'D0001', measurements: 2, distinctDates: 2 });
+    expect(exported.groups[0]).toMatchObject({ id: 'D0001', measurements: 2, distinctDates: 2 });
+    expect(exported.groups[0].evidence).toHaveLength(2);
     expect(exported.selectedGroup?.evidence).toHaveLength(2);
     expect(exported.exposures[0].archiveUrl).toContain('irsa.ipac.caltech.edu');
     expect(JSON.stringify(p)).toBe(original);
@@ -300,6 +328,7 @@ it('only emits same-origin cutouts and fixed official provenance links', () => {
     'https://evil.test/file.fits',
     '/api/cutout?url=javascript:alert(1)',
     '/api/cutout?url=https://evil.test/file.fits',
+    '/api/cutout?url=https://irsa.ipac.caltech.edu/ibe/data/spherex/dr1/level2/../../other.fits',
     '/examples/spherex/epoch-8.fits',
   ])
     expect(evidenceLinks(url, 'f1')).toEqual({});

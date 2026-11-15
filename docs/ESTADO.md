@@ -2,6 +2,8 @@
 
 ## Aplicación e infraestructura
 
+- Informe local de región con reglas versionadas, detecciones y enlaces por fecha, candidaturas de catálogo, evidencias y descarga JSON. Identifica datos parciales o de otra selección; declara sin evaluar calidad instrumental, movimiento y variabilidad. No usa un modelo generativo ni entrenamiento nuevo. [Método y uso](INTERPRETACION-REGION.md).
+
 - Regiones normales 1.2′–15′ y ampliadas hasta 60′ con activación explícita. Cuadro móvil/redimensionable, advertencias visibles y escala angular mediante proyección real, incluida en exportaciones con imágenes. Análisis ampliado verificado sobre un IMAGE oficial de 724,402 píxeles. [Uso y límites](REGIONES-AMPLIADAS.md).
 
 - Exportación visual PNG con capas seleccionables y transparencia; GIF local de cuadros preparados, anotaciones/marcadores opcionales, fecha UTC y nombres J2000 sexagesimales. [Uso y límites](EXPORTACION.md).

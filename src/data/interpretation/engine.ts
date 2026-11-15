@@ -10,6 +10,8 @@ import {
 import { exampleObservations } from '../example';
 
 export const REPORT_METHOD = 'eon-evidence-rules-1';
+export const countText = (n: number, singular: string, plural: string) =>
+  `${n} ${n === 1 ? singular : plural}`;
 export const REPORT_LIMITS = {
   instrumentQuality: 'not-evaluated',
   physicalMotion: 'not-evaluated',
@@ -112,6 +114,7 @@ export function evidenceLinks(url: string | undefined, frameId: string) {
     if (
       parsed.pathname === '/api/cutout' &&
       original &&
+      new URL(original).href === original &&
       /^https:\/\/irsa\.ipac\.caltech\.edu\/ibe\/data\/spherex\/(dr1|qr3)\/level2\/[A-Za-z0-9_./-]+\.fits$/.test(
         original,
       )
@@ -176,11 +179,11 @@ export function buildInterpretation(input: ReportInput): RegionInterpretation {
       truncated: catalog.truncated,
       associatedWithPixels: false,
     };
-    report.summary = `${catalog.objects.length} entradas de catálogo consultadas. Aún no hay mediciones de píxeles utilizables en este informe.`;
+    report.summary = `${countText(catalog.objects.length, 'entrada de catálogo consultada', 'entradas de catálogo consultadas')}. Aún no hay mediciones de píxeles utilizables en este informe.`;
     add(
       'observations',
       'catalog-entries',
-      `${report.catalog.byProvider.gaia} entradas Gaia DR3 y ${report.catalog.byProvider.simbad} SIMBAD. Pueden incluir el mismo objeto; no son detecciones demostradas en SPHEREx.`,
+      `${countText(report.catalog.byProvider.gaia, 'entrada Gaia DR3', 'entradas Gaia DR3')} y ${report.catalog.byProvider.simbad} SIMBAD. Pueden incluir el mismo objeto; no son detecciones demostradas en SPHEREx.`,
       ['catalog'],
     );
     if (catalog.errors.length || catalog.truncated)
@@ -217,6 +220,7 @@ export function buildInterpretation(input: ReportInput): RegionInterpretation {
       const original = expected.get(frame.frameId);
       if (
         !original ||
+        frame.inputUrl !== original.url ||
         !Number.isFinite(Date.parse(frame.dateUtc)) ||
         Date.parse(original.dateUtc) !== Date.parse(frame.dateUtc) ||
         measured.has(frame.frameId)
@@ -313,17 +317,17 @@ export function buildInterpretation(input: ReportInput): RegionInterpretation {
     report.failures = pixels.failures.map((f) => ({ ...f }));
     if (counts.analyzed) {
       report.mode = 'pixels';
-      report.summary = `${counts.detections} detecciones retenidas en ${counts.analyzed} exposiciones analizadas; ${counts.multiDateGroups} grupos enlazados en más de una fecha. No es un recuento de objetos únicos.`;
+      report.summary = `${countText(counts.detections, 'detección retenida', 'detecciones retenidas')} en ${countText(counts.analyzed, 'exposición analizada', 'exposiciones analizadas')}; ${countText(counts.multiDateGroups, 'grupo enlazado', 'grupos enlazados')} en más de una fecha. No es un recuento de objetos únicos.`;
       add(
         'observations',
         'pixel-detections',
-        `SEP midió ${counts.detections} detecciones con umbral ${pixels.parameters.threshold}σ y área mínima ${pixels.parameters.minArea} píxeles.`,
+        `SEP midió ${countText(counts.detections, 'detección', 'detecciones')} con umbral ${pixels.parameters.threshold}σ y área mínima ${pixels.parameters.minArea} píxeles.`,
         report.exposures.map((f) => f.id),
       );
       add(
         'observations',
         'positional-recurrence',
-        `${counts.multiDateGroups} de ${counts.groups} grupos tienen mediciones en fechas distintas. El enlace es por proximidad; no confirma identidad ni movimiento físico.`,
+        `${counts.multiDateGroups} de ${counts.groups} grupos ${counts.multiDateGroups === 1 ? 'tiene' : 'tienen'} mediciones en fechas distintas. El enlace es por proximidad; no confirma identidad ni movimiento físico.`,
         report.groups
           .filter((g) => g.distinctDates > 1)
           .slice(0, 6)
@@ -332,7 +336,7 @@ export function buildInterpretation(input: ReportInput): RegionInterpretation {
       add(
         'observations',
         'counterparts',
-        `${counts.candidate} detecciones con asociación candidata, ${counts.ambiguous} ambiguas y ${counts.unmatched} sin contraparte en las respuestas usadas.`,
+        `${countText(counts.candidate, 'detección con asociación candidata', 'detecciones con asociación candidata')}, ${countText(counts.ambiguous, 'ambigua', 'ambiguas')} y ${counts.unmatched} sin contraparte en las respuestas usadas.`,
         ['pixel-associations'],
       );
       if (!counts.detections)
@@ -353,7 +357,7 @@ export function buildInterpretation(input: ReportInput): RegionInterpretation {
         add(
           'cautions',
           'sep-flags',
-          `${counts.sepFlagged} detecciones tienen banderas SEP y ${counts.apertureFlagged} mediciones tienen banderas de apertura; pueden coincidir. Revisa sus exposiciones.`,
+          `${countText(counts.sepFlagged, 'detección con banderas SEP', 'detecciones con banderas SEP')} y ${countText(counts.apertureFlagged, 'medición con banderas de apertura', 'mediciones con banderas de apertura')}; pueden coincidir. Revisa sus exposiciones.`,
           report.exposures.filter((f) => f.sepFlagged || f.apertureFlagged).map((f) => f.id),
         );
     }
@@ -366,7 +370,7 @@ export function buildInterpretation(input: ReportInput): RegionInterpretation {
       add(
         'cautions',
         'partial-measurements',
-        `El análisis es parcial: ${counts.failed} exposiciones fallidas, ${counts.omitted} omitidas y ${pixels.frames.filter((f) => f.truncated).length} con límite de detecciones. ${rejected} registros o enlaces inconsistentes se excluyeron del informe.`,
+        `El análisis es parcial: ${countText(counts.failed, 'exposición fallida', 'exposiciones fallidas')}, ${countText(counts.omitted, 'omitida', 'omitidas')} y ${pixels.frames.filter((f) => f.truncated).length} con límite de detecciones. Se excluyen ${countText(rejected, 'registro o enlace inconsistente', 'registros o enlaces inconsistentes')}.`,
         ['analysis-input'],
       );
   }
@@ -408,6 +412,8 @@ export function interpretGroup(report: RegionInterpretation, id: string) {
     );
   const first = values[0],
     last = values.at(-1)!;
+  const sepFlagged = values.filter((m) => m.detection.flags !== 0).length,
+    apertureFlagged = values.filter((m) => m.detection.apertureFlags !== 0).length;
   const separation =
     values.length > 1 && group.distinctDates > 1
       ? separationArcsec(
@@ -422,8 +428,20 @@ export function interpretGroup(report: RegionInterpretation, id: string) {
     firstUtc: first.frame.dateUtc,
     lastUtc: last.frame.dateUtc,
     separationArcsec: separation,
-    sepFlagged: values.filter((m) => m.detection.flags !== 0).length,
-    apertureFlagged: values.filter((m) => m.detection.apertureFlags !== 0).length,
+    sepFlagged,
+    apertureFlagged,
+    nextStep:
+      sepFlagged || apertureFlagged
+        ? 'Revisa primero las exposiciones con banderas de extracción o apertura.'
+        : ambiguous
+          ? 'Compara las contrapartes por fecha y la resolución de las imágenes antes de asignar una identidad.'
+          : !report.catalogContextComplete
+            ? 'Completa o repite la consulta de catálogos antes de interpretar una ausencia de contraparte.'
+            : group.distinctDates < 2
+              ? 'Reúne otras fechas comparables; una sola fecha no permite evaluar continuidad temporal.'
+              : !consistentCandidate
+                ? 'Inspecciona las exposiciones y otros catálogos antes de tratar una ausencia de contraparte como un objeto nuevo.'
+                : 'Revisa las exposiciones originales; para cuantificar cambios faltan bandas compatibles y evaluación instrumental.',
     counterpart: ambiguous
       ? ('ambiguous' as const)
       : consistentCandidate
@@ -461,6 +479,10 @@ export function exportInterpretation(report: RegionInterpretation, selected?: st
       id: g.id,
       measurements: g.measurements.length,
       distinctDates: g.distinctDates,
+      evidence: g.measurements.map(({ frame, detection }) => ({
+        frameId: frame.frameId,
+        detectionId: detection.id,
+      })),
     })),
     selectedGroup: selected ? interpretGroup(report, selected) : undefined,
     evidenceDefinitions: {

@@ -14,6 +14,7 @@ import {
 } from '../shared';
 import { studyRegion } from './study';
 import { PixelResults } from './PixelResults';
+import { RegionReport } from './interpretation/RegionReport';
 interface Props {
   onOpenExample: () => void;
   imageSource?: FITSSource;
@@ -155,6 +156,24 @@ export function StudyPanel(props: Props) {
         <p role="alert" className="scientific-notice scientific-notice-error">
           {error}
         </p>
+      )}
+      {!loading && (result || props.pixelStudy) && (
+        <RegionReport
+          region={
+            props.imageSource?.sequence?.region ??
+            props.region ?? {
+              longitude: props.view.longitude,
+              latitude: props.view.latitude,
+              sizeDeg: Math.max(0.02, Math.min(0.25, props.view.fov)),
+            }
+          }
+          source={props.imageSource}
+          pixels={props.pixelStudy}
+          catalog={result}
+          selected={props.selectedTrack}
+          onSelect={props.onTrackSelected}
+          onFrame={props.onFrame}
+        />
       )}
       {props.pixelStudy && (
         <PixelResults
