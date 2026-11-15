@@ -29,6 +29,7 @@ interface Props {
   coordinateTools?: ReactNode;
   drawingTools?: ReactNode;
   telescopeTools?: ReactNode;
+  shareTools?: ReactNode;
   children: ReactNode;
 }
 
@@ -57,6 +58,7 @@ export function ExplorerLayout({
   coordinateTools,
   drawingTools,
   telescopeTools,
+  shareTools,
   children,
 }: Props) {
   const [open, setOpen] = useState(false);
@@ -99,6 +101,7 @@ export function ExplorerLayout({
         </svg>
       </button>
       <FloatingPanel open={open} onClose={close} observationDate={observationDate}>
+        {shareTools}
         {telescopeTools}
         <section className="control-section" aria-labelledby="survey-heading">
           <div className="section-title">

@@ -1,4 +1,5 @@
 export * from './contracts';
+export * from './location';
 export * from './zoom';
 export * from './timeline';
 export { createImageReadiness, type ImageReadiness } from './imageReadiness';
