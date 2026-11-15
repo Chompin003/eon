@@ -1,10 +1,12 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   normalizeView,
   type DisplayMode,
   type SkySource,
   type ViewerLayers,
   type ViewState,
+  type SkyProjection,
+  type SkyProjectionWindow,
 } from '../shared';
 const CheckerboardViewer = lazy(() =>
   import('./CheckerboardViewer').then((module) => ({ default: module.CheckerboardViewer })),
@@ -19,6 +21,7 @@ interface Props {
   secondFrame?: number;
   overlay?: boolean;
   onReadyChange?: (ready: boolean) => void;
+  renderAnnotations?: (projection: SkyProjection) => ReactNode;
 }
 
 export function SkyViewer(props: Props) {
@@ -82,12 +85,14 @@ function HiPSViewer({
   secondFrame,
   overlay,
   onReadyChange,
+  renderAnnotations,
 }: Props) {
   const documentKey = source.kind === 'fits' ? source.url : source.kind;
   const frame = useRef<HTMLIFrameElement>(null);
   const current = useRef({ source, view, onViewChange, mode, secondFrame, overlay, onReadyChange });
   const [error, setError] = useState('');
   const [connected, setConnected] = useState(false);
+  const [projection, setProjection] = useState<SkyProjection>();
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
@@ -101,6 +106,7 @@ function HiPSViewer({
   useEffect(() => {
     current.current.onReadyChange?.(false);
     setConnected(false);
+    setProjection(undefined);
   }, [source, mode, secondFrame, overlay, attempt]);
 
   useEffect(() => {
@@ -122,11 +128,15 @@ function HiPSViewer({
       } else if (message.type === 'sky:ready') {
         clearTimeout(timeout);
         setConnected(true);
+        setProjection(
+          (frame.current?.contentWindow as SkyProjectionWindow | null)?.spherexProjection,
+        );
         current.current.onReadyChange?.(true);
         setError('');
       } else if (message.type === 'sky:error' && typeof message.message === 'string') {
         clearTimeout(timeout);
         setError(message.message);
+        setProjection(undefined);
         current.current.onReadyChange?.(false);
       } else if (message.type === 'sky:view') {
         const next = message.view;
@@ -155,6 +165,7 @@ function HiPSViewer({
         title="Cielo SPHEREx"
         className="hips-frame"
       />
+      {connected && projection && renderAnnotations?.(projection)}
       {!connected && !error && (
         <div className="viewer-loading" role="status">
           Conectando con SPHEREx / IRSA…

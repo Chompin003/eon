@@ -10,8 +10,10 @@ import {
 } from './shared';
 import { SkyViewer } from './viewer';
 import { ExplorerLayout } from './ui';
+import { PaintTools, PaintSurface, usePaintSession } from './drawing';
 
 export function App() {
+  const paint = usePaintSession();
   const [view, setView] = useState<ViewState>({ ...DEFAULT_VIEW });
   const [metadata, setMetadata] = useState<SurveyMetadata>();
   const [dataError, setDataError] = useState('');
@@ -80,6 +82,7 @@ export function App() {
         />
       }
       coordinateTools={<CoordinatesPanel view={view} onViewChange={updateView} />}
+      drawingTools={<PaintTools session={paint} />}
     >
       {metadata ? (
         <SkyViewer
@@ -91,6 +94,9 @@ export function App() {
           view={view}
           layers={CHECKERBOARD_LAYERS}
           onViewChange={updateView}
+          renderAnnotations={(projection) => (
+            <PaintSurface session={paint} projection={projection} />
+          )}
         />
       ) : dataError ? (
         <div className="viewer-error" role="alert">
