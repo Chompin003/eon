@@ -6,6 +6,7 @@ import {
   type ViewState,
 } from './contracts';
 import { ARCHIVE_SURVEYS } from './archiveSurveys';
+import { REGION_LIMITS } from './regions';
 
 export interface SharedExposure {
   id: string;
@@ -36,11 +37,23 @@ export function readLocation(url: URL): SharedLocation | undefined {
   const ra = number('ra', 0, 360),
     dec = number('dec', -90, 90);
   if (ra === undefined || dec === undefined) return undefined;
-  const size = number('size', 0.02, 0.25),
+  const extended = q.get('wide') === '1';
+  const size = number(
+      'size',
+      REGION_LIMITS.min,
+      extended ? REGION_LIMITS.extendedMax : REGION_LIMITS.normalMax,
+    ),
     cx = number('cx', 0, 360) ?? ra,
     cy = number('cy', -90, 90) ?? dec;
   const region =
-    size === undefined ? undefined : { longitude: cx % 360, latitude: cy, sizeDeg: size };
+    size === undefined
+      ? undefined
+      : {
+          longitude: cx % 360,
+          latitude: cy,
+          sizeDeg: size,
+          ...(extended ? { extended: true } : {}),
+        };
   const epoch = q.get('epoch');
   const band = number('band', 0, 101),
     band2 = number('band2', 0, 101);
@@ -77,6 +90,7 @@ export function readLocation(url: URL): SharedLocation | undefined {
   };
 }
 const owned = [
+  'wide',
   'example',
   'ra',
   'dec',
@@ -121,6 +135,7 @@ export function writeLocation(input: URL, state: SharedLocation): URL {
   }
   const region = state.exposure?.region ?? state.region;
   if (region) {
+    if (region.extended) q.set('wide', '1');
     put('size', region.sizeDeg);
     put('cx', region.longitude);
     put('cy', region.latitude);

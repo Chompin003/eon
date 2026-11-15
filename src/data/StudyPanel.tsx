@@ -151,7 +151,11 @@ export function StudyPanel(props: Props) {
           max={progress.total}
         />
       )}
-      {error && <p role="alert">{error}</p>}
+      {error && (
+        <p role="alert" className="scientific-notice scientific-notice-error">
+          {error}
+        </p>
+      )}
       {props.pixelStudy && (
         <PixelResults
           result={props.pixelStudy}
@@ -170,12 +174,12 @@ export function StudyPanel(props: Props) {
             ′ de lado. Los dos catálogos pueden incluir el mismo objeto.
           </p>
           {result.errors.map((message) => (
-            <p className="survey-details" role="alert" key={message}>
+            <p className="scientific-notice scientific-notice-error" role="alert" key={message}>
               {message}
             </p>
           ))}
           {result.truncated && (
-            <p role="alert">
+            <p role="alert" className="scientific-notice">
               Se alcanzó el límite de catálogo: estos resultados son parciales. Elige una región
               menor.
             </p>

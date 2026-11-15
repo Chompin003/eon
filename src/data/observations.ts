@@ -67,6 +67,7 @@ export async function loadAllObservations(
   const request = async (start?: number, end?: number) => {
     const params = new URLSearchParams({ ra: String(view.longitude), dec: String(view.latitude) });
     if (sizeDeg !== undefined) params.set('radius', String(sizeDeg / Math.SQRT2));
+    if (sizeDeg !== undefined && sizeDeg > 0.25) params.set('extended', '1');
     if (start !== undefined && end !== undefined) {
       params.set('start', String(start));
       params.set('end', String(end));

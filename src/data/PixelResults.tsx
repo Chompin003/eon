@@ -119,9 +119,10 @@ export function PixelResults({
         </details>
       )}
       {(result.omittedFrames > 0 || result.frames.some((f) => f.truncated)) && (
-        <p role="alert">
-          Análisis parcial: límite de 96 exposiciones y 500 detecciones por imagen.{' '}
-          {result.omittedFrames} fechas quedaron fuera.
+        <p role="alert" className="scientific-notice">
+          Análisis parcial: límite de 96 exposiciones y 500 detecciones por región y fecha. Se
+          conservan las de mayor pico cuando se supera el límite. {result.omittedFrames} fechas
+          quedaron fuera.
         </p>
       )}
       <label className="study-toggle">
@@ -130,7 +131,7 @@ export function PixelResults({
       </label>
       <p className="survey-details">
         {current
-          ? `${current.detections.length} detecciones en ${current.dateUtc.slice(0, 19).replace('T', ' ')} UTC. Fondo ${current.background.toPrecision(4)}; RMS ${current.noise.toPrecision(3)} ${current.bunit}.`
+          ? `${current.detections.length}${current.detectedCount && current.detectedCount > current.detections.length ? ` de ${current.detectedCount}` : ''} detecciones en ${current.dateUtc.slice(0, 19).replace('T', ' ')} UTC. Fondo ${current.background.toPrecision(4)}; RMS ${current.noise.toPrecision(3)} ${current.bunit}.`
           : 'Esta fecha no está en el análisis. Abre una de las exposiciones analizadas para ver sus marcas.'}
       </p>
       <label htmlFor="pixel-track">Explorar fuente detectada</label>

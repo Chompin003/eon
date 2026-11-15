@@ -173,6 +173,7 @@ export async function studyRegion(
           ra: region.longitude.toFixed(9),
           dec: region.latitude.toFixed(9),
           size: region.sizeDeg.toFixed(6),
+          ...(region.extended ? { extended: '1' } : {}),
         });
         const response = await fetch(
           dataset === 'ngc1491-example'

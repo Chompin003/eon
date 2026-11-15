@@ -10,6 +10,7 @@ import {
 import { FloatingPanel } from './FloatingPanel';
 
 interface Props {
+  selectingRegion?: boolean;
   view: ViewState;
   onViewChange: (next: ViewState) => void;
   onReset: () => void;
@@ -42,6 +43,7 @@ export function formatFieldOfView(fov: number): string {
 }
 
 export function ExplorerLayout({
+  selectingRegion = false,
   view,
   onViewChange,
   onReset,
@@ -104,7 +106,11 @@ export function ExplorerLayout({
           <path d={open ? 'm12 5-5 5 5 5' : 'm8 5 5 5-5 5'} />
         </svg>
       </button>
-      <FloatingPanel open={open} onClose={close} observationDate={observationDate}>
+      <FloatingPanel
+        open={open && !selectingRegion}
+        onClose={close}
+        observationDate={observationDate}
+      >
         {shareTools}
         {exportTools}
         {telescopeTools}

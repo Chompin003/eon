@@ -1,4 +1,5 @@
 import { fetchIrsa, position } from '../../server/irsa';
+import { REGION_LIMITS } from '../../src/shared/regions';
 
 export async function onRequestGet({ request }: { request: Request }): Promise<Response> {
   try {
@@ -6,7 +7,9 @@ export async function onRequestGet({ request }: { request: Request }): Promise<R
     const { ra, dec } = position(params);
     const url = new URL('https://irsa.ipac.caltech.edu/SIA');
     const radius = Number(params.get('radius') ?? 0.0000001);
-    if (!Number.isFinite(radius) || radius <= 0 || radius > 0.18)
+    const maxRadius =
+      params.get('extended') === '1' ? REGION_LIMITS.extendedMax / Math.SQRT2 + 1e-6 : 0.18;
+    if (!Number.isFinite(radius) || radius <= 0 || radius > maxRadius)
       return new Response('Región inválida.', { status: 400 });
     url.searchParams.set('POS', `CIRCLE ${ra} ${dec} ${radius}`);
     for (const collection of ['spherex_dr1', 'spherex_qr3', 'spherex_dr1_deep', 'spherex_qr3_deep'])

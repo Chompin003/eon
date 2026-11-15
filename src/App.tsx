@@ -27,9 +27,13 @@ import {
   type PixelStudy,
   type ExportLayers,
   exportFilename,
+  validRegionSize,
+  regionWithMode,
+  formatAngularSize,
 } from './shared';
 import {
   ArchiveRegions,
+  AngularScale,
   SkyViewer,
   analyzePixels,
   captureSky,
@@ -95,15 +99,19 @@ function ExplorerApp() {
         saved.longitude >= 0 &&
         saved.longitude < 360 &&
         Math.abs(saved.latitude) <= 90 &&
-        saved.sizeDeg >= 0.02 &&
-        saved.sizeDeg <= 0.25
+        validRegionSize(saved.sizeDeg, saved.extended === true)
       )
-        return { longitude: saved.longitude, latitude: saved.latitude, sizeDeg: saved.sizeDeg };
+        return regionWithMode(saved, saved.extended === true);
     } catch {
       /* Storage is optional. */
     }
     return undefined;
   });
+  const [extendedRegions, setExtendedRegions] = useState(Boolean(region?.extended));
+  const updateRegionMode = (enabled: boolean) => {
+    setExtendedRegions(enabled);
+    if (!enabled) setRegion((current) => (current && current.sizeDeg > 0.25 ? undefined : current));
+  };
   const [view, setView] = useState<ViewState>(
     initial?.view ??
       (region
@@ -281,6 +289,7 @@ function ExplorerApp() {
 
   return (
     <ExplorerLayout
+      selectingRegion={selectingRegion}
       view={view}
       onViewChange={updateView}
       onReset={() =>
@@ -363,6 +372,8 @@ function ExplorerApp() {
       }
       timeTools={
         <ObservationsPanel
+          extendedRegions={extendedRegions}
+          onExtendedRegionsChange={updateRegionMode}
           onIntervalChange={setTimelineInterval}
           exampleRequest={exampleRequest}
           restoreExample={initial?.dataset === 'ngc1491-example'}
@@ -387,7 +398,7 @@ function ExplorerApp() {
             setRestoring(false);
             selectionPreviousView.current = view;
             setSelectingRegion(true);
-            setView((current) => ({ ...current, fov: 0.5 }));
+            setView((current) => ({ ...current, fov: extendedRegions ? 2.5 : 0.5 }));
           }}
           onClearRegion={() => {
             setRegion(undefined);
@@ -417,6 +428,34 @@ function ExplorerApp() {
       }
     >
       <>
+        {!selectingRegion &&
+          observationSource?.sequence?.region?.extended &&
+          bufferStatus.failed === 0 && (
+            <div className="sky-notice" role="status">
+              <strong>
+                Región ampliada · {formatAngularSize(observationSource.sequence.region.sizeDeg)} de
+                lado
+              </strong>
+              <span>
+                La preparación puede tardar más. Las zonas sin cobertura permanecen vacías.
+              </span>
+            </div>
+          )}
+        {observationSource?.sequence &&
+          bufferStatus.sequenceId === observationSource.sequence.id &&
+          bufferStatus.failed > 0 && (
+            <div className="sky-notice sky-notice-error" role="alert">
+              <strong>
+                Animación incompleta · {bufferStatus.ready} de {bufferStatus.total} fechas
+                preparadas
+              </strong>
+              <details>
+                <summary>Ver motivo</summary>
+                {bufferStatus.errorMessage ??
+                  'Algunas fechas aún no se pudieron preparar. Revisa Tiempo para reintentar.'}
+              </details>
+            </div>
+          )}
         {(restoreState === 'loading' || restoreState === 'error') && (
           <div className="link-restore-notice" role={restoreState === 'error' ? 'alert' : 'status'}>
             <strong>
@@ -457,8 +496,11 @@ function ExplorerApp() {
             onReadyChange={imageReadiness.setReady}
             onBufferStatus={setBufferStatus}
             selectingRegion={selectingRegion}
+            extendedRegions={extendedRegions}
+            onExtendedRegionsChange={updateRegionMode}
             onRegionSelected={(value) => {
               setRegion(value);
+              if (value.extended) setExtendedRegions(true);
               setSelectingRegion(false);
               setView({
                 longitude: value.longitude,
@@ -476,6 +518,7 @@ function ExplorerApp() {
             renderAnnotations={(projection) => (
               <>
                 <PaintSurface session={paint} projection={projection} />
+                <AngularScale projection={projection} />
                 <ArchiveRegions
                   projection={projection}
                   source={comparisonSource}

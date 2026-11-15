@@ -1,5 +1,6 @@
 import { boundedBody, fetchIrsa, position } from '../../server/irsa';
 import { cachedCutout, storeCutout } from '../../server/cache';
+import { validRegionSize } from '../../src/shared/regions';
 
 /** Fixed public providers only. No user-supplied SQL, remote URL or credentials. */
 export async function onRequestGet(ctx: {
@@ -12,9 +13,7 @@ export async function onRequestGet(ctx: {
       size = Number(q.get('size'));
     const provider = q.get('provider');
     if (
-      !Number.isFinite(size) ||
-      size < 0.02 ||
-      size > 0.25 ||
+      !validRegionSize(size, q.get('extended') === '1') ||
       !['gaia', 'simbad'].includes(provider ?? '')
     )
       return new Response('Región o proveedor inválido.', { status: 400 });
