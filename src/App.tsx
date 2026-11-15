@@ -63,6 +63,7 @@ function ExplorerApp() {
   const [restoreError, setRestoreError] = useState('');
   const [restoreAttempt, setRestoreAttempt] = useState(0);
   const [exampleRequest, setExampleRequest] = useState(0);
+  const [animationToolsRequest, setAnimationToolsRequest] = useState(0);
   const [study, setStudy] = useState<RegionStudy>();
   const [showStudy, setShowStudy] = useState(true);
   const [selectedObject, setSelectedObject] = useState<StudyObject>();
@@ -289,6 +290,7 @@ function ExplorerApp() {
 
   return (
     <ExplorerLayout
+      animationToolsRequest={animationToolsRequest}
       selectingRegion={selectingRegion}
       view={view}
       onViewChange={updateView}
@@ -318,6 +320,10 @@ function ExplorerApp() {
       showingObservation={Boolean(observationSource)}
       studyTools={
         <StudyPanel
+          onPrepareImages={(target) => {
+            setRegion(target);
+            setAnimationToolsRequest((n) => n + 1);
+          }}
           onOpenExample={() => {
             setRestoreState('none');
             setRestoring(false);

@@ -21,7 +21,7 @@ test('real catalog classes are explicit, missing astrometry stays unknown and ma
   const sky = page.getByTitle('Cielo SPHEREx').contentFrame().locator('#sky');
   await expect(sky).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
   await openControls(page);
-  await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
+  await page.getByRole('button', { name: 'Consultar solo catálogos', exact: true }).click();
   await expect(page.getByTestId('study-count')).toContainText('entradas catalogadas');
   const marks = page.locator('.study-markers [data-object-id]');
   expect(await marks.count()).toBeGreaterThan(30);
@@ -46,7 +46,7 @@ test('a failed catalog stays explicit while the other provider remains useful', 
   });
   await page.goto('/?ra=60.8109955&dec=51.3404038&fov=.1&size=.1');
   await openControls(page);
-  await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
+  await page.getByRole('button', { name: 'Consultar solo catálogos', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText('Gaia DR3 no está disponible');
   await expect(page.getByTestId('study-count')).toContainText('entradas catalogadas');
   await expect(page.locator('.study-markers [data-provider="Gaia DR3"]')).toHaveCount(0);

@@ -13,7 +13,7 @@ import { buildInterpretation, countText, exportInterpretation, interpretGroup } 
 import './report.css';
 
 interface Props {
-  onPrepareImages?: () => void;
+  onPrepareImages?: (region: SkyRegion) => void;
   region: SkyRegion;
   source?: FITSSource;
   pixels?: PixelStudy;
@@ -163,7 +163,7 @@ export function RegionReport({
               : 'Solo se consultaron catálogos. Carga las exposiciones en Animación y vuelve a Interpretar región para medir los píxeles.'}
           </p>
           {!source?.sequence?.region && onPrepareImages && (
-            <button className="plain-button" onClick={onPrepareImages}>
+            <button className="plain-button" onClick={() => onPrepareImages(report.region)}>
               Abrir Animación
             </button>
           )}

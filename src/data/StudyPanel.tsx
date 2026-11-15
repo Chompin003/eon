@@ -16,7 +16,7 @@ import { studyRegion } from './study';
 import { PixelResults } from './PixelResults';
 import { RegionReport } from './interpretation/RegionReport';
 interface Props {
-  onPrepareImages?: () => void;
+  onPrepareImages?: (region: SkyRegion) => void;
   onOpenExample: () => void;
   imageSource?: FITSSource;
   analyzePixels: (
@@ -54,6 +54,12 @@ export function StudyPanel(props: Props) {
     setLoading(false);
     setProgress(undefined);
   }, [props.imageSource?.sequence?.id]);
+  const analysisRegion = props.imageSource?.sequence?.region ??
+    props.region ?? {
+      longitude: props.view.longitude,
+      latitude: props.view.latitude,
+      sizeDeg: Math.max(0.02, Math.min(0.25, props.view.fov)),
+    };
   async function run() {
     abort.current?.abort();
     const controller = new AbortController();
@@ -61,11 +67,7 @@ export function StudyPanel(props: Props) {
     setLoading(true);
     setError('');
     props.onSelected(undefined);
-    const region = props.region ?? {
-      longitude: props.view.longitude,
-      latitude: props.view.latitude,
-      sizeDeg: Math.max(0.02, Math.min(0.25, props.view.fov)),
-    };
+    const region = analysisRegion;
     try {
       const result = await studyRegion(region, controller.signal, props.imageSource?.dataset);
       if (!controller.signal.aborted) {
@@ -123,7 +125,7 @@ export function StudyPanel(props: Props) {
           <button
             className="plain-button"
             disabled={loading || !props.onPrepareImages}
-            onClick={props.onPrepareImages}
+            onClick={() => props.onPrepareImages?.(analysisRegion)}
           >
             Preparar imágenes para analizar
           </button>
@@ -181,14 +183,7 @@ export function StudyPanel(props: Props) {
       )}
       {!loading && (result || props.pixelStudy) && (
         <RegionReport
-          region={
-            props.imageSource?.sequence?.region ??
-            props.region ?? {
-              longitude: props.view.longitude,
-              latitude: props.view.latitude,
-              sizeDeg: Math.max(0.02, Math.min(0.25, props.view.fov)),
-            }
-          }
+          region={analysisRegion}
           source={props.imageSource}
           pixels={props.pixelStudy}
           catalog={result}

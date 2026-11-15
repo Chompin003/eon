@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
 
 const icons = {
   location: 'M12 2v4m0 12v4M2 12h4m12 0h4M18 12a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z',
@@ -13,18 +13,20 @@ const icons = {
 
 /** Native disclosure keeps forms mounted and works with keyboard and touch. */
 export function ControlMenu({
+  menuRef,
   icon,
   title,
   description,
   children,
 }: {
+  menuRef?: Ref<HTMLDetailsElement>;
   icon: keyof typeof icons;
   title: string;
   description: string;
   children: ReactNode;
 }) {
   return (
-    <details className="control-menu" data-control-menu>
+    <details ref={menuRef} className="control-menu" data-control-menu>
       <summary>
         <svg className="control-menu-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d={icons[icon]} />

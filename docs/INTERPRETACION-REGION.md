@@ -1,5 +1,13 @@
 # Informe de región
 
+## Cargar imágenes antes de analizar
+
+Desde el mosaico, **Análisis → Preparar imágenes para analizar** abre y enfoca **Animación**, conservando el centro y el tamaño de esa misma región. Pulsa **Buscar exposiciones aquí**, después **Animar región** y vuelve a **Análisis → Interpretar región**. Este último botón solo aparece con una secuencia de imágenes activa.
+
+**Consultar solo catálogos** es una acción independiente. Si la eliges sin imágenes, el resultado se titula **Consulta de catálogos**, muestra **Imágenes pendientes de analizar** y ofrece **Abrir Animación**. No se presenta como análisis de píxeles fallido. Una vez medidas las imágenes aparece **Informe de región**; el bloque **Límites científicos** conserva las evaluaciones que el método todavía no permite realizar.
+
+![Preparación de imágenes antes de interpretar](analysis-prerequisite.png)
+
 En **Análisis → Interpretar región**, eon consulta catálogos y, si hay una secuencia regional activa, analiza sus IMAGE FITS con SEP. Al terminar aparece **Informe de región**. Resume las mediciones disponibles y explica cuáles no permiten una conclusión científica. No entrena un modelo, no usa un chatbot y no realiza llamadas a servicios de IA.
 
 El motor de reglas versionado `eon-evidence-rules-1` funciona localmente con los resultados ya obtenidos. No descarga otra copia de las imágenes ni consulta un catálogo al reproducir cada fecha. El ejemplo NGC 1491 sigue siendo un conjunto real guardado que se abre solo explícitamente. Se identifica como tal; la lectura de sus tablas guardadas no se presenta como consulta en vivo.

@@ -98,7 +98,7 @@ test('catalog-only results stay distinct from pixel detections and report provid
   });
   await page.goto('/?ra=60.8109955&dec=51.3404038&fov=.1&size=.1');
   await openControls(page);
-  await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
+  await page.getByRole('button', { name: 'Consultar solo catálogos', exact: true }).click();
   const report = page.getByTestId('interpretation-report');
   await expect(report).toContainText('Aún no hay mediciones de píxeles');
   await expect(report.locator('[data-rule="catalog-partial"]')).toContainText('incompletos');
@@ -108,7 +108,70 @@ test('catalog-only results stay distinct from pixel detections and report provid
   expect(json.groups).toEqual([]);
   expect(json.catalog.byProvider.gaia).toBe(0);
   expect(json.catalog.errors).toHaveLength(1);
+  await expect(report).toContainText('Imágenes pendientes de analizar');
+  await expect(report.getByTestId('report-unassessed')).toHaveCount(0);
+  await report.getByRole('button', { name: 'Abrir Animación', exact: true }).click();
+  await expect(
+    page
+      .locator('[data-control-menu]')
+      .filter({ has: page.locator(':scope > summary strong', { hasText: /^Animación$/ }) }),
+  ).toHaveAttribute('open', '');
 });
+
+for (const mobile of [false, true])
+  test(`preparing images guides the same region from the mosaic to a measured report (${mobile ? 'mobile' : 'desktop'})`, async ({
+    page,
+  }) => {
+    if (mobile) await page.setViewportSize({ width: 390, height: 844 });
+    await installArchiveFixtures(page);
+    await page.route('**/api/catalog?**', (r) =>
+      r.fulfill({
+        body: readFileSync(
+          'tests/fixtures/spherex/' +
+            (new URL(r.request().url()).searchParams.get('provider') === 'gaia'
+              ? 'gaia-dr3-region.xml'
+              : 'simbad-region.json'),
+        ),
+        contentType: 'text/plain',
+      }),
+    );
+    await page.goto('/?ra=60.8109955&dec=51.3404038&fov=.075');
+    await page.getByRole('button', { name: 'Mostrar controles' }).click();
+    const analysis = page
+      .locator('[data-control-menu]')
+      .filter({ has: page.locator(':scope > summary strong', { hasText: /^Análisis$/ }) });
+    await analysis.locator(':scope > summary').click();
+    await expect(page.getByRole('button', { name: 'Interpretar región', exact: true })).toHaveCount(
+      0,
+    );
+    await page
+      .getByRole('button', { name: 'Preparar imágenes para analizar', exact: true })
+      .press('Enter');
+    const animation = page
+      .locator('[data-control-menu]')
+      .filter({ has: page.locator(':scope > summary strong', { hasText: /^Animación$/ }) });
+    await expect(animation).toHaveAttribute('open', '');
+    await expect(animation.locator(':scope > summary')).toBeFocused();
+    await expect(page.getByLabel('Tamaño de región', { exact: true })).toHaveValue('0.075');
+    await page.getByRole('button', { name: 'Buscar exposiciones aquí', exact: true }).click();
+    await page.getByRole('button', { name: 'Animar región', exact: true }).click();
+    await expect(page.locator('.region-canvas')).toHaveAttribute('data-ready', 'true', {
+      timeout: 30000,
+    });
+    await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
+    await expect(page.getByTestId('interpretation-summary')).toContainText(
+      '3 exposiciones analizadas',
+      { timeout: 30000 },
+    );
+    await expect(
+      page
+        .getByTestId('interpretation-report')
+        .getByRole('heading', { name: 'Informe de región', exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Consultar solo catálogos', exact: true }),
+    ).toHaveCount(0);
+  });
 
 test('a wrong FITS date is omitted from the report and its evidence, never disguised as a good exposure', async ({
   page,
