@@ -1,7 +1,9 @@
 /** Cache only public scientific responses. No secrets or arbitrary upstream URLs. */
 export async function cachedCutout(request: Request): Promise<Response | undefined> {
   if (typeof caches === 'undefined') return;
-  return (caches as CacheStorage & { default: Cache }).default.match(request).catch(() => undefined);
+  return (caches as CacheStorage & { default: Cache }).default
+    .match(request)
+    .catch(() => undefined);
 }
 export function storeCutout(
   request: Request,

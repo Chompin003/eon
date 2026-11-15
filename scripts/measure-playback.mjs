@@ -7,13 +7,15 @@ const browser = await chromium.launch({
   args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
 });
 try {
+  const live = process.env.EON_LIVE === '1';
   const page = await browser.newPage({ viewport: { width: 900, height: 650 } });
-  await installArchiveFixtures(page);
+  if (!live) await installArchiveFixtures(page);
   // Controlled latency makes before/after comparable; this is not a WAN benchmark.
-  await page.route('**/api/cutout?**', async (route) => {
-    await new Promise((resolve) => setTimeout(resolve, 150));
-    await route.fallback();
-  });
+  if (!live)
+    await page.route('**/api/cutout?**', async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 150));
+      await route.fallback();
+    });
   let cutouts = 0,
     navigations = 0,
     hipsTiles = 0;
@@ -37,17 +39,26 @@ try {
     });
   });
   await page.goto(process.env.EON_MEASURE_URL ?? 'http://127.0.0.1:4174');
-  await expect(page.frameLocator('iframe').locator('#sky')).toHaveAttribute('data-ready', 'true');
+  await expect(page.frameLocator('iframe').locator('#sky')).toHaveAttribute('data-ready', 'true', {
+    timeout: 60000,
+  });
   await page.getByRole('button', { name: 'Mostrar controles' }).click();
   await page.getByRole('button', { name: 'Buscar exposiciones aquí' }).click();
   const start = performance.now();
-  await page.getByRole('button', { name: 'Ver exposición / centrar recorte' }).click();
-  await expect(page.frameLocator('iframe').locator('#sky')).toHaveAttribute('data-source', 'fits');
+  await page
+    .getByRole('button', { name: 'Ver exposición / centrar recorte' })
+    .click({ timeout: 90000 });
+  await expect(page.frameLocator('iframe').locator('#sky')).toHaveAttribute('data-source', 'fits', {
+    timeout: 90000,
+  });
   if (await page.getByTestId('buffer-progress').count())
     await expect(page.getByTestId('buffer-progress')).toHaveAttribute('data-ready', 'true', {
-      timeout: 60000,
+      timeout: live ? 600000 : 60000,
     });
   const preparationMs = performance.now() - start;
+  const sequenceFrames =
+    Number(await page.getByRole('slider', { name: 'Fecha', exact: true }).getAttribute('max')) + 1;
+  const targetFrames = live ? sequenceFrames * 2 : 10;
   await page.getByRole('slider', { name: 'Intervalo entre fechas' }).press('Home');
   await page.evaluate(() => {
     window.__frames = [];
@@ -55,16 +66,18 @@ try {
   const before = { cutouts, navigations };
   await page.getByRole('button', { name: 'Reproducir', exact: true }).click();
   await expect
-    .poll(() => page.evaluate(() => window.__frames.length), { timeout: 30000 })
-    .toBeGreaterThanOrEqual(10);
+    .poll(() => page.evaluate(() => window.__frames.length), { timeout: live ? 120000 : 30000 })
+    .toBeGreaterThanOrEqual(targetFrames);
   await page.getByRole('button', { name: 'Pausar', exact: true }).click();
-  const frames = await page.evaluate(() => window.__frames.slice(0, 10));
+  const frames = await page.evaluate((count) => window.__frames.slice(0, count), targetFrames);
   const gaps = frames
     .slice(1)
     .map((f, i) => f.at - frames[i].at)
     .sort((a, b) => a - b);
   const report = {
-    controlledLatencyMs: 150,
+    controlledLatencyMs: live ? undefined : 150,
+    source: live ? 'IRSA live / local Pages Functions' : 'three recorded IRSA exposures',
+    sequenceFrames,
     viewport: '900x650 / software WebGL',
     intervalMs: 100,
     preparationMs,
@@ -75,6 +88,7 @@ try {
     playbackDocumentNavigations: navigations - before.navigations,
     initialHiPSTileRequests: hipsTiles,
   };
+  if (process.env.EON_SCREENSHOT) await page.screenshot({ path: process.env.EON_SCREENSHOT });
   writeFileSync(
     process.env.EON_REPORT ?? 'data-cache/eon-baseline.json',
     JSON.stringify(report, null, 2),

@@ -2,11 +2,13 @@
 
 Repositorio del equipo: [Chompin003/eon](https://github.com/Chompin003/eon).
 
-**Explorador público:** [spherex-explorer.pages.dev](https://spherex-explorer.pages.dev/).
+**Explorador público:** [eon-visualizer.pages.dev](https://eon-visualizer.pages.dev/).
 
 Explorador educativo de imágenes reales de NASA/SPHEREx servidas por Caltech/IPAC IRSA. No es un producto oficial de NASA.
 
-Visor a pantalla completa y una sola flecha para abrir una ventana móvil/redimensionable. Incluye coordenadas RA h:m:s / Dec ±d:m:s, 100 canales útiles del mosaico DR1, superposición de dos canales, B/N, color falso y pantalla dividida sincronizada. La búsqueda de exposiciones por coordenadas permite recorrer fechas reales con año, hora UTC y reproducción regulable. Paint conserva su slot para el equipo.
+Visor a pantalla completa y una sola flecha para abrir una ventana móvil/redimensionable. Incluye coordenadas RA h:m:s / Dec ±d:m:s, 100 canales útiles del mosaico DR1, superposición de dos canales, B/N, color falso y pantalla dividida sincronizada. La búsqueda de exposiciones por coordenadas permite recorrer fechas reales con año, hora UTC y reproducción regulable. Paint y la comparación con mosaicos Hubble/Webb están integrados.
+
+Las animaciones preparan la secuencia una sola vez, con barra de avance y reintento de cuadros fallidos. Después alternan imágenes desde memoria sin descargar FITS ni reconstruir el visor por fecha. Se consultan todos los años publicados desde 2025; las respuestas SIA truncadas se recuperan mediante ventanas temporales menores.
 
 El mosaico mezcla fechas y tiene muestreo aproximado de 12.88″/píxel; ampliar hasta 1″ no añade resolución. Las exposiciones individuales se obtienen como recortes FITS de 0.1° y se corrigen para visualización usando su WCS/SIP. Las longitudes de onda de un detector pueden variar entre exposiciones: el parpadeo no constituye una medición fotométrica a longitud de onda fija.
 

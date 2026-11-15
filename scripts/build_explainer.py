@@ -25,7 +25,7 @@ def heading(text,y):txt(text,44,y,12,'Bold');return y-23
 def page(number,title,sub):
  c.setFillColor(white);c.rect(0,0,W,H,fill=1,stroke=0)
  txt('eon  /  NOTA TÉCNICA',44,H-40,9,'Bold',ACCENT);txt('14 noviembre 2026',442,H-40,8,color=MUTED)
- txt(title,44,H-83,22,'Bold');para(sub,H-108,size=10,color=MUTED) if False else None
+ txt(title,44,H-83,22,'Bold')
  para(sub,H-109,size=10)
  c.setStrokeColor(LINE);c.line(44,42,W-44,42);txt('Funcionamiento, datos y límites de interpretación',44,28,8,color=MUTED);txt(f'{number:02d} / 07',510,28,8,color=MUTED)
 def box(x,y,w,h,title,body=''):
@@ -54,7 +54,8 @@ box(326,285,225,100,'Cloudflare Pages','Sirve la aplicación y dos endpoints: /a
 arrow(155,445,155,385);arrow(438,445,438,385);arrow(326,335,269,335,'FITS')
 y=para('Dos rutas de datos: las teselas HiPS van directamente de IRSA al navegador. Las búsquedas y los recortes pasan por las Functions del sitio, que acotan rutas, tamaño y tiempo de espera.',247)
 y=heading('Responsabilidades separadas',y-7)
-para('El navegador mantiene la vista y presenta las imágenes. IRSA conserva los datos originales. GitHub guarda el código y ejecuta las comprobaciones. Cloudflare publica la versión integrada. Astroquery y Astropy permiten consultar y contrastar los datos desde Python.',y)
+y=para('El navegador mantiene la vista y presenta las imágenes. IRSA conserva los datos originales. GitHub guarda el código y ejecuta las comprobaciones. Cloudflare publica la versión integrada. Astroquery y Astropy permiten consultar y contrastar los datos desde Python.',y)
+para('Del documento del equipo se retomaron Three.js, Astroquery, IRSA/SIA y los requisitos RA/Dec. Aladin y los detalles de HiPS/FITS provienen de CDS y de los recursos oficiales astronómicos. El código propio conecta esas piezas.',y,size=10,leading=14)
 c.showPage()
 
 page(2,'Dos productos, dos usos','Los canales del mosaico y las fechas de las exposiciones son ejes diferentes.')
@@ -91,12 +92,12 @@ y=heading('Flujo anterior',y-8)
 for x,title,body in [(44,'Seleccionar','Elegir la fecha'),(216,'Esperar','Red + SIP + visor'),(388,'Mostrar','Ver un solo cuadro')]:box(x,476,163,72,title,body)
 arrow(207,512,216,512);arrow(379,512,388,512)
 txt('Este recorrido se repetía en cada fecha.',44,454,9,color=MUTED)
-y=heading('Flujo que necesita una reproducción continua',416)
+y=heading('Flujo implementado',416)
 box(44,272,225,107,'1. Preparar una vez','Consultar fechas; descargar recortes con concurrencia limitada; corregir distorsión; conservar los cuadros y crear las capas necesarias.')
 box(326,272,225,107,'2. Reproducir desde memoria','Mantener el visor abierto y alternar únicamente el cuadro visible. Pausar, repetir o cambiar velocidad sin otra descarga.')
 arrow(269,326,326,326)
 y=para('La preparación debe indicar avance y errores. Reproducir se habilita cuando la secuencia está lista. Ninguna exposición fallida se elimina en silencio. La memoria debe tener un límite y los cambios de región o detector deben cancelar el trabajo anterior.',242)
-para('Estado de esta página: diseño de la mejora solicitada. La última página de esta edición registra el resultado de la implementación y sus mediciones cuando concluyen las verificaciones.',y)
+para('La corrección SIP se ejecuta en un Web Worker. La caché de copias visuales y la selección activa tienen un límite de 96 MB cada una; Aladin añade sus recursos por panel. El modo dividido comparte las descargas y prepara sus dos vistas antes de reproducir.',y)
 c.showPage()
 
 page(5,'Del código a la página pública','Los cambios del equipo se integran mediante ramas y comprobaciones automáticas.')
@@ -109,13 +110,13 @@ arrow(438,570,438,536);arrow(438,536,155,536);arrow(155,536,155,507);arrow(269,4
 y=heading('Mapa del repositorio',380)
 for title,body in [('viewer','Proyección, imágenes, navegación y adaptación del visor.'),('data','Consulta de observaciones y formulario de coordenadas.'),('ui / drawing','Ventana de controles y anotaciones del cielo.'),('shared','Tipos y contratos; los módulos no se importan entre sí.'),('functions / server','Acceso acotado a IRSA y extracción del HDU IMAGE.')]:
  txt(title,44,y,10,'Bold',ACCENT);y=para(body,y,x=163,width=388,size=10,leading=14)
-para('El nombre del proyecto es eon. La dirección existente del sitio puede conservarse para no romper enlaces del equipo. El nombre técnico de un despliegue no cambia los datos científicos ni la interfaz visible.',y-9)
+para('Repositorio: github.com/Chompin003/eon. El nuevo sitio eon-visualizer.pages.dev está conectado a ese repositorio. La publicación conserva el mismo flujo automático de ramas, checks e integración; no requiere aprobar cada cambio.',y-9)
 c.showPage()
 
 page(6,'Herramientas, años y fuentes','Qué se reutiliza y qué partes conectan las herramientas entre sí.')
 y=680
-for title,body in [('IRSA + SIA','Fuente oficial de archivos y protocolo para descubrir exposiciones por posición y tiempo.'),('Aladin Lite / CDS','Motor abierto para HiPS, proyecciones y representación de imágenes.'),('Astroquery + Astropy','Consultas Python reproducibles y verificación de FITS, fechas y WCS. Astroquery no almacena todos los PNG ni actualiza una web por sí solo.'),('React / TypeScript / Vite','Estado, interfaz, contratos, compilación y carga de módulos.'),('Three.js / react-rnd','Three.js fue el primer checkerboard de prueba. react-rnd maneja la ventana de controles.'),('Código de conexión','Validación, extracción IMAGE, adaptación SIP, sincronización de vistas y preparación de secuencias.')]:
- txt(title,44,y,10,'Bold',ACCENT);y=para(body,y-19,size=10,leading=14)
+for title,body in [('IRSA + SIA','Fuente oficial de archivos y protocolo para descubrir exposiciones por posición y tiempo.'),('Aladin Lite / CDS','Motor abierto para HiPS, proyecciones y representación de imágenes. El equipo también integró mosaicos Hubble/Webb, con cobertura parcial.'),('Astroquery + Astropy','Consultas Python reproducibles y verificación de FITS, fechas y WCS. Astroquery no almacena todos los PNG ni actualiza una web por sí solo.'),('React / TypeScript / Vite','Estado, interfaz, contratos, compilación y carga de módulos.'),('Three.js / react-rnd','Three.js fue el primer checkerboard de prueba. react-rnd maneja la ventana de controles.'),('Código de conexión','Validación, extracción IMAGE, adaptación SIP, sincronización de vistas y preparación de secuencias.')]:
+ txt(title,44,y,10,'Bold',ACCENT);y=para(body,y-17,size=9.8,leading=13)
 y=heading('Por qué solo aparecen 2025 y 2026',y-9)
 y=para('SPHEREx se lanzó en marzo de 2025. A la fecha de esta guía, noviembre de 2026, sus observaciones abarcan esos dos años calendario. WISE es otra misión con una historia más larga. Todas las fechas disponibles dependen de la zona, el detector y la publicación del archivo; no todas las regiones tienen la misma cobertura.',y,size=10,leading=14)
 y=heading('Fuentes y lectura técnica',y-6)

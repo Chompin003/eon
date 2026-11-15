@@ -78,7 +78,15 @@ export function SkyViewer(props: Props) {
         (gpu.main?.key === bufferKey ? gpu.main.failed : 0) +
         (bufferedComparison && gpu.comparison?.key === bufferKey ? gpu.comparison.failed : 0),
     });
-  }, [preparation, bufferedComparison, mainGPU, comparisonGPU, gpu, bufferKey, props.onBufferStatus]);
+  }, [
+    preparation,
+    bufferedComparison,
+    mainGPU,
+    comparisonGPU,
+    gpu,
+    bufferKey,
+    props.onBufferStatus,
+  ]);
   const progress = (pane: string, count: number, failed: number) =>
     setGPU((current) =>
       current[pane]?.key === bufferKey &&
@@ -177,7 +185,9 @@ function HiPSViewer({
       ? source.sequence
         ? `${source.sequence.id}:${source.sequence.attempt ?? 0}`
         : source.url
-      : source.kind === 'archive-hips' ? source.url : source.kind;
+      : source.kind === 'archive-hips'
+        ? source.url
+        : source.kind;
   const frame = useRef<HTMLIFrameElement>(null);
   const current = useRef({
     source,

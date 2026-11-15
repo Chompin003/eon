@@ -16,7 +16,7 @@ Clona en una carpeta local fuera de carpetas sincronizadas (OneDrive puede causa
 
 ```sh
 git clone https://github.com/Chompin003/eon.git
-cd spherex-explorer
+cd eon
 git switch feat/sky-viewer
 npm ci
 npm run dev
