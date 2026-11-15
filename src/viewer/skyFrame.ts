@@ -5,6 +5,7 @@ import {
   type FITSSource,
   type HiPSSource,
   type ViewState,
+  type SkyProjectionWindow,
 } from '../shared';
 import { cubeFileFrequency } from './spectral';
 import { displayFits } from './sip';
@@ -27,6 +28,7 @@ interface AladinView {
   getFov(): [number, number];
   getSize(): [number, number];
   pix2world(x: number, y: number): [number, number];
+  world2pix(ra: number, dec: number): [number, number] | undefined;
   gotoRaDec(ra: number, dec: number): void;
   setFoV(fov: number): void;
   setFoVRange(min: number, max: number): void;
@@ -76,6 +78,7 @@ let applying = false;
 let layerKey = '';
 let revision = 0;
 let loading = false;
+const projectionListeners = new Set<() => void>();
 const send = (message: object) => parent.postMessage(message, location.origin);
 const sameView = (a: ViewState, b: ViewState) =>
   Math.abs(((a.longitude - b.longitude + 540) % 360) - 180) < 1e-8 &&
@@ -93,6 +96,7 @@ function publishView(notify = true) {
   host.dataset.ra = String(center[0]);
   host.dataset.dec = String(center[1]);
   host.dataset.fov = String(fov);
+  for (const listener of projectionListeners) listener();
   if (notify && configuration && !sameView(view, configuration.view))
     send({ type: 'sky:view', view });
 }
@@ -273,6 +277,22 @@ async function start() {
       lockNorthUp: true,
     });
     engine.setFoVRange(VIEW_LIMITS.minFov, VIEW_LIMITS.maxFov);
+    // Same-origin, read-only access to Aladin's actual SIN/FITS display projection.
+    (window as SkyProjectionWindow).spherexProjection = {
+      worldToPixel: (ra, dec) => engine?.world2pix(ra, dec),
+      pixelToWorld: (x, y) => engine?.pix2world(x, y),
+      getSize: () => engine!.getSize(),
+      getView: () => {
+        const [longitude, latitude] = engine!.getRaDec();
+        return { longitude, latitude, fov: engine!.getFov()[0] };
+      },
+      subscribe: (listener) => {
+        projectionListeners.add(listener);
+        return () => {
+          projectionListeners.delete(listener);
+        };
+      },
+    };
     for (const event of ['positionChanged', 'zoomChanged', 'resizeChanged'])
       engine.on(event, () => publishView());
     applyConfiguration();
