@@ -1,3 +1,4 @@
+import { openControls } from './controlMenus';
 import { expect, test } from '@playwright/test';
 import { installTelescopeFixtures } from './telescopeFixtures';
 
@@ -19,7 +20,7 @@ test('SPHEREx is default; Hubble and Webb comparisons synchronize coordinates, z
   );
   await page.goto('/');
   await expect(page.locator('iframe')).toHaveCount(1);
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   const controls = page.getByRole('group', { name: 'Telescopio de comparación' });
   await expect(controls.getByRole('button', { name: 'SPHEREx', exact: true })).toHaveAttribute(
     'aria-pressed',
@@ -87,7 +88,7 @@ test('an archive failure leaves SPHEREx usable and comparisons retain Paint laye
   page,
 }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.locator('spherex-paint').locator('summary').first().click();
   await page.locator('spherex-paint').locator('#emoji-picker > summary').click();
   await page.getByRole('searchbox', { name: 'Buscar emoji' }).fill('cohete');

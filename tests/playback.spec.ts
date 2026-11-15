@@ -1,3 +1,4 @@
+import { openControls } from './controlMenus';
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { installArchiveFixtures, provenance } from './archiveFixtures';
@@ -28,7 +29,7 @@ async function epochs(page: Page) {
 }
 async function openRegion(page: Page) {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Buscar exposiciones aquí' }).click();
   await page.getByRole('button', { name: 'Animar región' }).click();
 }
@@ -106,7 +107,7 @@ test('a revisit uses the persistent registered-frame cache without another FITS 
   await expect(page.getByTestId('buffer-progress')).toHaveAttribute('data-ready', 'true');
   expect(requests).toBe(3);
   await page.reload();
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Buscar exposiciones aquí' }).click();
   await page.getByRole('button', { name: 'Animar región' }).click();
   await expect(page.getByTestId('buffer-progress')).toHaveAttribute('data-ready', 'true');
@@ -126,7 +127,7 @@ test('SIA overflow recovers time windows and deduplicates boundaries', async ({ 
     });
   });
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Buscar exposiciones aquí' }).click();
   await expect(
     page.getByLabel('Detector de las exposiciones').locator('option:checked'),
@@ -145,7 +146,7 @@ test('drawn region controls the query footprint, cutout size and square player',
     if (u.pathname === '/api/cutout') cutoutSize = Number(u.searchParams.get('size'));
   });
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Seleccionar región', exact: true }).click();
   await expect(
     page.getByRole('application', { name: 'Seleccionar región del cielo' }),
@@ -189,7 +190,7 @@ test('region annotations remain registered across dates and follow keyboard pan 
   const path = page.locator('.study-annotations [data-item]');
   await expect(path).toHaveCount(1);
   const original = await path.getAttribute('d');
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('slider', { name: 'Fecha', exact: true }).press('End');
   await expect(canvas).toHaveAttribute('data-frame-id', provenance.exposures[2].id);
   await expect(path).toHaveAttribute('d', original!);
@@ -211,7 +212,7 @@ test.describe('mobile region navigation', () => {
     context,
   }) => {
     await page.goto('/');
-    await page.getByRole('button', { name: 'Mostrar controles' }).click();
+    await openControls(page);
     await page.getByRole('button', { name: 'Seleccionar región', exact: true }).click();
     let selection = page.getByRole('application', { name: 'Seleccionar región del cielo' });
     await selection.press('Escape');

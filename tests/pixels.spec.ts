@@ -1,3 +1,4 @@
+import { openControls } from './controlMenus';
 import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 import { installArchiveFixtures } from './archiveFixtures';
@@ -17,7 +18,7 @@ test('a wrong exposure is rejected rather than analyzed under the requested date
   await expect(page.locator('.region-canvas')).toHaveAttribute('data-ready', 'true', {
     timeout: 30000,
   });
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
   await expect(page.getByTestId('pixel-summary')).toContainText('2 exposiciones analizadas', {
     timeout: 30000,
@@ -31,7 +32,7 @@ test('cancel stops pixel work and the same region can be analyzed again', async 
   await expect(page.locator('.region-canvas')).toHaveAttribute('data-ready', 'true', {
     timeout: 30000,
   });
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   let release: () => void = () => {};
   const gate = new Promise<void>((resolve) => {
     release = resolve;
@@ -72,7 +73,7 @@ test('an explicit real example works without archives, detects FITS pixels and e
   await page.goto(example);
   const canvas = page.locator('.region-canvas');
   await expect(canvas).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await expect(page.getByTestId('example-notice')).toContainText('Ejemplo real guardado');
   await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
   await expect(page.getByTestId('pixel-summary')).toContainText('3 exposiciones analizadas', {
@@ -110,7 +111,7 @@ test('pixel detections update with dates, preserve Paint and allow jumping to a 
   await page.goto(example);
   const canvas = page.locator('.region-canvas');
   await expect(canvas).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
   await expect(page.getByTestId('pixel-summary')).toBeVisible({ timeout: 30000 });
   const old = await page
@@ -144,7 +145,7 @@ test('opening the example is explicit and never replaces a failed live query', a
   );
   await expect(page.locator('.link-restore-notice')).toContainText('No se pudo restaurar');
   await expect(page.locator('.region-canvas')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await openControls(page);
   await page.getByRole('button', { name: 'Abrir ejemplo real · NGC 1491', exact: true }).click();
   await expect(page.locator('.region-canvas')).toHaveAttribute('data-ready', 'true', {
     timeout: 30000,
