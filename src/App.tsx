@@ -3,6 +3,8 @@ import {
   CoordinatesPanel,
   ObservationsPanel,
   TelescopeComparison,
+  StudyPanel,
+  StudyMarkers,
   loadSurveyMetadata,
   spherexSource,
 } from './data';
@@ -17,15 +19,37 @@ import {
   type BufferStatus,
   type ArchiveHiPSSource,
   type SkyRegion,
+  readLocation,
+  ARCHIVE_SURVEYS,
+  type RegionStudy,
+  type StudyObject,
 } from './shared';
 import { SkyViewer } from './viewer';
 import { ExplorerLayout } from './ui';
 import { PaintTools, PaintSurface, usePaintSession } from './drawing';
+import { useShareLink } from './useShareLink';
 
 export function App() {
+  const [revision, setRevision] = useState(0);
+  useEffect(() => {
+    const pop = () => setRevision((n) => n + 1);
+    window.addEventListener('popstate', pop);
+    return () => window.removeEventListener('popstate', pop);
+  }, []);
+  return <ExplorerApp key={revision} />;
+}
+function ExplorerApp() {
+  const [initial] = useState(() => readLocation(new URL(location.href)));
+  const [restoring, setRestoring] = useState(Boolean(initial?.exposure));
+  const [study, setStudy] = useState<RegionStudy>();
+  const [showStudy, setShowStudy] = useState(true);
+  const [selectedObject, setSelectedObject] = useState<StudyObject>();
   const paint = usePaintSession();
-  const [comparisonSource, setComparisonSource] = useState<ArchiveHiPSSource>();
+  const [comparisonSource, setComparisonSource] = useState<ArchiveHiPSSource | undefined>(() =>
+    ARCHIVE_SURVEYS.find((s) => s.id === initial?.telescope),
+  );
   const [region, setRegion] = useState<SkyRegion | undefined>(() => {
+    if (initial) return initial.region;
     try {
       const saved = JSON.parse(localStorage.getItem('eon:last-region:v1') ?? 'null');
       if (
@@ -44,17 +68,22 @@ export function App() {
     return undefined;
   });
   const [view, setView] = useState<ViewState>(
-    region
-      ? { longitude: region.longitude, latitude: region.latitude, fov: region.sizeDeg * 2.5 }
-      : { ...DEFAULT_VIEW },
+    initial?.view ??
+      (region
+        ? { longitude: region.longitude, latitude: region.latitude, fov: region.sizeDeg * 2.5 }
+        : { ...DEFAULT_VIEW }),
   );
   const [metadata, setMetadata] = useState<SurveyMetadata>();
   const [dataError, setDataError] = useState('');
   const [dataAttempt, setDataAttempt] = useState(0);
-  const [spectralFrame, setSpectralFrame] = useState(spherexSource.frame);
-  const [secondFrame, setSecondFrame] = useState(84);
-  const [displayMode, setDisplayMode] = useState<DisplayMode>('mono');
-  const [overlay, setOverlay] = useState(false);
+  const [spectralFrame, setSpectralFrame] = useState(initial?.band ?? spherexSource.frame);
+  const [secondFrame, setSecondFrame] = useState(initial?.band2 ?? 84);
+  const [displayMode, setDisplayMode] = useState<DisplayMode>(initial?.display ?? 'mono');
+  const [overlay, setOverlay] = useState(initial?.spectralOverlay ?? false);
+  const [comparisonMode, setComparisonMode] = useState<'split' | 'overlay'>(
+    initial?.comparison ?? 'overlay',
+  );
+  const [transparency, setTransparency] = useState(initial?.transparency ?? 35);
   const [observationSource, setObservationSource] = useState<FITSSource | null>(null);
   const [selectingRegion, setSelectingRegion] = useState(false);
   const selectionPreviousView = useRef(view);
@@ -102,6 +131,22 @@ export function App() {
     () => observationSource ?? { ...spherexSource, frame: spectralFrame },
     [observationSource, spectralFrame],
   );
+  const share = useShareLink({
+    view,
+    band: spectralFrame,
+    band2: secondFrame,
+    display: displayMode,
+    spectralOverlay: overlay,
+    telescope: comparisonSource?.id,
+    comparison: comparisonMode,
+    transparency,
+    region,
+    exposure: observationSource?.sequence?.region
+      ? { id: observationSource.id, region: observationSource.sequence.region }
+      : restoring
+        ? initial?.exposure
+        : undefined,
+  });
 
   return (
     <ExplorerLayout
@@ -131,8 +176,39 @@ export function App() {
       overlay={overlay}
       onOverlayChange={setOverlay}
       showingObservation={Boolean(observationSource)}
+      studyTools={
+        <StudyPanel
+          date={observationSource?.dateUtc}
+          region={observationSource?.sequence?.region ?? region}
+          view={view}
+          onViewChange={updateView}
+          result={study}
+          visible={showStudy}
+          onVisibleChange={setShowStudy}
+          onResult={setStudy}
+          selected={selectedObject}
+          onSelected={setSelectedObject}
+        />
+      }
+      shareTools={
+        <div className="control-section">
+          <button className="plain-button" onClick={() => void share.copy()}>
+            {share.copied ? 'Enlace copiado' : 'Copiar enlace'}
+          </button>
+          {share.manual && (
+            <input
+              aria-label="Enlace para compartir"
+              readOnly
+              value={share.manual}
+              onFocus={(e) => e.currentTarget.select()}
+            />
+          )}
+        </div>
+      }
       timeTools={
         <ObservationsPanel
+          restoreExposure={initial?.exposure}
+          onRestoreSettled={() => setRestoring(false)}
           view={view}
           onViewChange={updateView}
           onSourceChange={setObservationSource}
@@ -151,6 +227,10 @@ export function App() {
       drawingTools={<PaintTools session={paint} />}
       telescopeTools={
         <TelescopeComparison
+          mode={comparisonMode}
+          onModeChange={setComparisonMode}
+          transparency={transparency}
+          onTransparencyChange={setTransparency}
           source={comparisonSource}
           onSourceChange={setComparisonSource}
           view={view}
@@ -165,6 +245,8 @@ export function App() {
         <SkyViewer
           source={source}
           comparisonSource={comparisonSource}
+          comparisonMode={comparisonMode}
+          transparency={transparency}
           secondFrame={secondFrame}
           mode={displayMode}
           overlay={overlay}
@@ -188,7 +270,18 @@ export function App() {
           layers={CHECKERBOARD_LAYERS}
           onViewChange={updateView}
           renderAnnotations={(projection) => (
-            <PaintSurface session={paint} projection={projection} />
+            <>
+              <PaintSurface session={paint} projection={projection} />
+              {study && showStudy && (
+                <StudyMarkers
+                  result={study}
+                  projection={projection}
+                  date={observationSource?.dateUtc}
+                  selected={selectedObject?.id}
+                  onSelect={setSelectedObject}
+                />
+              )}
+            </>
           )}
         />
       ) : dataError ? (

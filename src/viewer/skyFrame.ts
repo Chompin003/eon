@@ -82,6 +82,9 @@ interface Configuration {
   mode: 'mono' | 'color';
   secondFrame: number;
   overlay: boolean;
+  overlayComparison?: ArchiveHiPSSource;
+  transparency: number;
+  projectionType?: 'TAN';
 }
 const host = document.getElementById('sky')!;
 let A: AladinAPI;
@@ -106,6 +109,29 @@ let presentTick = 0;
 const projectionListeners = new Set<() => void>();
 let coverage: CoverageMOC | undefined;
 let coverageFailed = false;
+let comparisonLayer: Survey | undefined;
+let comparisonKey = '';
+let comparisonMoc: CoverageMOC | undefined;
+let comparisonMocFailed = false;
+let comparisonFailed = false;
+let comparisonLoaded = false;
+function publishComparison() {
+  if (!configuration?.overlayComparison || !engine) return;
+  const [ra, dec] = engine.getRaDec();
+  send({
+    type: 'sky:comparison',
+    id: configuration.overlayComparison.id,
+    loaded: comparisonLoaded,
+    covered: comparisonMoc
+      ? comparisonMoc.contains(ra, dec)
+      : comparisonMocFailed
+        ? null
+        : undefined,
+    error: comparisonFailed
+      ? `No se pudo cargar ${configuration.overlayComparison.title} desde ESA.`
+      : undefined,
+  });
+}
 const send = (message: object) => parent.postMessage(message, location.origin);
 const sameView = (a: ViewState, b: ViewState) =>
   Math.abs(((a.longitude - b.longitude + 540) % 360) - 180) < 1e-8 &&
@@ -128,8 +154,80 @@ function publishView(notify = true) {
     else if (coverageFailed) send({ type: 'sky:coverage', covered: null });
   }
   for (const listener of projectionListeners) listener();
+  publishComparison();
   if (notify && configuration && !sameView(view, configuration.view))
     send({ type: 'sky:view', view });
+}
+
+async function updateComparison() {
+  if (!engine || !configuration || loading) return;
+  const source = configuration.overlayComparison;
+  host.dataset.comparisonOpacity = String(1 - configuration.transparency / 100);
+  const key = source?.id ?? '';
+  if (key === comparisonKey) {
+    comparisonLayer?.setOptions({ opacity: 1 - configuration.transparency / 100 });
+    return;
+  }
+  comparisonKey = key;
+  comparisonLayer = undefined;
+  comparisonMoc = undefined;
+  comparisonMocFailed = false;
+  comparisonFailed = false;
+  comparisonLoaded = false;
+  engine.removeImageLayer('extra-telescope');
+  if (!source) return;
+  host.dataset.comparisonReady = 'false';
+  try {
+    const layer = A.HiPS(source.id, {
+      url: source.url,
+      name: source.title,
+      successCallback: () => {
+        if (comparisonKey === key) {
+          comparisonLoaded = true;
+          host.dataset.comparisonReady = 'true';
+          publishComparison();
+        }
+      },
+      errorCallback: () => {
+        if (comparisonKey === key) {
+          comparisonFailed = true;
+          publishComparison();
+        }
+      },
+    });
+    await layer.query;
+    if (comparisonKey !== key) return;
+    if (comparisonFailed) throw Error('Archive unavailable');
+    comparisonLayer = layer;
+    layer.setOptions({
+      opacity: 1 - (configuration?.transparency ?? 35) / 100,
+      colormap: 'native',
+    });
+    engine.setOverlayImageLayer(layer, 'extra-telescope');
+    host.dataset.comparisonId = key;
+    const moc = A.MOCFromURL(
+      source.url + 'Moc.fits',
+      { opacity: 0, lineWidth: 0, fill: false, perimeter: false },
+      (loaded) => {
+        if (comparisonKey !== key) return;
+        loaded.hide();
+        comparisonMoc = loaded;
+        publishComparison();
+      },
+      () => {
+        if (comparisonKey === key) {
+          comparisonMocFailed = true;
+          publishComparison();
+        }
+      },
+    );
+    engine.addMOC(moc);
+  } catch {
+    if (comparisonKey === key) {
+      comparisonFailed = true;
+      publishComparison();
+    }
+  }
 }
 
 function configureSurveys() {
@@ -253,6 +351,10 @@ async function updateLayers() {
           surveys[1] = loaded;
           loadingSecond = false;
           configureSurveys();
+          if (comparisonLayer) {
+            engine!.removeImageLayer('extra-telescope');
+            engine!.setOverlayImageLayer(comparisonLayer, 'extra-telescope');
+          }
           send({ type: 'sky:ready' });
         },
         errorCallback: () => {
@@ -414,7 +516,7 @@ function applyConfiguration() {
   }
   applying = false;
   publishView(false);
-  void updateLayers();
+  void updateLayers().then(updateComparison);
 }
 
 async function start() {
@@ -425,10 +527,10 @@ async function start() {
     A = ((await import(/* @vite-ignore */ moduleUrl)) as { default: AladinAPI }).default;
     await A.init;
     engine = A.aladin(host, {
+      projection: configuration.projectionType ?? 'SIN',
       target: `${configuration.view.longitude} ${configuration.view.latitude}`,
       fov: configuration.view.fov,
       cooFrame: 'ICRS',
-      projection: 'SIN',
       survey: [],
       log: false,
       backgroundColor: 'rgb(20, 20, 20)',
@@ -510,7 +612,16 @@ window.addEventListener('message', (event: MessageEvent) => {
     event.data?.type !== 'sky:configure'
   )
     return;
-  const { source, view, mode, secondFrame, overlay } = event.data;
+  const {
+    source,
+    view,
+    mode,
+    secondFrame,
+    overlay,
+    overlayComparison,
+    transparency,
+    projectionType,
+  } = event.data;
   if (!view || ![view.longitude, view.latitude, view.fov].every(Number.isFinite)) return;
   if (source?.kind === 'hips') {
     if (
@@ -539,6 +650,12 @@ window.addEventListener('message', (event: MessageEvent) => {
     mode: mode === 'color' ? 'color' : 'mono',
     secondFrame,
     overlay: Boolean(overlay),
+    overlayComparison: isArchiveSource(overlayComparison) ? overlayComparison : undefined,
+    transparency:
+      typeof transparency === 'number' && Number.isFinite(transparency)
+        ? Math.max(0, Math.min(100, transparency))
+        : 35,
+    projectionType: projectionType === 'TAN' ? 'TAN' : undefined,
   };
   if (engine) applyConfiguration();
   else void start();

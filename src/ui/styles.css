@@ -31,6 +31,72 @@
 .region-canvas:active {
   cursor: grabbing;
 }
+.registered-archive {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+.registered-archive .sky-canvas {
+  width: 100%;
+  height: 100%;
+}
+.study-markers {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 3;
+}
+.study-markers g {
+  pointer-events: all;
+  cursor: pointer;
+  outline: none;
+}
+.study-markers path {
+  stroke: currentColor;
+  stroke-width: 1.3;
+  fill: none;
+}
+.study-markers text {
+  fill: currentColor;
+  font-size: 11px;
+  paint-order: stroke;
+  stroke: #111;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.study-markers g:focus circle {
+  stroke: currentColor;
+}
+.study-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 11px;
+  margin: 10px 0;
+}
+.study-legend i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.study-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.study-details {
+  border-left: 2px solid #ddd;
+  padding-left: 10px;
+  margin-top: 12px;
+  font-size: 12px;
+}
 .region-message {
   position: absolute;
   inset: 0;

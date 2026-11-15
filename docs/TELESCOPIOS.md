@@ -1,6 +1,8 @@
 # Comparación SPHEREx / Hubble / Webb
 
-En **Controles → Comparar telescopios**, SPHEREx es la vista predeterminada. Hubble o Webb abren una segunda esfera a la derecha y conservan SPHEREx como referencia a la izquierda. Ambas comparten RA/Dec ICRS y FOV horizontal; GO, zoom y navegación funcionan desde cualquiera. Paint mantiene sus anotaciones en ambas proyecciones. Volver al botón SPHEREx quita el archivo externo; los controles espectrales existentes siguen disponibles.
+En **Controles → Comparar telescopios**, SPHEREx es la referencia permanente. Hubble o Webb se añaden en **Solapada**, con transparencia predeterminada 35%. 0% muestra el archivo extra donde hay cobertura; 100% deja SPHEREx. También se puede elegir **Pantalla dividida**, con SPHEREx a la izquierda. Ambas comparten RA/Dec ICRS y FOV horizontal. Paint conserva sus anotaciones. Volver al botón SPHEREx quita el archivo externo.
+
+En el mosaico, el solapado usa dos capas en una instancia Aladin. En la animación Canvas 2D, el archivo usa una TAN centrada en la región fija y su contenedor aplica la transformación exacta de la cuadrícula temporal; el pan no recentra erróneamente la TAN del archivo. La resolución del iframe permanece acotada y el zoom es una transformación visual. Los puntos contrastados en navegador difieren menos de 0.1 píxel en los casos probados.
 
 ## Fuentes verificadas
 
@@ -16,6 +18,8 @@ Los URL y `creator_did` proceden del [registro oficial](https://skies.esac.esa.i
 Se comprueba el centro contra el MOC FITS publicado por cada proveedor. Si está fuera de cobertura, aparece un aviso; el resto del campo puede contener observaciones. Si el MOC falla, se indica que no pudo verificarse, sin sustituirlo por datos sintéticos. Los fallos de ESA no bloquean el panel SPHEREx. El botón **Ver M74 · cobertura común** centra RA 24.173958°, Dec +15.783667° y FOV 0.14°; se verificó que ese punto pertenece a los cuatro MOC. Si se estaba mostrando otra exposición individual de SPHEREx, ese botón vuelve al mosaico antes de cambiar de región.
 
 Las teselas se consultan directamente a ESA según la posición y el zoom; no se descarga el archivo completo ni se instala otro visor. El esquema usa los documentos Aladin aislados y la misma proyección que Paint. Solo se aceptan los cuatro endpoints declarados en `shared/archiveSurveys.ts`. No se modifican la WCS ni los píxeles de SPHEREx, ni se relajan los endpoints del backend IRSA.
+
+En la comprobación en vivo del 15 de noviembre de 2026, `skies.esac.esa.int` agotó los plazos de espera. Los espejos registrados en MOCServer CDS devolvieron 404 o tampoco respondieron; no se adoptaron como sustitutos. La interfaz indica carga pendiente y, tras 30 s, permite reintentar conservando SPHEREx. Las pruebas de solapado usan los archivos oficiales previamente grabados y verifican la geometría, pero no demuestran disponibilidad actual de ESA. No se publican esas teselas de prueba como fallback de la aplicación.
 
 ## Astroquery instalado y comprobado
 

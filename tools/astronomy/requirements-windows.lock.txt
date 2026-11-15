@@ -7,6 +7,7 @@ boto3==1.44.3
 botocore==1.44.3
 certifi==2026.10.23
 charset-normalizer==3.5.2
+cloudpickle==3.1.2
 contourpy==1.4.0
 cycler==0.12.1
 fonttools==4.68.0
@@ -16,13 +17,16 @@ jaraco.classes==3.4.0
 jaraco.context==6.1.2
 jaraco.functools==4.6.0
 jmespath==1.1.0
+joblib==1.6.0
 keyring==25.7.0
 kiwisolver==1.5.1
 matplotlib==3.11.2
 mocpy==0.21.0
 more-itertools==11.2.1
+narwhals==2.28.0
 numpy==2.5.4
 packaging==26.3
+photutils==3.1.1
 pillow==13.0.0
 pyerfa==2.0.1.5
 pyparsing==3.3.3
@@ -33,9 +37,11 @@ PyYAML==6.0.3
 regions==0.13
 requests==2.34.2
 s3transfer==0.19.3
+scikit-learn==1.9.1
 scipy==1.18.1
 six==1.17.0
 soupsieve==4.1.1
+threadpoolctl==3.8.0
 typing_extensions==4.16.0
 urllib3==2.8.0
 webencodings==0.6.1

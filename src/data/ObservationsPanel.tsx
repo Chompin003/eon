@@ -7,6 +7,7 @@ import {
   type BufferStatus,
   type ImageReadiness,
   type SkyRegion,
+  type SharedExposure,
 } from '../shared';
 import { loadAllObservations } from './observations';
 
@@ -20,6 +21,8 @@ interface Props {
   selectedRegion?: SkyRegion;
   onSelectRegion: () => void;
   onClearRegion: () => void;
+  restoreExposure?: SharedExposure;
+  onRestoreSettled?: () => void;
 }
 const EMPTY_IDS: readonly string[] = [];
 const EMPTY_BUFFER: BufferStatus = {
@@ -42,6 +45,8 @@ export function ObservationsPanel({
   selectedRegion,
   onSelectRegion,
   onClearRegion,
+  restoreExposure,
+  onRestoreSettled,
 }: Props) {
   const imageReady = useSyncExternalStore(imageReadiness.subscribe, imageReadiness.getSnapshot);
   const [observations, setObservations] = useState<Observation[]>([]);
@@ -84,6 +89,50 @@ export function ObservationsPanel({
     () => observations.filter((observation) => observation.detector === detector),
     [observations, detector],
   );
+  useEffect(() => {
+    if (!restoreExposure) return;
+    const controller = new AbortController();
+    abort.current = controller;
+    const region = restoreExposure.region;
+    const target = { ...region, fov: region.sizeDeg };
+    setLoading(true);
+    setError('');
+    void loadAllObservations(target, '', controller.signal, setQueryProgress, region.sizeDeg)
+      .then((result) => {
+        if (controller.signal.aborted) return;
+        const found = result.observations.find((o) => o.id === restoreExposure.id);
+        if (!found)
+          throw new Error(
+            'La exposición del enlace no está disponible en IRSA. Puedes consultar otra fecha.',
+          );
+        setObservations(result.observations);
+        setDetector(found.detector);
+        setIndex(
+          result.observations
+            .filter((o) => o.detector === found.detector)
+            .findIndex((o) => o.id === found.id),
+        );
+        setCenter(target);
+        setQueryRegion(region);
+        setRegionSize(region.sizeDeg);
+        setTruncated(result.truncated);
+        setEnabled(true);
+        setPlaying(false);
+      })
+      .catch((problem) => {
+        if (!controller.signal.aborted)
+          setError(
+            problem instanceof Error ? problem.message : 'No se pudo restaurar la exposición.',
+          );
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+          onRestoreSettled?.();
+        }
+      });
+    return () => controller.abort();
+  }, [restoreExposure]);
   const active = matching[Math.min(index, Math.max(0, matching.length - 1))];
   const frames = useMemo(
     () =>

@@ -12,6 +12,10 @@ Las animaciones permiten seleccionar una región de 1.2′–15′, registrar su
 
 Se consultan todos los años publicados desde 2025; las respuestas SIA truncadas se recuperan mediante ventanas temporales menores.
 
+**Copiar enlace** comparte ubicación, zoom, canales, comparación y exposición exacta; se restaura pausada. Hubble/Webb admiten solapado con transparencia o pantalla dividida y conservan sus épocas de archivo. [Enlaces y comparación](docs/ENLACES-COMPARACION-ESTUDIO.md).
+
+**Interpretar región** añade marcas por clase mediante probabilidades publicadas de Gaia DSC y tipos SIMBAD. No es un modelo nuevo ni identifica todo el contenido de los píxeles SPHEREx. [Alcance y prueba local con Photutils](docs/ESTUDIO-REGIONES.md).
+
 El mosaico mezcla fechas y tiene muestreo aproximado de 12.88″/píxel; ampliar hasta 1″ no añade resolución. Las exposiciones individuales se obtienen como recortes FITS de 0.1° y se corrigen para visualización usando su WCS/SIP. Las longitudes de onda de un detector pueden variar entre exposiciones: el parpadeo no constituye una medición fotométrica a longitud de onda fija.
 
 [Cómo funciona, qué se usó del documento y evaluación de Astroquery](docs/COMO-FUNCIONA.md). [Licencias y procedencia](docs/THIRD-PARTY.md).

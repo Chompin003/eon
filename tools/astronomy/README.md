@@ -1,5 +1,7 @@
 # Entorno de astronomía
 
+El entorno también incluye Photutils 3.1.1 y scikit-learn 1.9.1. `requirements-study.txt` reproduce esa ampliación; `study_image.py` detecta candidatos puntuales sobre un FITS original y genera JSON/PNG locales. [Evaluación y decisión sobre entrenamiento](../../docs/ESTUDIO-REGIONES.md). No hay un modelo propio entrenado.
+
 Astroquery está instalado en el entorno virtual `.venv` de este proyecto. No modifica el Python global ni se incluye en el bundle del navegador.
 
 Para Hubble/Webb se añadió `query_telescopes.py` (Astroquery/MAST). La integración de comparación se verificó también con Python 3.12.14 y estos mismos requisitos fijados; véase [comparación de telescopios](../../docs/TELESCOPIOS.md) para instalación, comandos, resultados y límites. Las capas web usan Aladin/HiPS, no un servidor Python local.

@@ -5,9 +5,22 @@ interface Props {
   onSourceChange: (source: ArchiveHiPSSource | undefined) => void;
   view: ViewState;
   onViewChange: (next: ViewState) => void;
+  mode: 'split' | 'overlay';
+  onModeChange: (mode: 'split' | 'overlay') => void;
+  transparency: number;
+  onTransparencyChange: (value: number) => void;
 }
 
-export function TelescopeComparison({ source, onSourceChange, view, onViewChange }: Props) {
+export function TelescopeComparison({
+  source,
+  onSourceChange,
+  view,
+  onViewChange,
+  mode,
+  onModeChange,
+  transparency,
+  onTransparencyChange,
+}: Props) {
   return (
     <section className="control-section" aria-labelledby="telescope-heading">
       <div className="section-title">
@@ -37,6 +50,41 @@ export function TelescopeComparison({ source, onSourceChange, view, onViewChange
       </div>
       {source && (
         <>
+          <div className="display-modes" role="group" aria-label="Distribución de telescopios">
+            <button
+              className="plain-button"
+              aria-pressed={mode === 'overlay'}
+              onClick={() => onModeChange('overlay')}
+            >
+              Solapada
+            </button>
+            <button
+              className="plain-button"
+              aria-pressed={mode === 'split'}
+              onClick={() => onModeChange('split')}
+            >
+              Pantalla dividida
+            </button>
+          </div>
+          {mode === 'overlay' && (
+            <>
+              <label htmlFor="telescope-transparency">
+                Transparencia de {source.telescope} · {transparency}%
+              </label>
+              <input
+                id="telescope-transparency"
+                aria-label="Transparencia del telescopio"
+                type="range"
+                min="0"
+                max="100"
+                value={transparency}
+                onChange={(e) => onTransparencyChange(Number(e.target.value))}
+              />
+              <p className="survey-details">
+                0%: solo {source.telescope} donde hay cobertura. 100%: solo SPHEREx.
+              </p>
+            </>
+          )}
           <label htmlFor="comparison-instrument">Instrumento de {source.telescope}</label>
           <select
             className="survey-select"
@@ -53,8 +101,9 @@ export function TelescopeComparison({ source, onSourceChange, view, onViewChange
             ))}
           </select>
           <p className="survey-details">
-            Izquierda: SPHEREx. Derecha: {source.title}. Misma RA/Dec y zoom. Cobertura parcial: un
-            campo vacío no significa ausencia de objetos.
+            {mode === 'split' ? 'Izquierda: SPHEREx. Derecha: ' : 'Sobre SPHEREx: '}
+            {source.title}. Misma RA/Dec y zoom. Cobertura parcial: un campo vacío no significa
+            ausencia de objetos.
           </p>
           <button
             className="plain-button"
@@ -64,6 +113,7 @@ export function TelescopeComparison({ source, onSourceChange, view, onViewChange
           </button>
           <p className="survey-details">
             Vista multifiltro de archivo para orientación, no fotometría ni comparación temporal.
+            Las épocas no están sincronizadas: cambiar la fecha de SPHEREx no cambia este mosaico.
             Publicación del mosaico: {source.releaseDate}; no es la fecha de cada exposición.{' '}
             {source.telescope === 'Hubble'
               ? 'Estos mosaicos de Hubble recopilan observaciones hasta agosto de 2015.'
