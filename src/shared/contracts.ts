@@ -39,6 +39,17 @@ export interface FITSSource {
   url: string;
 }
 
+/** Archive previews contain heterogeneous filters and partial sky coverage, not a spectrum. */
+export interface ArchiveHiPSSource {
+  kind: 'archive-hips';
+  id: string;
+  title: string;
+  telescope: 'Hubble' | 'Webb';
+  url: string;
+  instrument: string;
+  releaseDate: string;
+}
+
 export type DisplayMode = 'mono' | 'color' | 'split';
 
 export interface Observation {
@@ -59,7 +70,7 @@ export interface SurveyMetadata {
   channels: readonly { frame: number; wavelengthUm: number }[];
 }
 
-export type SkySource = CheckerboardSource | HiPSSource | FITSSource;
+export type SkySource = CheckerboardSource | HiPSSource | FITSSource | ArchiveHiPSSource;
 
 /** Reserved data-only contract; no drawing UI or science data implemented yet. */
 export interface SkyAnnotation {

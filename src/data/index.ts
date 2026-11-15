@@ -1,6 +1,7 @@
 import type { SkySource } from '../shared';
 
 export { demoEpochs } from './demoEpochs';
+export { TelescopeComparison } from './TelescopeComparison';
 export { CoordinatesPanel } from './coordinates/CoordinatesPanel';
 export { spherexSource, loadSurveyMetadata } from './spherex';
 export { ObservationsPanel } from './ObservationsPanel';
