@@ -73,7 +73,6 @@ test('PNG exports real space without controls, then annotations with transparenc
   expect(stats.opaque).toBe(stats.width * stats.height);
   expect(stats.colored).toBe(0);
 
-  await page.locator('spherex-paint').locator('summary').first().click();
   await page.getByLabel('Anotar (bloquea arrastre del cielo)').check();
   await page.getByRole('button', { name: 'Cerrar controles' }).click();
   await page.mouse.move(600, 500);

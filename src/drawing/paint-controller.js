@@ -273,9 +273,8 @@ import M from './paint-model.js';
         :host { display:block; width:100%; max-width:100%; color:#37352f; font:13px/1.5 system-ui,sans-serif; color-scheme:light; }
         * { box-sizing:border-box; } details { background:#fbfbfa; border:1px solid #dededb; border-radius:6px; overflow:hidden; }
         summary { padding:9px 8px; display:flex; gap:12px; align-items:center; cursor:pointer; list-style:none; }
-        summary::-webkit-details-marker { display:none; } .badge { width:32px; height:32px; display:grid; place-items:center; color:#86e1ce; border:1px solid #42636a; border-radius:9px; }
-        .title { flex:1; font-weight:600; } .title small { display:block; font-size:10px; font-weight:400; letter-spacing:.05em; color:#787774; } .chevron { color:#787774; } details[open] .chevron { transform:rotate(180deg); }
-        .panel { padding:10px 8px; border-top:1px solid #e9e9e7; } .toolbar { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:5px; }
+        summary::-webkit-details-marker { display:none; }
+        .panel { padding:0; } .toolbar { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:5px; }
         button { font:inherit; cursor:pointer; color:inherit; background:#ffffff; border:1px solid #dededb; border-radius:7px; min-height:36px; padding:7px; }
         button:hover { background:#eeeeeb; } button[aria-pressed=true] { color:#10252a; background:#86e1ce; border-color:#86e1ce; } button:disabled { opacity:.35; cursor:default; }
         button:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible { outline:2px solid #86e1ce; outline-offset:2px; }
@@ -301,9 +300,7 @@ import M from './paint-model.js';
         #space-alphabet button { padding:4px 0; font:18px 'Segoe UI Symbol',sans-serif; }
         #new-text,#edit-text { width:100%; margin-top:8px; }
       </style>
-      <details>
-        <summary><span class="badge">${icon('pencil')}</span><span class="title">Herramientas<small>ANOTACIONES DE ESTUDIO</small></span><span class="chevron" aria-hidden="true">⌄</span></summary>
-        <div class="panel">
+        <div class="panel" role="group" aria-label="Controles de Paint">
           <div class="row"><label><input id="enabled" type="checkbox"> Anotar (bloquea arrastre del cielo)</label></div>
           <div class="row"><label><input id="visible" type="checkbox" checked> Mostrar anotaciones</label></div>
           <div class="toolbar" role="group" aria-label="Herramientas de Paint">
@@ -350,8 +347,7 @@ import M from './paint-model.js';
           <p class="help">Capa de estudio en RA/Dec, independiente de los datos SPHEREx. Desactiva Anotar para navegar. PNG/JPG exportan solo las anotaciones, sin los píxeles científicos. Guarda antes de cerrar: los dibujos viven en esta sesión.</p>
           <p class="help">Selecciona un objeto para moverlo; arrastra sus esquinas para escalar. Supr elimina. Ctrl+Z / Ctrl+Y en el lienzo.</p>
           <p id="status" role="status" aria-live="polite" aria-atomic="true"></p>
-        </div>
-      </details>`;
+        </div>`;
     }
 
     connectedCallback() {
@@ -360,7 +356,6 @@ import M from './paint-model.js';
       const listen = (target, type, fn, opts = {}) =>
         target.addEventListener(type, fn, { ...opts, signal: this.abort.signal });
       const root = this.shadowRoot;
-      root.querySelector('details').open = false;
       listen(root.getElementById('enabled'), 'change', (event) => {
         this.cancel();
         this.enabled = event.target.checked;

@@ -44,4 +44,13 @@ for (const mobile of [false, true])
     await page.getByRole('button', { name: 'Cerrar controles' }).click();
     await page.getByRole('button', { name: 'Mostrar controles' }).click();
     await expect(ra).toHaveValue('12 30 15');
+    const paint = menus.filter({
+      has: page.locator(':scope > summary', { hasText: 'Paint' }),
+    });
+    await paint.locator(':scope > summary').click();
+    await expect(page.getByRole('button', { name: 'Lápiz', exact: true })).toBeVisible();
+    await page.getByLabel('Mostrar anotaciones', { exact: true }).uncheck();
+    await page.getByRole('button', { name: 'Plegar todo', exact: true }).click();
+    await paint.locator(':scope > summary').press('Enter');
+    await expect(page.getByLabel('Mostrar anotaciones', { exact: true })).not.toBeChecked();
   });
