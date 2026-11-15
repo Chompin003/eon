@@ -13,6 +13,7 @@ import { buildInterpretation, countText, exportInterpretation, interpretGroup } 
 import './report.css';
 
 interface Props {
+  onPrepareImages?: () => void;
   region: SkyRegion;
   source?: FITSSource;
   pixels?: PixelStudy;
@@ -30,6 +31,7 @@ const ruleLabels: Record<string, string> = {
 };
 
 export function RegionReport({
+  onPrepareImages,
   region,
   source,
   pixels,
@@ -104,7 +106,9 @@ export function RegionReport({
       data-method={report.method}
     >
       <div className="section-title">
-        <h3 id={heading}>Informe de región</h3>
+        <h3 id={heading}>
+          {report.mode === 'pixels' ? 'Informe de región' : 'Consulta de catálogos'}
+        </h3>
         <span>Reglas · SEP y catálogos</span>
       </div>
       <p className="report-scope">
@@ -138,13 +142,33 @@ export function RegionReport({
           </p>
         </>
       )}
-      <div className="report-unassessed" data-testid="report-unassessed">
-        <strong>Sin evaluar</strong>
-        <p>
-          Calidad instrumental, movimiento físico y variabilidad de brillo. Este informe no confirma
-          identidades ni descubrimientos.
-        </p>
-      </div>
+      {report.mode === 'pixels' ? (
+        <div className="report-unassessed" data-testid="report-unassessed">
+          <strong>Límites científicos</strong>
+          <p>
+            Calidad instrumental, movimiento físico y variabilidad de brillo sin evaluar. Este
+            informe no confirma identidades ni descubrimientos.
+          </p>
+        </div>
+      ) : (
+        <div className="analysis-prerequisite">
+          <strong>
+            {source?.sequence?.region
+              ? 'Falta completar el análisis de píxeles'
+              : 'Imágenes pendientes de analizar'}
+          </strong>
+          <p>
+            {source?.sequence?.region
+              ? 'Revisa los errores del análisis y vuelve a pulsar Interpretar región.'
+              : 'Solo se consultaron catálogos. Carga las exposiciones en Animación y vuelve a Interpretar región para medir los píxeles.'}
+          </p>
+          {!source?.sequence?.region && onPrepareImages && (
+            <button className="plain-button" onClick={onPrepareImages}>
+              Abrir Animación
+            </button>
+          )}
+        </div>
+      )}
       {attention.length > 0 && (
         <ul className="report-attention">
           {attention.map((finding) => (

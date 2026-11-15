@@ -32,6 +32,17 @@
   border-left: 3px solid #9a813f;
   background: #f8f4e9;
 }
+.analysis-prerequisite {
+  margin: 12px 0;
+  padding: 12px;
+  border-left: 3px solid #44749e;
+  background: #edf4fa;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.analysis-prerequisite p {
+  margin: 6px 0 10px;
+}
 .report-unassessed p {
   margin: 4px 0 0;
 }
