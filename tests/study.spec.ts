@@ -66,6 +66,8 @@ test('catalog marks stay with a changing epoch and never turn playback into netw
   await page.getByRole('button', { name: 'Interpretar región', exact: true }).click();
   await expect(page.getByTestId('study-count')).toBeVisible();
   const marker = page.locator('.study-markers [data-provider="Gaia DR3"]').first();
+  await expect(page.getByTestId('pixel-summary')).toBeVisible({ timeout: 30000 });
+  await page.getByLabel('Mostrar identificaciones').check();
   const before = await marker.getAttribute('transform');
   await page.getByRole('slider', { name: 'Fecha', exact: true }).press('End');
   await expect(marker).not.toHaveAttribute('transform', before!);

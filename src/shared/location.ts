@@ -12,6 +12,7 @@ export interface SharedExposure {
   region: SkyRegion;
 }
 export interface SharedLocation {
+  dataset?: 'ngc1491-example';
   view: ViewState;
   band: number;
   band2: number;
@@ -43,6 +44,7 @@ export function readLocation(url: URL): SharedLocation | undefined {
   const band = number('band', 0, 101),
     band2 = number('band2', 0, 101);
   return {
+    dataset: q.get('example') === 'ngc1491' ? 'ngc1491-example' : undefined,
     view: {
       longitude: ra % 360,
       latitude: dec,
@@ -64,6 +66,7 @@ export function readLocation(url: URL): SharedLocation | undefined {
   };
 }
 const owned = [
+  'example',
   'ra',
   'dec',
   'fov',
@@ -83,6 +86,7 @@ export function writeLocation(input: URL, state: SharedLocation): URL {
   const url = new URL(input),
     q = url.searchParams;
   for (const key of owned) q.delete(key);
+  if (state.dataset === 'ngc1491-example') q.set('example', 'ngc1491');
   const put = (key: string, value: number) => q.set(key, String(Number(value.toFixed(9))));
   put('ra', state.view.longitude);
   put('dec', state.view.latitude);

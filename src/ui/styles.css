@@ -101,6 +101,52 @@
   margin-top: 12px;
   font-size: 12px;
 }
+.pixel-results {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+.pixel-results h3 {
+  font-size: 13px;
+  margin: 0;
+}
+.measurement-figure {
+  margin: 12px 0;
+}
+.measurement-figure figcaption {
+  font-size: 11px;
+}
+.measurement-figure svg {
+  width: 100%;
+  height: auto;
+  stroke: none;
+}
+.measurement-figure text {
+  font-size: 9px;
+  fill: #666;
+}
+.measurement-figure circle {
+  cursor: pointer;
+}
+.measurement-table {
+  max-height: 200px;
+  overflow: auto;
+}
+.measurement-table table {
+  width: 100%;
+  font-size: 11px;
+  border-collapse: collapse;
+}
+.measurement-table th,
+.measurement-table td {
+  text-align: left;
+  padding: 4px;
+  border-bottom: 1px solid #eee;
+}
+.observation-tools progress,
+.control-section progress {
+  width: 100%;
+}
 .link-restore-notice {
   position: fixed;
   top: 16px;

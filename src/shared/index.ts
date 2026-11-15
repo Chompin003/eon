@@ -1,6 +1,8 @@
 export * from './contracts';
 export * from './location';
 export * from './study';
+export * from './pixels';
+export * from './pixelAssociations';
 export * from './zoom';
 export * from './timeline';
 export { createImageReadiness, type ImageReadiness } from './imageReadiness';

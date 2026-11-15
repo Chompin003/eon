@@ -14,8 +14,12 @@ export function readFitsImage(input: ArrayBuffer) {
       start = Math.ceil((cursor + 80) / 2880) * 2880;
       break;
     }
-    if (card[8] === '=')
-      header[key] = card.slice(10).split('/')[0].trim().replace(/^'|'$/g, '').trim();
+    if (card[8] === '=') {
+      const value = card.slice(10).trim();
+      // A slash inside a quoted FITS value belongs to the value (e.g. MJy / sr).
+      const quoted = /^'((?:[^']|'')*)'/.exec(value);
+      header[key] = quoted ? quoted[1].replaceAll("''", "'").trim() : value.split('/')[0].trim();
+    }
   }
   const num = (key: string, fallback = NaN) =>
     header[key] === undefined ? fallback : Number(header[key].replace(/D/i, 'E'));
@@ -66,6 +70,15 @@ export function readFitsImage(input: ArrayBuffer) {
     width,
     height,
     header,
+    pixelToWorld(x: number, y: number): [number, number] {
+      const u = x + 1 - crpix1,
+        v = y + 1 - crpix2;
+      const term = (t: SipModel['a']) =>
+        t.reduce((sum, [i, j, value]) => sum + value * u ** i * v ** j, 0);
+      const px = u + term(sip.a),
+        py = v + term(sip.b);
+      return plane.planeToWorld(cd11 * px + cd12 * py, cd21 * px + cd22 * py);
+    },
     pixel(x: number, y: number) {
       return data.getFloat32(start + (y * width + x) * 4, false) * scale + zero;
     },

@@ -2,6 +2,8 @@
 
 ## Qué hace la opción web
 
+La interfaz ahora añade detección real sobre los píxeles originales de las secuencias FITS mediante SEP/WebAssembly, con mediciones entre exposiciones, asociaciones candidatas, gráfica y exportaciones. [Uso, parámetros, arquitectura y límites](ANALISIS-PIXELES.md). Las marcas de catálogo descritas a continuación siguen disponibles por separado: una entrada catalogada no equivale a una detección SPHEREx. La prueba Photutils de este documento es el ensayo previo, no el motor web entregado.
+
 **Estudiar región → Interpretar región** consulta la selección explícita, la región temporal activa o un cuadrado de hasta 15′ en el centro actual. Las marcas se proyectan con la misma API ICRS de Paint y siguen pan, zoom y fecha. El selector muestra procedencia, tipo y coordenadas de cada entrada.
 
 **Gaia DR3**, mediante IRSA Gator, aporta astrometría y probabilidades publicadas de DSC-Combmod para estrella, galaxia y cuásar. Es un clasificador previamente entrenado por Gaia, no por eon. Si ninguna probabilidad alcanza 0.8, la entrada queda sin clasificar. Otras clases de DSC no presentes en esas columnas pueden quedar sin clasificar. La probabilidad publicada no es una precisión medida sobre SPHEREx; Gaia usa espectros y astrometría ópticos.

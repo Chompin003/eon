@@ -4,10 +4,10 @@
 
 - Enlaces con coordenadas, zoom, canales y exposición exacta, restauración pausada y actualización limitada a dos escrituras por segundo.
 - Hubble/Webb solapados con transparencia y misma proyección, además de comparación dividida. Las épocas son independientes.
-- Estudio de regiones con Gaia DSC publicado y SIMBAD, marcas por categoría y movimiento propio de catálogo. [Alcance](ESTUDIO-REGIONES.md). Photutils y scikit-learn instalados; no se inició entrenamiento sin datos de validación.
+- Detección real sobre IMAGE con SEP 1.4.1/WASM en Worker: centroides ICRS, forma, señal en apertura, candidaturas Gaia/SIMBAD, enlaces entre exposiciones y exportación JSON/CSV. Ejemplo NGC 1491 con tres exposiciones oficiales guardadas, abierto solo explícitamente; nunca reemplaza una consulta fallida. [Método y límites](ANALISIS-PIXELES.md). No se entrenó un clasificador propio ni se promete identificar toda emisión.
 
 - [Repositorio](https://github.com/Chompin003/eon) y [página de producción](https://eon-visualizer.pages.dev/).
-- Datos reales: mosaico espectral HiPS DR1 y recortes de exposiciones FITS DR1/QR3 por coordenadas y año. B/N, superposición de dos canales, color falso y vista dividida sincronizada. Fechas reales, no fixtures en producción.
+- Datos reales: mosaico espectral HiPS DR1 y recortes de exposiciones FITS DR1/QR3 por coordenadas y año. B/N, superposición de dos canales, color falso y vista dividida sincronizada. Fechas reales; el conjunto guardado de ejemplo está identificado y separado de las consultas en vivo.
 - Coordenadas de Iván/GorditoG integradas en el [PR #3](https://github.com/Chompin003/eon/pull/3). Su cuenta tiene permiso de escritura.
 - Cuatro ramas del equipo preparadas: `feat/sky-viewer`, `feat/spherex-data`, `feat/drawing-tools`, `feat/interface`. Sus cambios se conservan al sincronizar `main`.
 - Cloudflare Pages conectado con GitHub, producción `main`, build `npm run build`, salida `dist`, Node 24.11.1 y previews de todas las ramas no productivas.

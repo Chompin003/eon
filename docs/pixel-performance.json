@@ -1,0 +1,31 @@
+{
+  "method": "SEP 1.4.1",
+  "analysisMs": 305.19460000000004,
+  "workerSeconds": 0.09040000000596046,
+  "frames": [
+    {
+      "id": "2025W34_2B_0099_1:SPHEREx-D4",
+      "detections": 10
+    },
+    {
+      "id": "2026W07_2A_0374_3:SPHEREx-D4",
+      "detections": 5
+    },
+    {
+      "id": "2026W36_1A_0557_1:SPHEREx-D4",
+      "detections": 6
+    }
+  ],
+  "tracks": 19,
+  "persistentTracks": 1,
+  "associations": {
+    "candidate": 5,
+    "ambiguous": 6,
+    "none": 10
+  },
+  "presentations": 30,
+  "medianMs": 99.89999999850988,
+  "p95Ms": 117.29999999701977,
+  "playbackFitsRequests": 0,
+  "iframes": 0
+}

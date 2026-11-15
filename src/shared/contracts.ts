@@ -30,6 +30,8 @@ export interface HiPSSource {
 }
 
 export interface FITSSource {
+  /** Explicit recorded real dataset; never an automatic archive fallback. */
+  dataset?: 'ngc1491-example';
   kind: 'fits';
   id: string;
   title: string;

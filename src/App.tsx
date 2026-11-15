@@ -5,6 +5,7 @@ import {
   TelescopeComparison,
   StudyPanel,
   StudyMarkers,
+  DetectionMarkers,
   loadSurveyMetadata,
   spherexSource,
 } from './data';
@@ -23,8 +24,9 @@ import {
   ARCHIVE_SURVEYS,
   type RegionStudy,
   type StudyObject,
+  type PixelStudy,
 } from './shared';
-import { SkyViewer } from './viewer';
+import { SkyViewer, analyzePixels } from './viewer';
 import { ExplorerLayout } from './ui';
 import { PaintTools, PaintSurface, usePaintSession } from './drawing';
 import { useShareLink } from './useShareLink';
@@ -46,9 +48,16 @@ function ExplorerApp() {
   );
   const [restoreError, setRestoreError] = useState('');
   const [restoreAttempt, setRestoreAttempt] = useState(0);
+  const [exampleRequest, setExampleRequest] = useState(0);
   const [study, setStudy] = useState<RegionStudy>();
   const [showStudy, setShowStudy] = useState(true);
   const [selectedObject, setSelectedObject] = useState<StudyObject>();
+  const [pixelStudy, setPixelStudy] = useState<PixelStudy>();
+  const [selectedTrack, setSelectedTrack] = useState<string>();
+  const [showPixels, setShowPixels] = useState(true);
+  const [frameRequest, setFrameRequest] = useState<{ id: string; nonce: number }>();
+  const requestFrame = (id: string) =>
+    setFrameRequest((prev) => ({ id, nonce: (prev?.nonce ?? 0) + 1 }));
   const paint = usePaintSession();
   const [comparisonSource, setComparisonSource] = useState<ArchiveHiPSSource | undefined>(() =>
     ARCHIVE_SURVEYS.find((s) => s.id === initial?.telescope),
@@ -90,6 +99,10 @@ function ExplorerApp() {
   );
   const [transparency, setTransparency] = useState(initial?.transparency ?? 35);
   const [observationSource, setObservationSource] = useState<FITSSource | null>(null);
+  useEffect(() => {
+    setPixelStudy(undefined);
+    setSelectedTrack(undefined);
+  }, [observationSource?.sequence?.id]);
   const [selectingRegion, setSelectingRegion] = useState(false);
   const selectionPreviousView = useRef(view);
   const [imageReadiness] = useState(createImageReadiness);
@@ -137,6 +150,7 @@ function ExplorerApp() {
     [observationSource, spectralFrame],
   );
   const share = useShareLink({
+    dataset: observationSource?.dataset ?? (restoring ? initial?.dataset : undefined),
     view,
     band: spectralFrame,
     band2: secondFrame,
@@ -183,6 +197,21 @@ function ExplorerApp() {
       showingObservation={Boolean(observationSource)}
       studyTools={
         <StudyPanel
+          onOpenExample={() => {
+            setRestoreState('none');
+            setRestoring(false);
+            setComparisonSource(undefined);
+            setExampleRequest((n) => n + 1);
+          }}
+          imageSource={observationSource ?? undefined}
+          analyzePixels={analyzePixels}
+          pixelStudy={pixelStudy}
+          onPixelStudy={setPixelStudy}
+          selectedTrack={selectedTrack}
+          onTrackSelected={setSelectedTrack}
+          showPixels={showPixels}
+          onShowPixels={setShowPixels}
+          onFrame={requestFrame}
           date={observationSource?.dateUtc}
           region={observationSource?.sequence?.region ?? region}
           view={view}
@@ -212,6 +241,9 @@ function ExplorerApp() {
       }
       timeTools={
         <ObservationsPanel
+          exampleRequest={exampleRequest}
+          restoreExample={initial?.dataset === 'ngc1491-example'}
+          frameRequest={frameRequest}
           restoreExposure={
             restoreState === 'loading' || restoreState === 'error' ? initial?.exposure : undefined
           }
@@ -290,7 +322,7 @@ function ExplorerApp() {
             </button>
           </div>
         )}
-        {metadata ? (
+        {metadata || observationSource?.sequence?.region ? (
           <SkyViewer
             source={source}
             comparisonSource={comparisonSource}
@@ -321,6 +353,15 @@ function ExplorerApp() {
             renderAnnotations={(projection) => (
               <>
                 <PaintSurface session={paint} projection={projection} />
+                {pixelStudy && showPixels && observationSource && (
+                  <DetectionMarkers
+                    result={pixelStudy}
+                    frameId={observationSource.id}
+                    projection={projection}
+                    selected={selectedTrack}
+                    onSelect={setSelectedTrack}
+                  />
+                )}
                 {study && showStudy && (
                   <StudyMarkers
                     result={study}

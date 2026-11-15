@@ -10,8 +10,12 @@ import {
   type SharedExposure,
 } from '../shared';
 import { loadAllObservations } from './observations';
+import { exampleRegion, exampleObservations, exampleFrames } from './example';
 
 interface Props {
+  exampleRequest?: number;
+  restoreExample?: boolean;
+  frameRequest?: { id: string; nonce: number };
   view: ViewState;
   onViewChange: (view: ViewState) => void;
   onSourceChange: (source: FITSSource | null) => void;
@@ -39,6 +43,9 @@ const EMPTY_BUFFER: BufferStatus = {
 };
 
 export function ObservationsPanel({
+  exampleRequest,
+  restoreExample,
+  frameRequest,
   view,
   onViewChange,
   onSourceChange,
@@ -68,6 +75,7 @@ export function ObservationsPanel({
   const [queryProgress, setQueryProgress] = useState('');
   const [regionSize, setRegionSize] = useState(0.1);
   const [queryRegion, setQueryRegion] = useState<SkyRegion>();
+  const [exampleLoaded, setExampleLoaded] = useState(false);
   const abort = useRef<AbortController | null>(null);
   const presented = useRef(imageReady);
   useEffect(() => {
@@ -94,26 +102,49 @@ export function ObservationsPanel({
     [observations, detector],
   );
   useEffect(() => {
+    if (!exampleRequest) return;
+    abort.current?.abort();
+    setLoading(false);
+    setError('');
+    setPlaying(false);
+    setEnabled(true);
+    setExampleLoaded(true);
+    setObservations(exampleObservations);
+    setDetector('SPHEREx-D4');
+    setIndex(0);
+    setTruncated(false);
+    setCenter({ ...exampleRegion, fov: exampleRegion.sizeDeg });
+    setQueryRegion(exampleRegion);
+    setRegionSize(exampleRegion.sizeDeg);
+    props.current.onViewChange({ ...exampleRegion, fov: exampleRegion.sizeDeg });
+  }, [exampleRequest]);
+  useEffect(() => {
     if (!restoreExposure) {
       setLoading(false);
       return;
     }
     const controller = new AbortController();
     abort.current = controller;
-    const region = restoreExposure.region;
+    const region = restoreExample ? exampleRegion : restoreExposure.region;
     const target = { ...region, fov: region.sizeDeg };
     setLoading(true);
     setError('');
     onRestoreStatus?.('loading');
-    void loadAllObservations(target, '', controller.signal, setQueryProgress, region.sizeDeg)
+    const lookup = restoreExample
+      ? Promise.resolve({ observations: exampleObservations, truncated: false })
+      : loadAllObservations(target, '', controller.signal, setQueryProgress, region.sizeDeg);
+    void lookup
       .then((result) => {
         if (controller.signal.aborted) return;
         const found = result.observations.find((o) => o.id === restoreExposure.id);
         if (!found)
           throw new Error(
-            'La exposición del enlace no está disponible en IRSA. Puedes consultar otra fecha.',
+            restoreExample
+              ? 'La exposición no pertenece a este conjunto real guardado.'
+              : 'La exposición del enlace no está disponible en IRSA. Puedes consultar otra fecha.',
           );
         setObservations(result.observations);
+        setExampleLoaded(Boolean(restoreExample));
         setDetector(found.detector);
         setIndex(
           result.observations
@@ -145,19 +176,30 @@ export function ObservationsPanel({
     return () => controller.abort();
   }, [restoreExposure, restoreAttempt]);
   const active = matching[Math.min(index, Math.max(0, matching.length - 1))];
+  useEffect(() => {
+    if (!frameRequest) return;
+    const target = matching.findIndex((f) => f.id === frameRequest.id);
+    if (target >= 0) {
+      setIndex(target);
+      setPlaying(false);
+      setEnabled(true);
+    }
+  }, [frameRequest]);
   const frames = useMemo(
     () =>
-      center
-        ? matching.map((active) => ({
-            kind: 'fits' as const,
-            id: active.id,
-            title: `${active.detector} · ${active.dateUtc}`,
-            dateUtc: active.dateUtc,
-            center: { longitude: center.longitude, latitude: center.latitude },
-            url: `/api/cutout?${new URLSearchParams({ url: active.url, ra: String(center.longitude), dec: String(center.latitude), size: ((queryRegion?.sizeDeg ?? 0.1) * 1.5).toFixed(6) })}`,
-          }))
-        : [],
-    [matching, center, queryRegion],
+      exampleLoaded
+        ? exampleFrames
+        : center
+          ? matching.map((active) => ({
+              kind: 'fits' as const,
+              id: active.id,
+              title: `${active.detector} · ${active.dateUtc}`,
+              dateUtc: active.dateUtc,
+              center: { longitude: center.longitude, latitude: center.latitude },
+              url: `/api/cutout?${new URLSearchParams({ url: active.url, ra: String(center.longitude), dec: String(center.latitude), size: ((queryRegion?.sizeDeg ?? 0.1) * 1.5).toFixed(6) })}`,
+            }))
+          : [],
+    [matching, center, queryRegion, exampleLoaded],
   );
   const sequenceId = useMemo(() => crypto.randomUUID(), [frames]);
   const bufferStatus =
@@ -219,6 +261,7 @@ export function ObservationsPanel({
   }, [playing, enabled, matching.length, interval]);
 
   async function search() {
+    setExampleLoaded(false);
     abort.current?.abort();
     const controller = new AbortController();
     abort.current = controller;
@@ -264,10 +307,21 @@ export function ObservationsPanel({
 
   return (
     <div className="observation-tools">
+      {exampleLoaded && (
+        <p className="survey-details" data-testid="example-notice">
+          Ejemplo real guardado: NGC 1491 · tres exposiciones de 2025–2026. No es una consulta
+          actual del archivo.{' '}
+          <a href="/examples/spherex/manifest.json" target="_blank" rel="noreferrer">
+            Procedencia y hashes
+          </a>
+          .
+        </p>
+      )}
       <div className="time-actions">
         <button
           className="plain-button"
           onClick={() => {
+            setExampleLoaded(false);
             setEnabled(false);
             setPlaying(false);
             onSelectRegion();
@@ -297,7 +351,7 @@ export function ObservationsPanel({
           setEnabled(false);
         }}
       />
-      {selectedRegion && (
+      {selectedRegion && !exampleLoaded && (
         <p className="survey-details">
           Región seleccionada: RA {selectedRegion.longitude.toFixed(6)}° · Dec{' '}
           {selectedRegion.latitude.toFixed(6)}°.
