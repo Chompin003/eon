@@ -100,7 +100,7 @@ test('an archive failure leaves SPHEREx usable and comparisons retain Paint laye
     .getByRole('button', { name: 'Pantalla dividida', exact: true })
     .click();
   await expect(page.locator('.study-annotations [data-item]')).toHaveCount(2);
-  await page.route('https://skies.esac.esa.int/HST/ACS/**', (route) => route.abort());
+  await page.route('**/api/telescope/0/**', (route) => route.abort());
   await page
     .getByRole('group', { name: 'Telescopio de comparación' })
     .getByRole('button', { name: 'Hubble', exact: true })

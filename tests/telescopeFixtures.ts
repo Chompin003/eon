@@ -15,22 +15,23 @@ export async function installTelescopeFixtures(page: Page) {
   ];
   const file = (name: string) =>
     readFileSync(new URL(`./fixtures/telescopes/${name}`, import.meta.url));
-  await page.route('https://skies.esac.esa.int/**', async (route) => {
-    const url = route.request().url();
-    const source = sources.find(([path]) => url.startsWith(`https://skies.esac.esa.int/${path}`));
+  await page.route('**/api/telescope/**', async (route) => {
+    const parts = new URL(route.request().url()).pathname.split('/');
+    const source = sources[Number(parts[3])];
+    const url = parts.slice(4).join('/');
     const headers = { 'Access-Control-Allow-Origin': '*' };
     if (!source) {
       await route.fulfill({ status: 404, headers });
       return;
     }
     const [, name, format] = source;
-    if (url.endsWith('/properties'))
+    if (url === 'properties')
       await route.fulfill({
         body: file(`${name}-properties.txt`),
         contentType: 'text/plain',
         headers,
       });
-    else if (url.endsWith('/Moc.fits'))
+    else if (url === 'Moc.fits')
       await route.fulfill({
         body: file(`${name}-Moc.fits`),
         contentType: 'application/fits',

@@ -9,7 +9,7 @@ test('a temporal archive failure can be retried through the non-interactive over
   page,
 }) => {
   let reject = true;
-  await page.route('https://skies.esac.esa.int/JWST/**', (route) =>
+  await page.route('**/api/telescope/{2,3}/**', (route) =>
     reject ? route.abort() : route.fallback(),
   );
   await page.goto(
@@ -43,7 +43,7 @@ test('an unresponsive archive times out explicitly without blocking SPHEREx', as
   const gate = new Promise<void>((resolve) => {
     release = resolve;
   });
-  await page.route('https://skies.esac.esa.int/JWST/**', async (route) => {
+  await page.route('**/api/telescope/{2,3}/**', async (route) => {
     await gate;
     await route.abort();
   });
@@ -86,7 +86,7 @@ test('HiPS telescopes share a single camera, offer both layouts and preserve the
   await expect(
     page.getByText('Las épocas no están sincronizadas:', { exact: false }),
   ).toBeVisible();
-  await page.route('https://skies.esac.esa.int/HST/ACS/**', (r) => r.abort());
+  await page.route('**/api/telescope/0/**', (r) => r.abort());
   await page
     .getByRole('group', { name: 'Telescopio de comparación' })
     .getByRole('button', { name: 'Hubble', exact: true })

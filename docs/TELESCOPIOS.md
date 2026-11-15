@@ -1,5 +1,13 @@
 # Comparación SPHEREx / Hubble / Webb
 
+## Conexión y modos actuales
+
+Controles → Comparar telescopios → Hubble/Webb ofrece **Superposición** y **Pantalla dividida**. En superposición, el deslizador cambia solo la transparencia del telescopio externo (0% opaco, 100% oculto). Se conserva la misma cámara y Paint; no se modifica el análisis SEP ni los catálogos.
+
+Las teselas y los MOC de ESA se solicitan mediante `/api/telescope/0..3/`. Este transporte de Cloudflare solo admite cuatro datasets fijos y rutas HiPS válidas: propiedades, MOC, Allsky y teselas PNG/JPEG hasta orden 15. Cada petición tiene un plazo de 12 segundos, lecturas limitadas y caché pública de 24 horas para respuestas correctas. Los errores no se guardan ni se sustituyen con imágenes de prueba. No se requiere una base de datos privada o credenciales para estos mosaicos públicos.
+
+Esta ruta evita que el navegador tenga que conectarse directamente a ESA, pero no puede reparar una caída global del proveedor. Si falla, usa Reintentar o vuelve a SPHEREx. Para desarrollo con estos endpoints usa `npm run dev:full`, no el servidor Vite sin Functions. Si aún ves la interfaz antigua, recarga la página.
+
 En **Controles → Comparar telescopios**, SPHEREx es la referencia permanente. Hubble o Webb se añaden en **Solapada**, con transparencia predeterminada 35%. 0% muestra el archivo extra donde hay cobertura; 100% deja SPHEREx. También se puede elegir **Pantalla dividida**, con SPHEREx a la izquierda. Ambas comparten RA/Dec ICRS y FOV horizontal. Paint conserva sus anotaciones. Volver al botón SPHEREx quita el archivo externo.
 
 En el mosaico, el solapado usa dos capas en una instancia Aladin. En la animación Canvas 2D, el archivo usa una TAN centrada en la región fija y su contenedor aplica la transformación exacta de la cuadrícula temporal; el pan no recentra erróneamente la TAN del archivo. La resolución del iframe permanece acotada y el zoom es una transformación visual. Los puntos contrastados en navegador difieren menos de 0.1 píxel en los casos probados.
