@@ -9,7 +9,6 @@ test.beforeEach(async ({ page }) => {
 test('text and space symbols edit, undo, follow the sky and share both panes', async ({ page }) => {
   await page.goto('/');
   await openControls(page);
-  await page.locator('spherex-paint').locator('summary').first().click();
   await page.getByRole('button', { name: 'T + Texto / símbolos' }).click();
   await page.getByRole('textbox', { name: 'Texto', exact: true }).fill('Centauri\nλ = 2 μm');
   await page.getByRole('button', { name: 'Insertar símbolo α', exact: true }).click();

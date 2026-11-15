@@ -23,7 +23,6 @@ test('study annotations preserve sky pixels/navigation, erase partially and foll
     (window as SkyProjectionWindow).spherexProjection!.pixelToWorld(600, 500)!,
   );
   await openControls(page);
-  await page.locator('spherex-paint').locator('summary').first().click();
   await page.getByLabel('Anotar (bloquea arrastre del cielo)').check();
   await page.getByRole('button', { name: 'Cerrar controles' }).click();
   await page.mouse.move(600, 500);
@@ -79,7 +78,6 @@ test('emojis, imported images and annotations share both spectral panes and surv
   await page.goto('/');
   await expect(page.frameLocator('iframe').locator('#sky')).toHaveAttribute('data-ready', 'true');
   await openControls(page);
-  await page.locator('spherex-paint').locator('summary').first().click();
   await page.locator('spherex-paint').locator('#emoji-picker > summary').click();
   await page.getByRole('searchbox', { name: 'Buscar emoji' }).fill('cohete');
   await page.getByRole('button', { name: 'Insertar cohete', exact: true }).click();

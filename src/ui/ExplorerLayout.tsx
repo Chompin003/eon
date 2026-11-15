@@ -125,7 +125,11 @@ export function ExplorerLayout({
             Plegar todo
           </button>
         </div>
-        <ControlMenu title="Ubicación y zoom" description="Coordenadas J2000 y campo visible">
+        <ControlMenu
+          icon="location"
+          title="Ubicación y zoom"
+          description="Coordenadas J2000 y campo visible"
+        >
           <section
             className="control-section"
             aria-labelledby="coordinates-heading"
@@ -180,7 +184,7 @@ export function ExplorerLayout({
             </button>
           </section>
         </ControlMenu>
-        <ControlMenu title="Imagen" description="Canales, color y referencias">
+        <ControlMenu icon="image" title="Imagen" description="Canales, color y referencias">
           <section className="control-section" aria-labelledby="survey-heading">
             <div className="section-title">
               <h2 id="survey-heading">SPHEREx DR1</h2>
@@ -292,7 +296,7 @@ export function ExplorerLayout({
             </details>
           </section>
         </ControlMenu>
-        <ControlMenu title="Animación" description="Región, fechas y velocidad">
+        <ControlMenu icon="animation" title="Animación" description="Región, fechas y velocidad">
           <section className="control-section" aria-labelledby="time-heading">
             <div className="section-title">
               <h2 id="time-heading">Tiempo · exposiciones reales</h2>
@@ -300,21 +304,26 @@ export function ExplorerLayout({
             {timeTools}
           </section>
         </ControlMenu>
-        <ControlMenu title="Análisis" description="Detecciones y catálogos">
+        <ControlMenu icon="analysis" title="Análisis" description="Detecciones y catálogos">
           {studyTools}
         </ControlMenu>
-        <ControlMenu title="Paint" description="Dibujo, texto y símbolos">
-          <section className="control-section" aria-labelledby="drawing-heading">
-            <div className="section-title">
-              <h2 id="drawing-heading">Paint</h2>
-            </div>
+        <ControlMenu icon="paint" title="Paint" description="Dibujo, texto y símbolos">
+          <section className="control-section" aria-label="Paint">
             {drawingTools ?? <p className="module-note">Módulo por conectar</p>}
           </section>
         </ControlMenu>
-        <ControlMenu title="Telescopios" description="Comparación y campos observados">
+        <ControlMenu
+          icon="telescope"
+          title="Telescopios"
+          description="Comparación y campos observados"
+        >
           {telescopeTools}
         </ControlMenu>
-        <ControlMenu title="Descargar y compartir" description="Imagen PNG, animación GIF y enlace">
+        <ControlMenu
+          icon="download"
+          title="Descargar y compartir"
+          description="Imagen PNG, animación GIF y enlace"
+        >
           {shareTools}
           {exportTools}
         </ControlMenu>

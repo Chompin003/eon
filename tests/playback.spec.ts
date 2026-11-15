@@ -176,7 +176,6 @@ test('region annotations remain registered across dates and follow keyboard pan 
   await openRegion(page);
   await expect(page.getByTestId('buffer-progress')).toHaveAttribute('data-ready', 'true');
   await page.getByRole('button', { name: 'Pausar', exact: true }).click();
-  await page.locator('spherex-paint').locator('summary').first().click();
   await page.getByLabel('Anotar (bloquea arrastre del cielo)').check();
   await page.getByRole('button', { name: 'Cerrar controles' }).click();
   const canvas = page.locator('.region-canvas'),

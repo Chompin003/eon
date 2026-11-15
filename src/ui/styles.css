@@ -961,6 +961,16 @@ input[type='range']::-moz-range-thumb {
   flex-shrink: 0;
   color: #555;
 }
+.control-menu-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: #686763;
+}
+.control-menu-label {
+  flex: 1;
+  min-width: 0;
+}
 .control-menu-toolbar {
   display: flex;
   justify-content: flex-end;

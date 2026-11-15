@@ -36,7 +36,6 @@ try {
   await expect(page.getByTestId('pixel-summary')).toContainText('3 exposiciones', {
     timeout: 30000,
   });
-  await page.locator('spherex-paint').locator('summary').first().click();
   await page.getByLabel('Anotar (bloquea arrastre del cielo)').check();
   await page.getByRole('button', { name: 'Cerrar controles' }).click();
   await page.mouse.move(650, 450);

@@ -89,7 +89,6 @@ test('an archive failure leaves SPHEREx usable and comparisons retain Paint laye
 }) => {
   await page.goto('/');
   await openControls(page);
-  await page.locator('spherex-paint').locator('summary').first().click();
   await page.locator('spherex-paint').locator('#emoji-picker > summary').click();
   await page.getByRole('searchbox', { name: 'Buscar emoji' }).fill('cohete');
   await page.getByRole('button', { name: 'Insertar cohete', exact: true }).click();
