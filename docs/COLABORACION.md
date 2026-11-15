@@ -15,7 +15,7 @@ El propietario invita a los tres compañeros desde GitHub → repositorio → Se
 Clona en una carpeta local fuera de carpetas sincronizadas (OneDrive puede causar bloqueos de archivos):
 
 ```sh
-git clone https://github.com/Chompin003/spherex-explorer.git
+git clone https://github.com/Chompin003/eon.git
 cd spherex-explorer
 git switch feat/sky-viewer
 npm ci

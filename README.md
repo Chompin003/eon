@@ -1,6 +1,6 @@
-# SPHEREx Explorer
+# eon
 
-Repositorio del equipo: [Chompin003/spherex-explorer](https://github.com/Chompin003/spherex-explorer).
+Repositorio del equipo: [Chompin003/eon](https://github.com/Chompin003/eon).
 
 **Explorador público:** [spherex-explorer.pages.dev](https://spherex-explorer.pages.dev/).
 

@@ -7,6 +7,7 @@ import {
   type FITSSource,
   type SurveyMetadata,
   type ViewState,
+  type BufferStatus,
 } from './shared';
 import { SkyViewer } from './viewer';
 import { ExplorerLayout } from './ui';
@@ -24,6 +25,13 @@ export function App() {
   const [overlay, setOverlay] = useState(false);
   const [observationSource, setObservationSource] = useState<FITSSource | null>(null);
   const [imageReady, setImageReady] = useState(false);
+  const [bufferStatus, setBufferStatus] = useState<BufferStatus>({
+    total: 0,
+    prepared: 0,
+    ready: 0,
+    failed: 0,
+    bytes: 0,
+  });
 
   useEffect(() => {
     const controller = new AbortController();
@@ -79,6 +87,7 @@ export function App() {
           onViewChange={updateView}
           onSourceChange={setObservationSource}
           imageReady={imageReady}
+          bufferStatus={bufferStatus}
         />
       }
       coordinateTools={<CoordinatesPanel view={view} onViewChange={updateView} />}
@@ -91,6 +100,7 @@ export function App() {
           mode={displayMode}
           overlay={overlay}
           onReadyChange={setImageReady}
+          onBufferStatus={setBufferStatus}
           view={view}
           layers={CHECKERBOARD_LAYERS}
           onViewChange={updateView}
