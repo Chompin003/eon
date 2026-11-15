@@ -5,6 +5,36 @@ test.beforeEach(async ({ page }) => {
   await installTelescopeFixtures(page);
 });
 
+test('a temporal archive failure can be retried through the non-interactive overlay', async ({
+  page,
+}) => {
+  let reject = true;
+  await page.route('https://skies.esac.esa.int/JWST/**', (route) =>
+    reject ? route.abort() : route.fallback(),
+  );
+  await page.goto(
+    '/?ra=60.8109955&dec=51.3404038&fov=.1&size=.1&epoch=2026W07_2A_0374_3%3ASPHEREx-D4',
+  );
+  const canvas = page.locator('.region-canvas');
+  await expect(canvas).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
+  await page.getByRole('button', { name: 'Mostrar controles' }).click();
+  await page
+    .getByRole('group', { name: 'Telescopio de comparación' })
+    .getByRole('button', { name: 'Webb', exact: true })
+    .click();
+  const layer = page.locator('.registered-archive');
+  await expect(layer.getByRole('alert')).toContainText('No se pudo cargar Webb');
+  reject = false;
+  await layer.getByRole('button', { name: 'Reintentar', exact: true }).click();
+  await expect(page.getByTitle('Cielo Webb').contentFrame().locator('#sky')).toHaveAttribute(
+    'data-ready',
+    'true',
+    { timeout: 30000 },
+  );
+  await expect(layer.getByRole('alert')).toHaveCount(0);
+  await expect(canvas).toHaveAttribute('data-ready', 'true');
+});
+
 test('an unresponsive archive times out explicitly without blocking SPHEREx', async ({ page }) => {
   await page.goto('/');
   const sky = page.getByTitle('Cielo SPHEREx').contentFrame().locator('#sky');
