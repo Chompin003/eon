@@ -1,3 +1,6 @@
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.woff2 binary
 # FITS headers can exceed Git's binary-detection window. Never normalize data bytes.
 *.fits binary
-*.png binary
