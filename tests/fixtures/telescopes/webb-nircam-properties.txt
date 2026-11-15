@@ -1,0 +1,698 @@
+hips_initial_fov     = 0.04132
+hips_initial_ra      = 16.9411
+hips_initial_dec     = -17.50246
+creator_did          = ivo://ESAVO/P/JWST/NIRCam_Imaging
+hips_pixel_bitpix    = -32
+data_pixel_bitpix    = -32
+hips_sampling        = bilinear
+hips_overlay         = mean
+hips_hierarchy       = median
+#hips_creator        = HiPS creator (institute or person)
+#hips_copyright      = Copyright mention of the HiPS
+obs_title            = JWST NIRCam_Imaging
+obs_description      = Observations from JWST-NIRCam Imaging observing mode since ERO release
+obs_ack              = Original data from the European JWST Archive (eJWST) at ESA/ESAC
+prov_progenitor      = http://www.cosmos.esa.int/web/jwst
+obs_regime           = Infrared
+#bib_reference       = Bibcode for bibliographic reference
+#bib_reference_url   = URL to bibliographic reference
+#obs_copyright       = Copyright mention of the original data
+#obs_copyright_url   = URL to copyright page of the original data
+#t_min               = Start time in MJD ( =(Unixtime/86400)+40587  or https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl)
+#t_max               = Stop time in MJD
+#obs_regime          = Waveband keyword (Radio Infrared Optical UV X-ray Gamma-ray)
+#em_min              = Start in spectral coordinates in meters ( =2.998E8/freq in Hz, or =1.2398841929E-12*energy in MeV )
+#em_max              = Stop in spectral coordinates in meters
+hips_builder         = Aladin/HipsGen v11.025
+hips_version         = 1.4
+hips_release_date    = 2024-07-15T15:30Z
+hips_frame           = equatorial
+hips_order           = 15
+hips_order_min       = 0
+hips_tile_width      = 512
+hips_status          = public master clonableOnce
+hips_service_url     = http://skies.esac.esa.int/JWST/NIRCam_Imaging/
+hips_pixel_scale     = 3.494E-6
+s_pixel_scale        = 8.576E-6
+dataproduct_type     = image
+moc_sky_fraction     = 1.025E-5
+hips_estsize         = 194493144
+hipsgen_date         = 2022-08-11T08:16Z
+hipsgen_params       = -live in=/home/mmi/mmiops/www-dev/test_data/NIRCam_Imaging cache=/home/mmi/mmiops/jwst_hips/cache hips_order=15 -blank=0 -f out=/home/mmi/mmiops/www-dev/JWST/NIRCam_Imaging "creator_did=eJWST NIRCam_Imaging"
+hips_creation_date   = 2022-08-11T08:16Z
+hips_tile_format     = png fits
+hips_pixel_cut       = 0 999.9
+hips_data_range      = -500 1500
+hipsgen_date_1       = 2022-08-11T11:33Z
+hipsgen_params_1     = -live in=/home/mmi/mmiops/www-dev/test_data/NIRCam_Imaging cache=/home/mmi/mmiops/jwst_hips/cache hips_order=15 -f out=/home/mmi/mmiops/www-dev/JWST/NIRCam_Imaging "creator_did=eJWST NIRCam_Imaging"
+addendum_id          = APPEND/P/1677897379
+addendum_id          = APPEND/P/1678156826
+addendum_id          = APPEND/P/1678280142
+addendum_id          = APPEND/P/1678806826
+addendum_id          = APPEND/P/1678887198
+addendum_id          = APPEND/P/1679062548
+addendum_id          = APPEND/P/1679135819
+addendum_id          = APPEND/P/1679231178
+addendum_id          = APPEND/P/1679333016
+addendum_id          = APPEND/P/1679417235
+addendum_id          = APPEND/P/1679514333
+addendum_id          = APPEND/P/1679593624
+addendum_id          = APPEND/P/1679671784
+addendum_id          = APPEND/P/1679750860
+addendum_id          = APPEND/P/1679825491
+addendum_id          = APPEND/P/1679913047
+addendum_id          = APPEND/P/1680630299
+addendum_id          = APPEND/P/1680773275
+addendum_id          = APPEND/P/1680868079
+addendum_id          = APPEND/P/1680957094
+addendum_id          = APPEND/P/1681038483
+addendum_id          = APPEND/P/1681136607
+addendum_id          = APPEND/P/1681206878
+addendum_id          = APPEND/P/1681364908
+addendum_id          = APPEND/P/1681790141
+addendum_id          = APPEND/P/1681944623
+addendum_id          = APPEND/P/1682104617
+addendum_id          = APPEND/P/1682159597
+addendum_id          = APPEND/P/1682273746
+addendum_id          = APPEND/P/1682339726
+addendum_id          = APPEND/P/1682605046
+addendum_id          = APPEND/P/1682688551
+addendum_id          = APPEND/P/1683263149
+addendum_id          = APPEND/P/1683367567
+addendum_id          = APPEND/P/1683625272
+addendum_id          = APPEND/P/1683799282
+addendum_id          = APPEND/P/1683884943
+addendum_id          = APPEND/P/1683982834
+addendum_id          = APPEND/P/1684072928
+addendum_id          = APPEND/P/1684151192
+addendum_id          = APPEND/P/1684252908
+addendum_id          = APPEND/P/1684336997
+addendum_id          = APPEND/P/1684416183
+addendum_id          = APPEND/P/1684499999
+addendum_id          = APPEND/P/1684587001
+addendum_id          = APPEND/P/1684689316
+addendum_id          = APPEND/P/1684754979
+addendum_id          = APPEND/P/1684853821
+addendum_id          = APPEND/P/1685116315
+addendum_id          = APPEND/P/1685210202
+addendum_id          = APPEND/P/1686676885
+addendum_id          = APPEND/P/1686884549
+addendum_id          = APPEND/P/1687034762
+addendum_id          = APPEND/P/1687172985
+addendum_id          = APPEND/P/1687260451
+addendum_id          = APPEND/P/1687369891
+addendum_id          = APPEND/P/1687431347
+addendum_id          = APPEND/P/1687541030
+addendum_id          = APPEND/P/1687610951
+addendum_id          = APPEND/P/1687708294
+addendum_id          = APPEND/P/1687783248
+addendum_id          = APPEND/P/1687889203
+addendum_id          = APPEND/P/1687951393
+addendum_id          = APPEND/P/1688044939
+addendum_id          = APPEND/P/1688131298
+addendum_id          = APPEND/P/1688227004
+addendum_id          = APPEND/P/1688306948
+addendum_id          = APPEND/P/1688392165
+addendum_id          = APPEND/P/1688469206
+addendum_id          = APPEND/P/1688553401
+addendum_id          = APPEND/P/1688725805
+addendum_id          = APPEND/P/1688900455
+addendum_id          = APPEND/P/1689060335
+addendum_id          = APPEND/P/1689145316
+addendum_id          = APPEND/P/1689158585
+addendum_id          = APPEND/P/1689230727
+addendum_id          = APPEND/P/1689404437
+addendum_id          = APPEND/P/1689489654
+addendum_id          = APPEND/P/1689575713
+addendum_id          = APPEND/P/1689662225
+addendum_id          = APPEND/P/1689752808
+addendum_id          = APPEND/P/1689837449
+addendum_id          = APPEND/P/1689920339
+addendum_id          = APPEND/P/1690013078
+addendum_id          = APPEND/P/1690093758
+addendum_id          = APPEND/P/1690178220
+addendum_id          = APPEND/P/1690279649
+addendum_id          = APPEND/P/1690371160
+addendum_id          = APPEND/P/1690457739
+addendum_id          = APPEND/P/1690619758
+addendum_id          = APPEND/P/1690784241
+addendum_id          = APPEND/P/1690974198
+addendum_id          = APPEND/P/1691082765
+addendum_id          = APPEND/P/1691159191
+addendum_id          = APPEND/P/1691221492
+addendum_id          = APPEND/P/1691310662
+addendum_id          = APPEND/P/1691414677
+addendum_id          = APPEND/P/1691542435
+addendum_id          = APPEND/P/1691728629
+addendum_id          = APPEND/P/1691825779
+addendum_id          = APPEND/P/1691911421
+addendum_id          = APPEND/P/1691998117
+addendum_id          = APPEND/P/1692273226
+addendum_id          = APPEND/P/1692348533
+addendum_id          = APPEND/P/1692454982
+addendum_id          = APPEND/P/1692526328
+addendum_id          = APPEND/P/1692626786
+addendum_id          = APPEND/P/1692978866
+addendum_id          = APPEND/P/1693058626
+addendum_id          = APPEND/P/1693291511
+addendum_id          = APPEND/P/1693381510
+addendum_id          = APPEND/P/1693479966
+addendum_id          = APPEND/P/1693555175
+addendum_id          = APPEND/P/1693635126
+addendum_id          = APPEND/P/1693725935
+addendum_id          = APPEND/P/1693818185
+addendum_id          = APPEND/P/1693910967
+addendum_id          = APPEND/P/1693984412
+addendum_id          = APPEND/P/1694418464
+addendum_id          = APPEND/P/1694521685
+addendum_id          = APPEND/P/1694597184
+addendum_id          = APPEND/P/1694859304
+addendum_id          = APPEND/P/1694951246
+addendum_id          = APPEND/P/1695649425
+addendum_id          = APPEND/P/1697059229
+addendum_id          = APPEND/P/1697729744
+addendum_id          = APPEND/P/1698420926
+addendum_id          = APPEND/P/1698846780
+addendum_id          = APPEND/P/1699111649
+addendum_id          = APPEND/P/1699216800
+addendum_id          = APPEND/P/1699258103
+addendum_id          = APPEND/P/1699377503
+addendum_id          = APPEND/P/1699500739
+addendum_id          = APPEND/P/1699898606
+addendum_id          = APPEND/P/1700130184
+addendum_id          = APPEND/P/1700311138
+addendum_id          = APPEND/P/1700498079
+addendum_id          = APPEND/P/1700653499
+addendum_id          = APPEND/P/1702109002
+addendum_id          = APPEND/P/1702816744
+addendum_id          = APPEND/P/1702878211
+addendum_id          = APPEND/P/1702966192
+addendum_id          = APPEND/P/1703052710
+addendum_id          = APPEND/P/1703137263
+addendum_id          = APPEND/P/1703223803
+addendum_id          = APPEND/P/1703311832
+addendum_id          = APPEND/P/1703399741
+addendum_id          = APPEND/P/1703485071
+addendum_id          = APPEND/P/1703571253
+addendum_id          = APPEND/P/1703658016
+addendum_id          = APPEND/P/1703742321
+addendum_id          = APPEND/P/1703832185
+addendum_id          = APPEND/P/1703915563
+addendum_id          = APPEND/P/1704001624
+addendum_id          = APPEND/P/1704090512
+addendum_id          = APPEND/P/1704176689
+addendum_id          = APPEND/P/1704262510
+addendum_id          = APPEND/P/1704348792
+addendum_id          = APPEND/P/1704432862
+addendum_id          = APPEND/P/1704520643
+addendum_id          = APPEND/P/1704609764
+addendum_id          = APPEND/P/1704695998
+addendum_id          = APPEND/P/1704779973
+addendum_id          = APPEND/P/1704866644
+addendum_id          = APPEND/P/1704953169
+addendum_id          = APPEND/P/1705041666
+addendum_id          = APPEND/P/1705124815
+addendum_id          = APPEND/P/1705210298
+addendum_id          = APPEND/P/1705299482
+addendum_id          = APPEND/P/1705383412
+addendum_id          = APPEND/P/1705473497
+addendum_id          = APPEND/P/1705558935
+addendum_id          = APPEND/P/1705818051
+addendum_id          = APPEND/P/1705904120
+addendum_id          = APPEND/P/1705988274
+addendum_id          = APPEND/P/1706077370
+addendum_id          = APPEND/P/1706165806
+addendum_id          = APPEND/P/1706257811
+addendum_id          = APPEND/P/1706336513
+addendum_id          = APPEND/P/1706423472
+addendum_id          = APPEND/P/1706510597
+addendum_id          = APPEND/P/1707399840
+addendum_id          = APPEND/P/1707543343
+addendum_id          = APPEND/P/1707631200
+addendum_id          = APPEND/P/1707716610
+addendum_id          = APPEND/P/1707809672
+addendum_id          = APPEND/P/1708578555
+addendum_id          = APPEND/P/1709856512
+addendum_id          = APPEND/P/1710051831
+addendum_id          = APPEND/P/1710138191
+addendum_id          = APPEND/P/1710226583
+addendum_id          = APPEND/P/1710395806
+addendum_id          = APPEND/P/1710487427
+addendum_id          = APPEND/P/1710576449
+addendum_id          = APPEND/P/1710666584
+addendum_id          = APPEND/P/1710757746
+addendum_id          = APPEND/P/1710832005
+addendum_id          = APPEND/P/1712036985
+addendum_id          = APPEND/P/1712387532
+addendum_id          = APPEND/P/1712671092
+addendum_id          = APPEND/P/1712903144
+addendum_id          = APPEND/P/1715401776
+addendum_id          = APPEND/P/1715870334
+addendum_id          = APPEND/P/1717651316
+addendum_id          = APPEND/P/1718205700
+addendum_id          = APPEND/P/1718274094
+addendum_id          = APPEND/P/1718441846
+addendum_id          = APPEND/P/1718700985
+addendum_id          = APPEND/P/1718992697
+addendum_id          = APPEND/P/1719390188
+addendum_id          = APPEND/P/1719564052
+addendum_id          = APPEND/P/1719743732
+addendum_id          = APPEND/P/1720014146
+addendum_id          = APPEND/P/1720274631
+addendum_id          = APPEND/P/1720634746
+addendum_id          = APPEND/P/1720890201
+#obs_collection      = Dataset collection name
+hipsgen_date_2       = 2023-03-06T09:24Z
+hipsgen_params_2     = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_3       = 2023-03-07T02:43Z
+hipsgen_params_3     = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_4       = 2023-03-08T12:59Z
+hipsgen_params_4     = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_5       = 2023-03-14T17:48Z
+hipsgen_params_5     = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_6       = 2023-03-15T13:33Z
+hipsgen_params_6     = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_7       = 2023-03-17T14:37Z
+hipsgen_params_7     = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_8       = 2023-03-18T10:47Z
+hipsgen_params_8     = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_9       = 2023-03-19T13:56Z
+hipsgen_params_9     = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_10      = 2023-03-20T19:33Z
+hipsgen_params_10    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_11      = 2023-03-21T19:44Z
+hipsgen_params_11    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_12      = 2023-03-23T02:27Z
+hipsgen_params_12    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_13      = 2023-03-23T20:10Z
+hipsgen_params_13    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_14      = 2023-03-24T15:51Z
+hipsgen_params_14    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_15      = 2023-03-25T14:04Z
+hipsgen_params_15    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_16      = 2023-03-26T10:46Z
+hipsgen_params_16    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_17      = 2023-03-27T11:27Z
+hipsgen_params_17    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_18      = 2023-04-05T04:23Z
+hipsgen_params_18    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_19      = 2023-04-06T13:31Z
+hipsgen_params_19    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_20      = 2023-04-07T11:51Z
+hipsgen_params_20    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_21      = 2023-04-08T12:46Z
+hipsgen_params_21    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_22      = 2023-04-09T11:08Z
+hipsgen_params_22    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_23      = 2023-04-10T15:41Z
+hipsgen_params_23    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_24      = 2023-04-11T10:07Z
+hipsgen_params_24    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_25      = 2023-04-13T19:18Z
+hipsgen_params_25    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_26      = 2023-04-18T14:38Z
+hipsgen_params_26    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_27      = 2023-04-20T05:14Z
+hipsgen_params_27    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_28      = 2023-04-21T22:07Z
+hipsgen_params_28    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_29      = 2023-04-22T11:01Z
+hipsgen_params_29    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_30      = 2023-04-23T21:08Z
+hipsgen_params_30    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_31      = 2023-04-24T14:19Z
+hipsgen_params_31    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_32      = 2023-04-27T21:10Z
+hipsgen_params_32    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_33      = 2023-04-28T15:18Z
+hipsgen_params_33    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_34      = 2023-05-05T07:32Z
+hipsgen_params_34    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_35      = 2023-05-06T10:14Z
+hipsgen_params_35    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_36      = 2023-05-09T09:43Z
+hipsgen_params_36    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_37      = 2023-05-11T10:04Z
+hipsgen_params_37    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_38      = 2023-05-12T09:49Z
+hipsgen_params_38    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_39      = 2023-05-13T14:55Z
+hipsgen_params_39    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_40      = 2023-05-14T17:50Z
+hipsgen_params_40    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_41      = 2023-05-15T12:27Z
+hipsgen_params_41    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_42      = 2023-05-16T17:10Z
+hipsgen_params_42    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_43      = 2023-05-17T17:34Z
+hipsgen_params_43    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_44      = 2023-05-18T14:30Z
+hipsgen_params_44    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_45      = 2023-05-19T14:40Z
+hipsgen_params_45    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_46      = 2023-05-20T14:02Z
+hipsgen_params_46    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_47      = 2023-05-21T21:17Z
+hipsgen_params_47    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_48      = 2023-05-22T11:55Z
+hipsgen_params_48    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_49      = 2023-05-23T18:28Z
+hipsgen_params_49    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_50      = 2023-05-26T18:14Z
+hipsgen_params_50    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_51      = 2023-05-27T20:43Z
+hipsgen_params_51    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_52      = 2023-06-14T16:07Z
+hipsgen_params_52    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_53      = 2023-06-14T16:19Z
+hipsgen_params_53    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_54      = 2023-06-16T07:03Z
+hipsgen_params_54    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_55      = 2023-06-18T01:47Z
+hipsgen_params_55    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_56      = 2023-06-19T11:23Z
+hipsgen_params_56    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_57      = 2023-06-20T11:32Z
+hipsgen_params_57    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_58      = 2023-06-21T19:17Z
+hipsgen_params_58    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_59      = 2023-06-22T10:57Z
+hipsgen_params_59    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_60      = 2023-06-23T19:38Z
+hipsgen_params_60    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_61      = 2023-06-24T13:00Z
+hipsgen_params_61    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_62      = 2023-06-25T16:49Z
+hipsgen_params_62    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_63      = 2023-06-26T13:36Z
+hipsgen_params_63    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_64      = 2023-06-27T19:55Z
+hipsgen_params_64    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_65      = 2023-06-28T11:25Z
+hipsgen_params_65    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_66      = 2023-06-29T13:45Z
+hipsgen_params_66    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_67      = 2023-06-30T15:29Z
+hipsgen_params_67    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_68      = 2023-07-01T20:01Z
+hipsgen_params_68    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_69      = 2023-07-02T16:25Z
+hipsgen_params_69    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_70      = 2023-07-03T13:52Z
+hipsgen_params_70    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_71      = 2023-07-04T11:19Z
+hipsgen_params_71    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_72      = 2023-07-05T10:38Z
+hipsgen_params_72    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_73      = 2023-07-07T10:31Z
+hipsgen_params_73    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_74      = 2023-07-09T11:19Z
+hipsgen_params_74    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_75      = 2023-07-11T07:55Z
+hipsgen_params_75    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_76      = 2023-07-12T08:01Z
+hipsgen_params_76    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_77      = 2023-07-12T11:01Z
+hipsgen_params_77    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_78      = 2023-07-13T08:23Z
+hipsgen_params_78    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_79      = 2023-07-15T07:39Z
+hipsgen_params_79    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_80      = 2023-07-16T06:52Z
+hipsgen_params_80    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_81      = 2023-07-17T06:41Z
+hipsgen_params_81    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_82      = 2023-07-18T06:39Z
+hipsgen_params_82    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_83      = 2023-07-19T08:37Z
+hipsgen_params_83    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_84      = 2023-07-20T08:15Z
+hipsgen_params_84    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_85      = 2023-07-21T06:28Z
+hipsgen_params_85    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_86      = 2023-07-22T09:04Z
+hipsgen_params_86    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_87      = 2023-07-23T07:04Z
+hipsgen_params_87    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_88      = 2023-07-24T05:58Z
+hipsgen_params_88    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_89      = 2023-07-25T12:51Z
+hipsgen_params_89    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_90      = 2023-07-26T13:48Z
+hipsgen_params_90    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_91      = 2023-07-27T11:42Z
+hipsgen_params_91    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_92      = 2023-07-29T08:42Z
+hipsgen_params_92    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_93      = 2023-07-31T06:26Z
+hipsgen_params_93    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_94      = 2023-08-03T02:08Z
+hipsgen_params_94    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_95      = 2023-08-03T21:03Z
+hipsgen_params_95    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_96      = 2023-08-04T18:15Z
+hipsgen_params_96    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_97      = 2023-08-05T08:19Z
+hipsgen_params_97    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_98      = 2023-08-06T10:14Z
+hipsgen_params_98    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_99      = 2023-08-07T16:10Z
+hipsgen_params_99    = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_100     = 2023-08-09T07:27Z
+hipsgen_params_100   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_101     = 2023-08-11T18:59Z
+hipsgen_params_101   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_102     = 2023-08-12T09:07Z
+hipsgen_params_102   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_103     = 2023-08-13T08:25Z
+hipsgen_params_103   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_104     = 2023-08-14T08:14Z
+hipsgen_params_104   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_105     = 2023-08-17T15:10Z
+hipsgen_params_105   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_106     = 2023-08-18T09:55Z
+hipsgen_params_106   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_107     = 2023-08-19T17:02Z
+hipsgen_params_107   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_108     = 2023-08-20T12:02Z
+hipsgen_params_108   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_109     = 2023-08-21T16:05Z
+hipsgen_params_109   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_110     = 2023-08-25T20:39Z
+hipsgen_params_110   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_111     = 2023-08-26T16:09Z
+hipsgen_params_111   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_112     = 2023-08-29T06:48Z
+hipsgen_params_112   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_113     = 2023-08-30T08:16Z
+hipsgen_params_113   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_114     = 2023-08-31T11:27Z
+hipsgen_params_114   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_115     = 2023-09-01T08:03Z
+hipsgen_params_115   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_116     = 2023-09-02T06:16Z
+hipsgen_params_116   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_117     = 2023-09-03T08:05Z
+hipsgen_params_117   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_118     = 2023-09-04T09:54Z
+hipsgen_params_118   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_119     = 2023-09-05T13:20Z
+hipsgen_params_119   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_120     = 2023-09-06T07:42Z
+hipsgen_params_120   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_121     = 2023-09-11T09:09Z
+hipsgen_params_121   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_122     = 2023-09-12T14:36Z
+hipsgen_params_122   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_123     = 2023-09-13T11:21Z
+hipsgen_params_123   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_124     = 2023-09-16T11:31Z
+hipsgen_params_124   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_125     = 2023-09-17T14:30Z
+hipsgen_params_125   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_126     = 2023-10-01T13:55Z
+hipsgen_params_126   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_127     = 2023-10-16T18:34Z
+hipsgen_params_127   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_128     = 2023-10-19T16:08Z
+hipsgen_params_128   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_129     = 2023-10-29T03:50Z
+hipsgen_params_129   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_130     = 2023-11-02T01:56Z
+hipsgen_params_130   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_131     = 2023-11-05T07:09Z
+hipsgen_params_131   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_132     = 2023-11-05T20:40Z
+hipsgen_params_132   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_133     = 2023-11-06T08:09Z
+hipsgen_params_133   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_134     = 2023-11-08T11:47Z
+hipsgen_params_134   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_135     = 2023-11-09T03:53Z
+hipsgen_params_135   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_136     = 2023-11-14T15:07Z
+hipsgen_params_136   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_137     = 2023-11-16T23:18Z
+hipsgen_params_137   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_138     = 2023-11-18T23:54Z
+hipsgen_params_138   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_139     = 2023-11-21T04:15Z
+hipsgen_params_139   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_140     = 2023-11-23T02:03Z
+hipsgen_params_140   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_141     = 2023-12-11T02:47Z
+hipsgen_params_141   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_142     = 2023-12-17T14:29Z
+hipsgen_params_142   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_143     = 2023-12-18T07:09Z
+hipsgen_params_143   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_144     = 2023-12-19T06:53Z
+hipsgen_params_144   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_145     = 2023-12-20T06:30Z
+hipsgen_params_145   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_146     = 2023-12-21T06:08Z
+hipsgen_params_146   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_147     = 2023-12-22T06:23Z
+hipsgen_params_147   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_148     = 2023-12-23T06:50Z
+hipsgen_params_148   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_149     = 2023-12-24T07:23Z
+hipsgen_params_149   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_150     = 2023-12-25T07:09Z
+hipsgen_params_150   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_151     = 2023-12-26T06:39Z
+hipsgen_params_151   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_152     = 2023-12-27T07:40Z
+hipsgen_params_152   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_153     = 2023-12-28T08:22Z
+hipsgen_params_153   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_154     = 2023-12-29T09:39Z
+hipsgen_params_154   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_155     = 2023-12-30T12:04Z
+hipsgen_params_155   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_156     = 2023-12-31T09:23Z
+hipsgen_params_156   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_157     = 2024-01-01T08:17Z
+hipsgen_params_157   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_158     = 2024-01-02T08:06Z
+hipsgen_params_158   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_159     = 2024-01-03T07:45Z
+hipsgen_params_159   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_160     = 2024-01-04T07:47Z
+hipsgen_params_160   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_161     = 2024-01-05T06:18Z
+hipsgen_params_161   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_162     = 2024-01-06T08:36Z
+hipsgen_params_162   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_163     = 2024-01-07T14:46Z
+hipsgen_params_163   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_164     = 2024-01-08T10:26Z
+hipsgen_params_164   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_165     = 2024-01-09T07:13Z
+hipsgen_params_165   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_166     = 2024-01-10T08:09Z
+hipsgen_params_166   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_167     = 2024-01-11T07:12Z
+hipsgen_params_167   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_168     = 2024-01-12T07:16Z
+hipsgen_params_168   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_169     = 2024-01-13T07:16Z
+hipsgen_params_169   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_170     = 2024-01-14T05:45Z
+hipsgen_params_170   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_171     = 2024-01-15T06:45Z
+hipsgen_params_171   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_172     = 2024-01-16T05:58Z
+hipsgen_params_172   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_173     = 2024-01-17T07:18Z
+hipsgen_params_173   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_174     = 2024-01-18T06:33Z
+hipsgen_params_174   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_175     = 2024-01-21T06:37Z
+hipsgen_params_175   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_176     = 2024-01-22T06:33Z
+hipsgen_params_176   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_177     = 2024-01-23T07:21Z
+hipsgen_params_177   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_178     = 2024-01-24T07:30Z
+hipsgen_params_178   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_179     = 2024-01-25T09:09Z
+hipsgen_params_179   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_180     = 2024-01-26T10:47Z
+hipsgen_params_180   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_181     = 2024-01-27T06:51Z
+hipsgen_params_181   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_182     = 2024-01-28T07:16Z
+hipsgen_params_182   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_183     = 2024-01-29T08:07Z
+hipsgen_params_183   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_184     = 2024-02-09T04:24Z
+hipsgen_params_184   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_185     = 2024-02-10T05:53Z
+hipsgen_params_185   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_186     = 2024-02-11T08:05Z
+hipsgen_params_186   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_187     = 2024-02-12T06:52Z
+hipsgen_params_187   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_188     = 2024-02-13T13:57Z
+hipsgen_params_188   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_189     = 2024-02-25T21:25Z
+hipsgen_params_189   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_190     = 2024-03-08T12:57Z
+hipsgen_params_190   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_191     = 2024-03-10T06:31Z
+hipsgen_params_191   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_192     = 2024-03-11T06:33Z
+hipsgen_params_192   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_193     = 2024-03-12T07:43Z
+hipsgen_params_193   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_194     = 2024-03-14T06:44Z
+hipsgen_params_194   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_195     = 2024-03-15T08:23Z
+hipsgen_params_195   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_196     = 2024-03-16T12:30Z
+hipsgen_params_196   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_197     = 2024-03-17T14:38Z
+hipsgen_params_197   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_198     = 2024-03-18T13:14Z
+hipsgen_params_198   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_199     = 2024-03-19T10:13Z
+hipsgen_params_199   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_200     = 2024-04-02T07:23Z
+hipsgen_params_200   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_201     = 2024-04-06T17:32Z
+hipsgen_params_201   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_202     = 2024-04-10T10:40Z
+hipsgen_params_202   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_203     = 2024-04-12T12:11Z
+hipsgen_params_203   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_204     = 2024-05-11T05:24Z
+hipsgen_params_204   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_205     = 2024-05-16T15:33Z
+hipsgen_params_205   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_206     = 2024-06-06T05:27Z
+hipsgen_params_206   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_207     = 2024-06-12T15:27Z
+hipsgen_params_207   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_208     = 2024-06-13T17:27Z
+hipsgen_params_208   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_209     = 2024-06-15T20:46Z
+hipsgen_params_209   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_210     = 2024-06-18T21:08Z
+hipsgen_params_210   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_211     = 2024-06-24T08:11Z
+hipsgen_params_211   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_212     = 2024-06-26T23:34Z
+hipsgen_params_212   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_213     = 2024-06-28T17:52Z
+hipsgen_params_213   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_214     = 2024-07-01T07:27Z
+hipsgen_params_214   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_215     = 2024-07-04T11:46Z
+hipsgen_params_215   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_216     = 2024-07-07T07:32Z
+hipsgen_params_216   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_217     = 2024-07-11T11:23Z
+hipsgen_params_217   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT
+hipsgen_date_218     = 2024-07-15T15:13Z
+hipsgen_params_218   = "out=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging\"" "in=\"/home/mmi/mmiops/www-operational/JWST/NIRCam_Imaging/AddsHiPS\"" CONCAT

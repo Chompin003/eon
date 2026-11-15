@@ -1,0 +1,53 @@
+creator_did          = ivo://ESAVO/P/HST/ACS-blue
+publisher_did          = ivo://ESAVO/P/HST/ACS-blue
+creator              = ESA (ESDC)
+hips_copyright      = ESA/ESDC
+obs_collection       = HST-ACS
+obs_title           = HST/ACS - all bands
+obs_description     = All observations from HST/ACS retrieved until 27/08/2015
+obs_ack             = Original data from the European HST Archive (eHST) at ESA/ESAC 
+prov_progenitor     = http://www.cosmos.esa.int/web/hst
+bib_reference	    = 2002ExA....14..107C
+bib_reference_url   = http://adsabs.harvard.edu/abs/2002ExA....14..107C
+obs_copyright       = eHST/ESA 
+obs_copyright_url   = http://www.cosmos.esa.int/web/hst
+t_min               = 52365.0703
+t_max               = 57260.3828
+obs_regime          = Optical 
+em_min              = 3.7000e-7
+em_max              = 1.1000e-6
+hips_builder         = Aladin/HipsGen v9.013
+hips_version         = 1.3
+hips_release_date    = 2016-11-11T09:04Z
+hips_frame           = equatorial
+hips_order           = 14
+hips_tile_width      = 512
+hips_service_url    = http://skies.esac.esa.int/HST/ACS/
+hips_master_url    = http://skies.esac.esa.int/HST/ACS/
+hips_status          = public master clonable
+hips_tile_format     = jpeg
+hips_hierarchy       = mean
+hips_pixel_scale     = 6.989E-6
+dataproduct_type     = image
+dataproduct_subtype  = color live
+moc_sky_fraction     = 6.566E-6
+hips_estsize         = 1879726
+hipsgen_date         = 2016-10-18T11:09Z
+hipsgen_params       = -f -live
+hips_creation_date   = 2016-10-18T11:09Z
+hipsgen_date_1       = 2016-10-25T02:27Z
+hipsgen_params_1     = -f -live frame=C
+addendum_id          = ESAVO/P/HST/ACS-red
+addendum_id          = ESAVO/P/HST/ACS
+hipsgen_date_2       = 2016-11-02T10:36Z
+hipsgen_params_2     = -f -live in=/home/mmi/mmiops/grid/HiPS/new/HST/ACS-BLANK/ CONCAT
+hipsgen_date_3       = 2016-11-03T04:21Z
+hipsgen_params_3     = -f -live in=/home/mmi/mmiops/grid/HiPS/new/HST/ACS-RED/ CONCAT
+hipsgen_date_4       = 2016-11-11T09:04Z
+hipsgen_params_4     = -f -live in=/home/mmi/mmiops/grid/HiPS/new/HST/ACS-UV/ CONCAT
+#____FOR_COMPATIBILITY_WITH_OLD_HIPS_CLIENTS____
+label                = HST-ACS
+coordsys             = C
+maxOrder             = 14
+format               = jpeg
+isColored            = true

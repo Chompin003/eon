@@ -28,6 +28,7 @@ interface Props {
   /** Modules mount through App.tsx, without importing sibling modules. */
   coordinateTools?: ReactNode;
   drawingTools?: ReactNode;
+  telescopeTools?: ReactNode;
   children: ReactNode;
 }
 
@@ -55,6 +56,7 @@ export function ExplorerLayout({
   timeTools,
   coordinateTools,
   drawingTools,
+  telescopeTools,
   children,
 }: Props) {
   const [open, setOpen] = useState(false);
@@ -97,6 +99,7 @@ export function ExplorerLayout({
         </svg>
       </button>
       <FloatingPanel open={open} onClose={close} observationDate={observationDate}>
+        {telescopeTools}
         <section className="control-section" aria-labelledby="survey-heading">
           <div className="section-title">
             <h2 id="survey-heading">SPHEREx DR1</h2>

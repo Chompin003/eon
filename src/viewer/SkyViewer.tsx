@@ -8,6 +8,7 @@ import {
   type SkyProjection,
   type SkyProjectionWindow,
   type BufferStatus,
+  type ArchiveHiPSSource,
 } from '../shared';
 import { FrameBuffer } from './frameBuffer';
 const CheckerboardViewer = lazy(() =>
@@ -25,11 +26,15 @@ interface Props {
   onReadyChange?: (ready: boolean) => void;
   renderAnnotations?: (projection: SkyProjection) => ReactNode;
   onBufferStatus?: (status: BufferStatus) => void;
+  comparisonSource?: ArchiveHiPSSource;
 }
 
 export function SkyViewer(props: Props) {
   const [readyPanes, setReadyPanes] = useState<Record<string, string>>({});
   const mode = props.mode ?? 'mono';
+  const comparison = props.comparisonSource;
+  const twoPanes = Boolean(comparison) || mode === 'split';
+  const bufferedComparison = mode === 'split' && !comparison;
   const sequence = props.source.kind === 'fits' ? props.source.sequence : undefined;
   const bufferKey = `${sequence?.id ?? ''}:${sequence?.attempt ?? 0}`;
   const buffer = useMemo(
@@ -67,13 +72,13 @@ export function SkyViewer(props: Props) {
     props.onBufferStatus?.({
       ...preparation,
       sequenceId: sequence?.id,
-      ready: mode === 'split' ? Math.min(mainGPU, comparisonGPU) : mainGPU,
+      ready: bufferedComparison ? Math.min(mainGPU, comparisonGPU) : mainGPU,
       failed:
         preparation.failed +
         (gpu.main?.key === bufferKey ? gpu.main.failed : 0) +
-        (mode === 'split' && gpu.comparison?.key === bufferKey ? gpu.comparison.failed : 0),
+        (bufferedComparison && gpu.comparison?.key === bufferKey ? gpu.comparison.failed : 0),
     });
-  }, [preparation, mode, mainGPU, comparisonGPU, gpu, bufferKey, props.onBufferStatus]);
+  }, [preparation, bufferedComparison, mainGPU, comparisonGPU, gpu, bufferKey, props.onBufferStatus]);
   const progress = (pane: string, count: number, failed: number) =>
     setGPU((current) =>
       current[pane]?.key === bufferKey &&
@@ -88,11 +93,13 @@ export function SkyViewer(props: Props) {
     props.secondFrame,
     props.overlay,
     mode,
+    comparison,
   ]);
   const ready =
-    readyPanes.main === signature && (mode !== 'split' || readyPanes.comparison === signature);
+    readyPanes.main === signature &&
+    (Boolean(comparison) || mode !== 'split' || readyPanes.comparison === signature);
   useEffect(() => {
-    props.onReadyChange?.(ready);
+    props.onReadyChange?.(Boolean(ready));
   }, [props.onReadyChange, ready]);
   if (props.source.kind === 'checkerboard')
     return (
@@ -101,7 +108,7 @@ export function SkyViewer(props: Props) {
       </Suspense>
     );
   return (
-    <div className={mode === 'split' ? 'sky-split' : 'sky-single'}>
+    <div className={twoPanes ? 'sky-split' : 'sky-single'}>
       <div className="sky-pane">
         <HiPSViewer
           {...props}
@@ -116,14 +123,21 @@ export function SkyViewer(props: Props) {
             )
           }
         />
-        {mode === 'split' && <span className="pane-label">Blanco y negro</span>}
+        {twoPanes && (
+          <span className="pane-label">
+            {comparison
+              ? `SPHEREx · ${props.source.kind === 'fits' ? 'exposición' : 'mosaico'}`
+              : 'Blanco y negro'}
+          </span>
+        )}
       </div>
-      {mode === 'split' && (
+      {twoPanes && (
         <div className="sky-pane">
           <HiPSViewer
             {...props}
-            mode="color"
-            buffer={buffer}
+            source={comparison ?? props.source}
+            mode={comparison ? 'mono' : 'color'}
+            buffer={comparison ? undefined : buffer}
             onGPUProgress={(count, failed) => progress('comparison', count, failed)}
             onReadyChange={(value) =>
               setReadyPanes((current) =>
@@ -134,7 +148,11 @@ export function SkyViewer(props: Props) {
             }
           />
           <span className="pane-label">
-            {props.source.kind === 'fits' ? 'Pseudocolor' : 'Color falso · A rojo / B azul'}
+            {comparison
+              ? comparison.title
+              : props.source.kind === 'fits'
+                ? 'Pseudocolor'
+                : 'Color falso · A rojo / B azul'}
           </span>
         </div>
       )}
@@ -159,7 +177,7 @@ function HiPSViewer({
       ? source.sequence
         ? `${source.sequence.id}:${source.sequence.attempt ?? 0}`
         : source.url
-      : source.kind;
+      : source.kind === 'archive-hips' ? source.url : source.kind;
   const frame = useRef<HTMLIFrameElement>(null);
   const current = useRef({
     source,
@@ -177,6 +195,9 @@ function HiPSViewer({
   const [error, setError] = useState('');
   const [connected, setConnected] = useState(false);
   const [projection, setProjection] = useState<SkyProjection>();
+  const [covered, setCovered] = useState<boolean>();
+  const [coverageError, setCoverageError] = useState(false);
+  const archive = source.kind === 'archive-hips';
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
@@ -237,12 +258,16 @@ function HiPSViewer({
     setProjection(undefined);
     engineReady.current = false;
     sent.current.clear();
+    setCovered(undefined);
+    setCoverageError(false);
   }, [documentKey, attempt]);
 
   useEffect(() => {
     const timeout = window.setTimeout(
       () =>
-        setError('IRSA o el visor tardaron demasiado. Revisa tu conexión e inténtalo otra vez.'),
+        setError(
+          `${archive ? 'ESA' : 'IRSA'} o el visor tardaron demasiado. Revisa tu conexión e inténtalo otra vez.`,
+        ),
       source.kind === 'fits' ? 70000 : 30000,
     );
     const receive = (event: MessageEvent) => {
@@ -284,6 +309,9 @@ function HiPSViewer({
         if (next && [next.longitude, next.latitude, next.fov].every(Number.isFinite)) {
           current.current.onViewChange(normalizeView(next));
         }
+      } else if (message.type === 'sky:coverage') {
+        if (typeof message.covered === 'boolean') setCovered(message.covered);
+        setCoverageError(message.covered === null);
       } else if (message.type === 'sky:escape') {
         window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
       }
@@ -296,25 +324,37 @@ function HiPSViewer({
   }, [attempt, documentKey, source.kind]);
 
   return (
-    <div className="sky-canvas" data-connected={connected}>
+    <div
+      className="sky-canvas"
+      data-connected={connected}
+      data-telescope={archive ? source.telescope : 'SPHEREx'}
+    >
       {/* The isolated document owns Aladin's WASM, events and animation loop.
           Removing it releases all of these, including during React StrictMode. */}
       <iframe
         key={`${documentKey}:${attempt}`}
         ref={frame}
         src="/sky.html"
-        title="Cielo SPHEREx"
+        title={archive ? `Cielo ${source.telescope}` : 'Cielo SPHEREx'}
         className="hips-frame"
       />
       {connected && projection && renderAnnotations?.(projection)}
+      {archive && connected && (covered === false || coverageError) && (
+        <div className="coverage-notice" role="status">
+          {covered === false
+            ? 'El centro está fuera de la cobertura de este mosaico.'
+            : 'No se pudo verificar la cobertura.'}{' '}
+          {source.telescope} no cubre todo el cielo. Prueba M74 o busca otra posición.
+        </div>
+      )}
       {!connected && !error && (
         <div className="viewer-loading" role="status">
-          Conectando con SPHEREx / IRSA…
+          {archive ? `Conectando con ${source.title} / ESA…` : 'Conectando con SPHEREx / IRSA…'}
         </div>
       )}
       {error && (
         <div className="viewer-error" role="alert">
-          <strong>No se pudo cargar SPHEREx</strong>
+          <strong>No se pudo cargar {archive ? source.title : 'SPHEREx'}</strong>
           <p>{error}</p>
           <button
             className="plain-button"

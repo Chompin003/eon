@@ -2,6 +2,8 @@
 
 Astroquery está instalado en el entorno virtual `.venv` de este proyecto. No modifica el Python global ni se incluye en el bundle del navegador.
 
+Para Hubble/Webb se añadió `query_telescopes.py` (Astroquery/MAST). La integración de comparación se verificó también con Python 3.12.14 y estos mismos requisitos fijados; véase [comparación de telescopios](../../docs/TELESCOPIOS.md) para instalación, comandos, resultados y límites. Las capas web usan Aladin/HiPS, no un servidor Python local.
+
 ## Repetir la instalación
 
 Desde la raíz del repositorio, con Python 3.13:
