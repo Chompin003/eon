@@ -12,6 +12,8 @@ Las animaciones permiten seleccionar una región de 1.2′–15′, registrar su
 
 Se consultan todos los años publicados desde 2025; las respuestas SIA truncadas se recuperan mediante ventanas temporales menores.
 
+El selector permite mover y redimensionar el cuadro antes de confirmarlo. Modo normal 1.2′–15′ y modo ampliado explícito hasta 60′, con avisos de carga/memoria visibles. La escala de la esquina usa la proyección real y minutos/segundos de arco, también en PNG/GIF con imágenes. [Uso y límites](docs/REGIONES-AMPLIADAS.md).
+
 **Copiar enlace** comparte ubicación, zoom, canales, comparación y exposición exacta; se restaura pausada. Hubble/Webb admiten solapado con transparencia o pantalla dividida y conservan sus épocas de archivo. [Enlaces y comparación](docs/ENLACES-COMPARACION-ESTUDIO.md).
 
 **Descargar vista** exporta PNG con espacio, anotaciones y marcadores seleccionables, o GIF de las fechas preparadas con anotaciones/marcadores opcionales. PNG permite transparencia; GIF conserva siempre las imágenes. Los nombres incluyen coordenadas J2000 sexagesimales y, en GIF, el rango UTC. [Uso y límites](docs/EXPORTACION.md).

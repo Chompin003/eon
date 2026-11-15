@@ -1,5 +1,6 @@
 import { fetchIrsa, streamedImageHdu, position } from '../../server/irsa';
 import { cachedCutout, storeCutout } from '../../server/cache';
+import { REGION_LIMITS } from '../../src/shared/regions';
 
 export async function onRequestGet({
   request,
@@ -21,7 +22,11 @@ export async function onRequestGet({
     )
       return new Response('Archivo no permitido.', { status: 400 });
     const size = Number(params.get('size') ?? 0.1);
-    if (!Number.isFinite(size) || size < 0.02 || size > 0.4)
+    const max =
+      params.get('extended') === '1'
+        ? REGION_LIMITS.extendedCutoutMax
+        : REGION_LIMITS.normalCutoutMax;
+    if (!Number.isFinite(size) || size < REGION_LIMITS.min || size > max)
       return new Response('Campo de recorte inválido.', { status: 400 });
     const url = new URL(input);
     url.searchParams.set('center', `${ra},${dec}d`);

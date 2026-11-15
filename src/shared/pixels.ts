@@ -38,6 +38,8 @@ export interface DetectedExposure {
   noise: number;
   coverage: number;
   truncated: boolean;
+  /** Detections in the ROI before applying the display/export result cap. */
+  detectedCount?: number;
   detections: readonly SourceDetection[];
 }
 export interface DetectionTrack {

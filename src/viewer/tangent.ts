@@ -39,7 +39,10 @@ export function tangentPlane(longitude: number, latitude: number) {
 
 export function regionGrid(region: SkyRegion) {
   // Match native SPHEREx sampling. Zoom magnifies these pixels without inventing detail.
-  const size = Math.max(12, Math.min(256, Math.ceil((region.sizeDeg * 3600) / 6.15)));
+  const size = Math.max(
+    12,
+    Math.min(region.extended ? 512 : 256, Math.ceil((region.sizeDeg * 3600) / 6.15)),
+  );
   const scaleDeg = (2 * Math.tan((region.sizeDeg * RAD) / 2)) / RAD / size;
   const plane = tangentPlane(region.longitude, region.latitude);
   return {

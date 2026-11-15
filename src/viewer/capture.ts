@@ -199,6 +199,7 @@ export async function captureSky(
       }
       for (const svg of host.querySelectorAll<SVGSVGElement>(':scope > svg')) {
         if (
+          (layers.space && svg.classList.contains('angular-scale')) ||
           (layers.annotations && svg.classList.contains('study-annotations')) ||
           (layers.markers && svg.classList.contains('study-markers'))
         ) {
@@ -217,9 +218,9 @@ export async function captureSky(
       ctx.font = `${size}px sans-serif`;
       const label = 'SPHEREx · ' + options.date.slice(0, 19).replace('T', ' ') + ' UTC';
       ctx.fillStyle = 'rgba(0,0,0,.8)';
-      ctx.fillRect(8, canvas.height - size - 20, ctx.measureText(label).width + 16, size + 12);
+      ctx.fillRect(8, 8, ctx.measureText(label).width + 16, size + 12);
       ctx.fillStyle = '#fff';
-      ctx.fillText(label, 16, canvas.height - 15);
+      ctx.fillText(label, 16, size + 12);
     }
     abortExport(signal);
     return canvas;

@@ -10,7 +10,7 @@
 int eon_extract(float * pixels, unsigned char * mask, int w, int h,
                 double threshold, int minarea, double * output, int capacity,
                 double * stats) {
-  if(w < 8 || h < 8 || w*h > 262144 || capacity < 1) return -1;
+  if(w < 8 || h < 8 || w*h > 2097152 || capacity < 1) return -1;
   sep_image im = {0};
   im.data=pixels; im.mask=mask; im.dtype=SEP_TFLOAT; im.mdtype=SEP_TBYTE;
   im.w=w; im.h=h; im.maskthresh=0;

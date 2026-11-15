@@ -35,6 +35,8 @@ interface Props {
   overlayComparison?: ArchiveHiPSSource;
   projectionType?: 'TAN';
   selectingRegion?: boolean;
+  extendedRegions?: boolean;
+  onExtendedRegionsChange?: (enabled: boolean) => void;
   onRegionSelected?: (region: SkyRegion) => void;
   onCancelRegion?: () => void;
 }
@@ -235,6 +237,8 @@ function HiPSViewer({
   buffer,
   onGPUProgress,
   selectingRegion,
+  extendedRegions,
+  onExtendedRegionsChange,
   onRegionSelected,
   onCancelRegion,
   overlayComparison,
@@ -484,6 +488,8 @@ function HiPSViewer({
       {connected && projection && renderAnnotations?.(projection)}
       {selectingRegion && connected && projection && onRegionSelected && onCancelRegion && (
         <RegionSelector
+          extended={extendedRegions}
+          onExtendedChange={onExtendedRegionsChange}
           projection={projection}
           view={view}
           onViewChange={onViewChange}

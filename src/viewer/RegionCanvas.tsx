@@ -127,7 +127,10 @@ export function RegionCanvas(props: Props) {
       if (!image) {
         image = bitmap(frame, mode, buffer.levels);
         images.set(key, image);
-        while (images.size * frame.size * frame.size * 4 > 16 * 1024 * 1024 && images.size > 1) {
+        while (
+          images.size * frame.size * frame.size * 4 > (region.extended ? 96 : 16) * 1024 * 1024 &&
+          images.size > 1
+        ) {
           const oldest = images.keys().next().value!;
           images.get(oldest)!.width = 0;
           images.delete(oldest);

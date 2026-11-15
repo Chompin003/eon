@@ -45,6 +45,8 @@ export interface FITSSource {
 
 /** Square footprint, centered in ICRS. sizeDeg is the full angular side. */
 export interface SkyRegion {
+  /** Explicit opt-in to a larger field; old links keep the normal limit. */
+  extended?: boolean;
   longitude: number;
   latitude: number;
   sizeDeg: number;

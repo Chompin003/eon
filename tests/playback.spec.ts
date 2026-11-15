@@ -155,6 +155,7 @@ test('drawn region controls the query footprint, cutout size and square player',
   await page.mouse.down();
   await page.mouse.move(820, 610, { steps: 8 });
   await page.mouse.up();
+  await page.getByRole('button', { name: 'Usar esta región', exact: true }).click();
   await expect(page.getByRole('application', { name: 'Seleccionar región del cielo' })).toHaveCount(
     0,
   );

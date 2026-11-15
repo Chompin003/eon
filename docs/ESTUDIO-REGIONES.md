@@ -14,7 +14,7 @@ Las marcas son **posiciones de catálogo**, no detecciones demostradas en estos 
 
 ## Límites del servicio
 
-`/api/catalog` solo consulta IRSA Gator y Harvard SIMBAD. No acepta URLs ni SQL del cliente. Coordenadas y lado 0.02–0.25° validados, respuesta de hasta 2 MB, plazo 30 s, caché pública de un día. Hasta 1,000 entradas por proveedor; se indica si se alcanza el límite. Se dibujan hasta 200 marcas dentro de la vista, manteniendo todas las entradas recibidas en la lista. Los fallos se muestran por proveedor; la animación no dispara consultas de catálogo por fecha.
+`/api/catalog` solo consulta IRSA Gator y Harvard SIMBAD. No acepta URLs ni SQL del cliente. Coordenadas y lado 0.02–0.25° normal, hasta 1° solo con extended=1; respuesta de hasta 2 MB, plazo 30 s, caché pública de un día. Hasta 1,000 entradas por proveedor; se indica si se alcanza el límite. Los campos grandes pueden devolver catálogos parciales: no se promete inventariar toda la región. Se dibujan hasta 200 marcas dentro de la vista, manteniendo todas las entradas recibidas en la lista. Los fallos se muestran por proveedor; la animación no dispara consultas de catálogo por fecha.
 
 No hay inferencia de pago, servidor Python público, R2 ni Workers AI. Se usan la caché y el despliegue Pages existentes.
 

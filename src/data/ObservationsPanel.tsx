@@ -1,6 +1,9 @@
 import { memo, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import {
   TIMELINE_LIMITS,
+  REGION_LIMITS,
+  validRegionSize,
+  regionWithMode,
   type FITSSource,
   type Observation,
   type ViewState,
@@ -13,6 +16,8 @@ import { loadAllObservations } from './observations';
 import { exampleRegion, exampleObservations, exampleFrames } from './example';
 
 interface Props {
+  extendedRegions?: boolean;
+  onExtendedRegionsChange?: (enabled: boolean) => void;
   exampleRequest?: number;
   restoreExample?: boolean;
   frameRequest?: { id: string; nonce: number };
@@ -44,6 +49,8 @@ const EMPTY_BUFFER: BufferStatus = {
 };
 
 export function ObservationsPanel({
+  extendedRegions = false,
+  onExtendedRegionsChange,
   exampleRequest,
   restoreExample,
   frameRequest,
@@ -80,6 +87,24 @@ export function ObservationsPanel({
   const [queryRegion, setQueryRegion] = useState<SkyRegion>();
   const [exampleLoaded, setExampleLoaded] = useState(false);
   const abort = useRef<AbortController | null>(null);
+  const wasExtended = useRef(extendedRegions);
+  useEffect(() => {
+    if (wasExtended.current && !extendedRegions) {
+      abort.current?.abort();
+      setLoading(false);
+    }
+    wasExtended.current = extendedRegions;
+    if (!extendedRegions) {
+      setRegionSize((size) => Math.min(size, REGION_LIMITS.normalMax));
+      if (queryRegion && queryRegion.sizeDeg > REGION_LIMITS.normalMax) {
+        setEnabled(false);
+        setPlaying(false);
+        setObservations([]);
+        setCenter(undefined);
+        setQueryRegion(undefined);
+      }
+    }
+  }, [extendedRegions, queryRegion]);
   const presented = useRef(imageReady);
   useEffect(() => {
     presented.current = imageReady;
@@ -199,7 +224,7 @@ export function ObservationsPanel({
               title: `${active.detector} · ${active.dateUtc}`,
               dateUtc: active.dateUtc,
               center: { longitude: center.longitude, latitude: center.latitude },
-              url: `/api/cutout?${new URLSearchParams({ url: active.url, ra: String(center.longitude), dec: String(center.latitude), size: ((queryRegion?.sizeDeg ?? 0.1) * 1.5).toFixed(6) })}`,
+              url: `/api/cutout?${new URLSearchParams({ url: active.url, ra: String(center.longitude), dec: String(center.latitude), size: ((queryRegion?.sizeDeg ?? 0.1) * 1.5).toFixed(6), ...(queryRegion?.extended ? { extended: '1' } : {}) })}`,
             }))
           : [],
     [matching, center, queryRegion, exampleLoaded],
@@ -272,13 +297,20 @@ export function ObservationsPanel({
     setError('');
     setPlaying(false);
     setEnabled(false);
-    const region = selectedRegion ?? {
-      longitude: view.longitude,
-      latitude: view.latitude,
-      sizeDeg: regionSize,
-    };
+    const region =
+      selectedRegion ??
+      regionWithMode(
+        {
+          longitude: view.longitude,
+          latitude: view.latitude,
+          sizeDeg: regionSize,
+        },
+        extendedRegions,
+      );
     const target = { longitude: region.longitude, latitude: region.latitude, fov: region.sizeDeg };
     try {
+      if (!validRegionSize(region.sizeDeg, extendedRegions))
+        throw Error('Activa el modo ampliado para una región mayor de 15′.');
       const result = await loadAllObservations(
         target,
         year,
@@ -338,13 +370,30 @@ export function ObservationsPanel({
           </button>
         )}
       </div>
+      <label className="extended-option">
+        <input
+          type="checkbox"
+          checked={extendedRegions}
+          onChange={(event) => onExtendedRegionsChange?.(event.target.checked)}
+        />
+        Modo ampliado · hasta 60′
+      </label>
+      {extendedRegions && (
+        <div className="scientific-notice" role="status">
+          <strong>Más cielo, más tiempo de carga</strong>
+          <p>
+            Hasta 16 veces el área del máximo normal. Puede usar más memoria; empieza con un año si
+            tarda demasiado. Ampliar el campo no aumenta el detalle de los datos.
+          </p>
+        </div>
+      )}
       <label htmlFor="region-size">Lado de la región · {(regionSize * 60).toFixed(1)}′</label>
       <input
         id="region-size"
         aria-label="Tamaño de región"
         type="range"
-        min="0.02"
-        max="0.25"
+        min={REGION_LIMITS.min}
+        max={extendedRegions ? REGION_LIMITS.extendedMax : REGION_LIMITS.normalMax}
         step="0.001"
         value={regionSize}
         onChange={(event) => {
@@ -354,6 +403,9 @@ export function ObservationsPanel({
           setEnabled(false);
         }}
       />
+      <p className="region-limits">
+        Mínimo 1.2′ · máximo {extendedRegions ? '60′ ampliado' : '15′ normal'}.
+      </p>
       {selectedRegion && !exampleLoaded && (
         <p className="survey-details">
           Región seleccionada: RA {selectedRegion.longitude.toFixed(6)}° · Dec{' '}
@@ -565,7 +617,7 @@ export function ObservationsPanel({
         </p>
       )}
       {error && (
-        <p role="alert" className="coordinate-error">
+        <p role="alert" className="scientific-notice scientific-notice-error">
           {error}
         </p>
       )}

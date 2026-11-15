@@ -1,5 +1,5 @@
 import type { SkyRegion, DetectedExposure, SourceDetection } from '../shared';
-import { inStudyRegion, separationArcsec } from '../shared';
+import { inStudyRegion, separationArcsec, REGION_LIMITS } from '../shared';
 import { readFitsImage } from './registerFits';
 export interface SepModule {
   HEAPF32: Float32Array;
@@ -42,11 +42,13 @@ export async function detectFits(
 ): Promise<DetectedExposure> {
   const sep = provided ?? (await getSep()),
     im = readFitsImage(bytes);
-  if (im.width < 8 || im.height < 8 || im.width * im.height > 262144)
+  if (im.width < 8 || im.height < 8 || im.width * im.height > REGION_LIMITS.analysisPixels)
     throw Error('La imagen excede el límite de análisis. Elige una región menor.');
-  const capacity = 500,
-    columns = 15,
-    n = im.width * im.height;
+  const columns = 15,
+    n = im.width * im.height,
+    // Without deblending, each object owns at least five pixels. Measure before
+    // filtering the sky ROI: an early 500-row cap would bias a large cutout to one edge.
+    capacity = Math.floor(n / 5);
   const data = sep._malloc(n * 4),
     mask = sep._malloc(n),
     out = sep._malloc(capacity * columns * 8),
@@ -80,8 +82,10 @@ export async function detectFits(
       stats,
     );
     if (code) throw Error('SEP no pudo estimar el fondo o extraer fuentes en esta exposición.');
-    const values = Array.from(sep.HEAPF64.subarray(out / 8, out / 8 + capacity * columns));
     const [background, noise, total] = sep.HEAPF64.subarray(stats / 8, stats / 8 + 3);
+    const values = Array.from(
+      sep.HEAPF64.subarray(out / 8, out / 8 + Math.min(total, capacity) * columns),
+    );
     const detections: SourceDetection[] = [];
     for (let i = 0; i < Math.min(total, capacity); i++) {
       const v = values.slice(i * columns, (i + 1) * columns),
@@ -126,8 +130,12 @@ export async function detectFits(
       background,
       noise,
       coverage: valid / n,
-      truncated: total > capacity,
-      detections,
+      truncated: total > capacity || detections.length > 500,
+      detectedCount: detections.length,
+      detections:
+        detections.length > 500
+          ? detections.sort((a, b) => b.peak - a.peak).slice(0, 500)
+          : detections,
     };
   } finally {
     for (const p of [data, mask, out, stats]) sep._free(p);
