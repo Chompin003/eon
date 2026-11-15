@@ -1,0 +1,106 @@
+{
+  "retrieved_utc": "2026-11-15T03:39:33.496457+00:00",
+  "center_icrs_deg": [
+    24.173958,
+    15.783667
+  ],
+  "note": "One real HiPS tile per instrument repeated in offline tests only. Not scientific astrometric or photometric validation; never a runtime fallback.",
+  "files": [
+    {
+      "filename": "hubble-acs-properties.txt",
+      "url": "https://skies.esac.esa.int/HST/ACS/properties",
+      "sha256": "f47ac3f3e6657faad20fd3357d732eea47af77c080354864921205e308ef28ec",
+      "bytes": 2241
+    },
+    {
+      "filename": "hubble-acs-Moc.fits",
+      "url": "https://skies.esac.esa.int/HST/ACS/Moc.fits",
+      "sha256": "d133d8fec95c53173eefb1cd32232366b93f950a8dd33185c9e84bbb818c2d82",
+      "bytes": 2986560
+    },
+    {
+      "filename": "hubble-acs-allsky.jpg",
+      "url": "https://skies.esac.esa.int/HST/ACS/Norder3/Allsky.jpg",
+      "sha256": "9cebc6b42f349921aad54af9d902df35d88560a1e6cc33bba31802c6da6ecd2f",
+      "bytes": 103784
+    },
+    {
+      "filename": "hubble-acs-tile.jpg",
+      "url": "https://skies.esac.esa.int/HST/ACS/Norder8/Dir290000/Npix294378.jpg",
+      "sha256": "b91631db1e015975d1b10dde43e9a00cf648da5c22b22e8214043f2961978be7",
+      "bytes": 31116
+    },
+    {
+      "filename": "hubble-wfc3-properties.txt",
+      "url": "https://skies.esac.esa.int/HST/WFC3/properties",
+      "sha256": "aa20311f5c3367789108b87255fe58628a29a52b6dbd34c4d7e574cc50a32b68",
+      "bytes": 1996
+    },
+    {
+      "filename": "hubble-wfc3-Moc.fits",
+      "url": "https://skies.esac.esa.int/HST/WFC3/Moc.fits",
+      "sha256": "daf73332adea408a8698b9baf5827636a30dc849eef71a8bdca4e83cafdfc847",
+      "bytes": 1356480
+    },
+    {
+      "filename": "hubble-wfc3-allsky.jpg",
+      "url": "https://skies.esac.esa.int/HST/WFC3/Norder3/Allsky.jpg",
+      "sha256": "7f71d23d89a083f1b5941eab2565114719a57e4ab327491681731d12b585f6cd",
+      "bytes": 71198
+    },
+    {
+      "filename": "hubble-wfc3-tile.jpg",
+      "url": "https://skies.esac.esa.int/HST/WFC3/Norder8/Dir290000/Npix294378.jpg",
+      "sha256": "fa8191728c2813a77bd7aac04dc705640ad6deea45e3fb5b6642a4e7a8ec2ba7",
+      "bytes": 10159
+    },
+    {
+      "filename": "webb-nircam-properties.txt",
+      "url": "https://skies.esac.esa.int/JWST/NIRCam_Imaging/properties",
+      "sha256": "3726a0998ab2e131bee65e66d8df873aa93d558e51fc24be2fe7b4f7ec252b06",
+      "bytes": 56399
+    },
+    {
+      "filename": "webb-nircam-Moc.fits",
+      "url": "https://skies.esac.esa.int/JWST/NIRCam_Imaging/Moc.fits",
+      "sha256": "5318300b3fdccc54365dc9776554bc17a5a9953dafd962ee0cba14ea7f0531f4",
+      "bytes": 555840
+    },
+    {
+      "filename": "webb-nircam-allsky.png",
+      "url": "https://skies.esac.esa.int/JWST/NIRCam_Imaging/Norder3/Allsky.png",
+      "sha256": "9a31b07a5576a87cf99cfbc491e993ecd4a76eb692843f4aaff2dc88db97a3e3",
+      "bytes": 13517
+    },
+    {
+      "filename": "webb-nircam-tile.png",
+      "url": "https://skies.esac.esa.int/JWST/NIRCam_Imaging/Norder8/Dir290000/Npix294378.png",
+      "sha256": "440f45c86031eb3dab88487837b70484b054c60ca91925cfb8a43c71462973fa",
+      "bytes": 34941
+    },
+    {
+      "filename": "webb-miri-properties.txt",
+      "url": "https://skies.esac.esa.int/JWST/MIRI_Imaging/properties",
+      "sha256": "a5cede1fac0bf70d8cba240fcfe6d8b185158ff94e10f5ee4babcef7e0fec498",
+      "bytes": 47708
+    },
+    {
+      "filename": "webb-miri-Moc.fits",
+      "url": "https://skies.esac.esa.int/JWST/MIRI_Imaging/Moc.fits",
+      "sha256": "9aa8c0b15b7a71e42499bfd29e65500038528881789019535dacc93d72558cf3",
+      "bytes": 40320
+    },
+    {
+      "filename": "webb-miri-allsky.png",
+      "url": "https://skies.esac.esa.int/JWST/MIRI_Imaging/Norder3/Allsky.png",
+      "sha256": "734387ae848d8fe99a183ceb9c6f0621dbedf791958411194fb4b2c71d6bddae",
+      "bytes": 13236
+    },
+    {
+      "filename": "webb-miri-tile.png",
+      "url": "https://skies.esac.esa.int/JWST/MIRI_Imaging/Norder8/Dir290000/Npix294378.png",
+      "sha256": "039f0eb453443f512e3045d35e03b9c16ea0ea63bab3f33c6ec86e6fdc8a34ea",
+      "bytes": 31425
+    }
+  ]
+}

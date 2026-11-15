@@ -6,6 +6,8 @@ import {
   type HiPSSource,
   type ViewState,
   type SkyProjectionWindow,
+  type ArchiveHiPSSource,
+  isArchiveSource,
 } from '../shared';
 import { cubeFileFrequency } from './spectral';
 import { displayFits } from './sip';
@@ -13,6 +15,10 @@ import './skyFrame.css';
 
 interface Layer {
   setOptions(options: Record<string, unknown>): void;
+}
+interface CoverageMOC {
+  contains(ra: number, dec: number): boolean;
+  hide(): void;
 }
 interface Survey extends Layer {
   query: Promise<Survey>;
@@ -36,6 +42,7 @@ interface AladinView {
   getOverlayImageLayer(id: string): Layer | undefined;
   removeImageLayer(id: string): void;
   on(event: string, callback: () => void): void;
+  addMOC(moc: CoverageMOC): void;
 }
 interface AladinAPI {
   init: Promise<void>;
@@ -60,9 +67,15 @@ interface AladinAPI {
       errorCallback: () => void;
     },
   ): Layer;
+  MOCFromURL(
+    url: string,
+    options: Record<string, unknown>,
+    success: (moc: CoverageMOC) => void,
+    error: () => void,
+  ): CoverageMOC;
 }
 interface Configuration {
-  source: HiPSSource | FITSSource;
+  source: HiPSSource | FITSSource | ArchiveHiPSSource;
   view: ViewState;
   mode: 'mono' | 'color';
   secondFrame: number;
@@ -79,6 +92,8 @@ let layerKey = '';
 let revision = 0;
 let loading = false;
 const projectionListeners = new Set<() => void>();
+let coverage: CoverageMOC | undefined;
+let coverageFailed = false;
 const send = (message: object) => parent.postMessage(message, location.origin);
 const sameView = (a: ViewState, b: ViewState) =>
   Math.abs(((a.longitude - b.longitude + 540) % 360) - 180) < 1e-8 &&
@@ -96,6 +111,10 @@ function publishView(notify = true) {
   host.dataset.ra = String(center[0]);
   host.dataset.dec = String(center[1]);
   host.dataset.fov = String(fov);
+  if (configuration?.source.kind === 'archive-hips') {
+    if (coverage) send({ type: 'sky:coverage', covered: coverage.contains(ra, dec) });
+    else if (coverageFailed) send({ type: 'sky:coverage', covered: null });
+  }
   for (const listener of projectionListeners) listener();
   if (notify && configuration && !sameView(view, configuration.view))
     send({ type: 'sky:view', view });
@@ -148,7 +167,9 @@ async function updateLayers() {
   loading = true;
   host.dataset.ready = 'false';
   surveys = [];
-  for (const id of ['spherex-A', 'spherex-B', 'exposure']) engine.removeImageLayer(id);
+  coverage = undefined;
+  coverageFailed = false;
+  for (const id of ['spherex-A', 'spherex-B', 'exposure', 'archive']) engine.removeImageLayer(id);
   try {
     if (config.source.kind === 'hips') {
       for (let index = 0; index < 2; index++) {
@@ -180,6 +201,44 @@ async function updateLayers() {
         await loadedPromise;
       }
       configureSurveys();
+    } else if (config.source.kind === 'archive-hips') {
+      const source = config.source;
+      let resolveLoaded: () => void;
+      let rejectLoaded: (error: Error) => void;
+      const loaded = new Promise<void>((resolve, reject) => {
+        resolveLoaded = resolve;
+        rejectLoaded = reject;
+      });
+      const layer = A.HiPS(source.id, {
+        url: source.url,
+        name: source.title,
+        successCallback: () => resolveLoaded(),
+        errorCallback: () =>
+          rejectLoaded(new Error(`No se pudo cargar ${source.title} desde ESA.`)),
+      });
+      await layer.query;
+      if (requestRevision !== revision) return;
+      layer.setOptions({ opacity: 1, colormap: 'native' });
+      engine.setOverlayImageLayer(layer, 'archive');
+      await loaded;
+      if (requestRevision !== revision) return;
+      // MOC is kept invisible and used only for a point-coverage check.
+      const moc = A.MOCFromURL(
+        `${source.url}Moc.fits`,
+        { opacity: 0, lineWidth: 0, fill: false, perimeter: false },
+        (loadedMoc) => {
+          if (requestRevision !== revision) return;
+          loadedMoc.hide();
+          coverage = loadedMoc;
+          publishView(false);
+        },
+        () => {
+          if (requestRevision !== revision) return;
+          coverageFailed = true;
+          publishView(false);
+        },
+      );
+      engine.addMOC(moc);
     } else {
       const response = await fetch(config.source.url, { signal: AbortSignal.timeout(65000) });
       if (!response.ok) throw new Error('IRSA no pudo preparar el recorte.');
@@ -220,7 +279,10 @@ async function updateLayers() {
     console.error(error);
     send({
       type: 'sky:error',
-      message: 'No se pudo cargar esta imagen de IRSA. Reintenta o selecciona otra exposición.',
+      message:
+        config.source.kind === 'archive-hips'
+          ? `No se pudo cargar ${config.source.title} desde ESA. Reintenta o vuelve a SPHEREx.`
+          : 'No se pudo cargar esta imagen de IRSA. Reintenta o selecciona otra exposición.',
     });
   }
 }
@@ -327,6 +389,8 @@ window.addEventListener('message', (event: MessageEvent) => {
       [50, 51].includes(secondFrame)
     )
       return;
+  } else if (source?.kind === 'archive-hips') {
+    if (!isArchiveSource(source)) return;
   } else if (
     source?.kind !== 'fits' ||
     typeof source.url !== 'string' ||

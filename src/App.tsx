@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { CoordinatesPanel, ObservationsPanel, loadSurveyMetadata, spherexSource } from './data';
+import {
+  CoordinatesPanel,
+  ObservationsPanel,
+  TelescopeComparison,
+  loadSurveyMetadata,
+  spherexSource,
+} from './data';
 import {
   DEFAULT_VIEW,
   normalizeView,
@@ -7,6 +13,7 @@ import {
   type FITSSource,
   type SurveyMetadata,
   type ViewState,
+  type ArchiveHiPSSource,
 } from './shared';
 import { SkyViewer } from './viewer';
 import { ExplorerLayout } from './ui';
@@ -14,6 +21,7 @@ import { PaintTools, PaintSurface, usePaintSession } from './drawing';
 
 export function App() {
   const paint = usePaintSession();
+  const [comparisonSource, setComparisonSource] = useState<ArchiveHiPSSource>();
   const [view, setView] = useState<ViewState>({ ...DEFAULT_VIEW });
   const [metadata, setMetadata] = useState<SurveyMetadata>();
   const [dataError, setDataError] = useState('');
@@ -69,7 +77,10 @@ export function App() {
       secondFrame={secondFrame}
       onSecondFrameChange={setSecondFrame}
       displayMode={displayMode}
-      onDisplayModeChange={setDisplayMode}
+      onDisplayModeChange={(mode) => {
+        setDisplayMode(mode);
+        if (mode === 'split') setComparisonSource(undefined);
+      }}
       overlay={overlay}
       onOverlayChange={setOverlay}
       showingObservation={Boolean(observationSource)}
@@ -83,10 +94,22 @@ export function App() {
       }
       coordinateTools={<CoordinatesPanel view={view} onViewChange={updateView} />}
       drawingTools={<PaintTools session={paint} />}
+      telescopeTools={
+        <TelescopeComparison
+          source={comparisonSource}
+          onSourceChange={setComparisonSource}
+          view={view}
+          onViewChange={(next) => {
+            setObservationSource(null);
+            updateView(next);
+          }}
+        />
+      }
     >
       {metadata ? (
         <SkyViewer
           source={source}
+          comparisonSource={comparisonSource}
           secondFrame={secondFrame}
           mode={displayMode}
           overlay={overlay}
