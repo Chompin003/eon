@@ -19,6 +19,7 @@ export interface SharedLocation {
   display: DisplayMode;
   spectralOverlay: boolean;
   telescope?: string;
+  hubble?: { dataset: string; longitude: number; latitude: number };
   comparison: 'split' | 'overlay';
   transparency: number;
   region?: SkyRegion;
@@ -55,6 +56,16 @@ export function readLocation(url: URL): SharedLocation | undefined {
     display:
       q.get('display') === 'color' ? 'color' : q.get('display') === 'split' ? 'split' : 'mono',
     spectralOverlay: q.get('mix') === '1',
+    hubble:
+      /^hst_[a-z0-9_]{5,100}$/.test(q.get('hla') ?? '') &&
+      number('hra', 0, 360) !== undefined &&
+      number('hdec', -90, 90) !== undefined
+        ? {
+            dataset: q.get('hla')!,
+            longitude: number('hra', 0, 360)! % 360,
+            latitude: number('hdec', -90, 90)!,
+          }
+        : undefined,
     telescope: ARCHIVE_SURVEYS.find((s) => s.id === q.get('tel'))?.id,
     comparison: q.get('compare') === 'split' ? 'split' : 'overlay',
     transparency: number('fade', 0, 100) ?? 35,
@@ -75,6 +86,9 @@ const owned = [
   'display',
   'mix',
   'tel',
+  'hla',
+  'hra',
+  'hdec',
   'compare',
   'fade',
   'size',
@@ -95,6 +109,11 @@ export function writeLocation(input: URL, state: SharedLocation): URL {
   if (state.band2 !== 84) put('band2', state.band2);
   if (state.display !== 'mono') q.set('display', state.display);
   if (state.spectralOverlay) q.set('mix', '1');
+  if (state.hubble) {
+    q.set('hla', state.hubble.dataset);
+    put('hra', state.hubble.longitude);
+    put('hdec', state.hubble.latitude);
+  }
   if (state.telescope) {
     q.set('tel', state.telescope);
     q.set('compare', state.comparison);

@@ -10,6 +10,7 @@ import {
   type ArchiveHiPSSource,
   isArchiveSource,
   ARCHIVE_SURVEYS,
+  archiveImageUrl,
 } from '../shared';
 import { cubeFileFrequency } from './spectral';
 import { displayFits } from './sip';
@@ -110,7 +111,7 @@ let presentTick = 0;
 const projectionListeners = new Set<() => void>();
 let coverage: CoverageMOC | undefined;
 let coverageFailed = false;
-let comparisonLayer: Survey | undefined;
+let comparisonLayer: Layer | undefined;
 let comparisonKey = '';
 let comparisonMoc: CoverageMOC | undefined;
 let comparisonMocFailed = false;
@@ -129,7 +130,7 @@ function publishComparison() {
         ? null
         : undefined,
     error: comparisonFailed
-      ? `No se pudo cargar ${configuration.overlayComparison.title} desde ESA.`
+      ? `No se pudo cargar ${configuration.overlayComparison.title} desde el archivo remoto.`
       : undefined,
   });
 }
@@ -161,18 +162,82 @@ function publishView(notify = true) {
 }
 
 function archiveRoot(source: ArchiveHiPSSource) {
-  return `${location.origin}/api/telescope/${ARCHIVE_SURVEYS.findIndex((item) => item.id === source.id)}/`;
+  if (source.provider === 'Florida') return source.url;
+  return `${location.origin}/api/telescope/${ARCHIVE_SURVEYS.filter((item) => !item.provider).findIndex((item) => item.id === source.id)}/`;
+}
+
+let archiveController: AbortController | undefined;
+async function loadArchiveFits(source: ArchiveHiPSSource, slot: string): Promise<Layer> {
+  archiveController?.abort();
+  const controller = new AbortController();
+  archiveController = controller;
+  const response = await fetch(archiveImageUrl(source), {
+    signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]),
+  });
+  if (!response.ok) throw Error('HLA no pudo preparar el recorte');
+  const reader = response.body!.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  try {
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > 2 * 1024 * 1024) throw Error('Recorte HLA demasiado grande');
+      chunks.push(value);
+    }
+  } catch (error) {
+    await reader.cancel();
+    throw error;
+  }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.length;
+  }
+  controller.signal.throwIfAborted();
+  if (!new TextDecoder().decode(bytes.slice(0, 80)).startsWith('SIMPLE'))
+    throw Error('Respuesta HLA no es FITS');
+  const url = URL.createObjectURL(new Blob([bytes], { type: 'application/fits' }));
+  try {
+    return await new Promise<Layer>((resolve, reject) => {
+      const timer = setTimeout(() => reject(Error('HLA excedió el tiempo de carga')), 15000);
+      const layer = A.image(url, {
+        name: source.title,
+        imgFormat: 'fits',
+        colormap: 'native',
+        stretch: 'asinh',
+        opacity: slot === 'extra-telescope' ? 1 - (configuration?.transparency ?? 35) / 100 : 1,
+        successCallback: (ra, dec, fov) => {
+          host.dataset.archiveRa = String(ra);
+          host.dataset.archiveDec = String(dec);
+          host.dataset.archiveFov = String(fov);
+          clearTimeout(timer);
+          resolve(layer);
+        },
+        errorCallback: () => {
+          clearTimeout(timer);
+          reject(Error('WCS HLA no compatible'));
+        },
+      });
+      engine!.setOverlayImageLayer(layer, slot);
+    });
+  } finally {
+    URL.revokeObjectURL(url);
+  }
 }
 
 async function updateComparison() {
   if (!engine || !configuration || loading) return;
   const source = configuration.overlayComparison;
   host.dataset.comparisonOpacity = String(1 - configuration.transparency / 100);
-  const key = source?.id ?? '';
+  const key = source ? JSON.stringify([source.id, source.dataset, source.target]) : '';
   if (key === comparisonKey) {
     comparisonLayer?.setOptions({ opacity: 1 - configuration.transparency / 100 });
     return;
   }
+  archiveController?.abort();
   comparisonKey = key;
   comparisonLayer = undefined;
   comparisonMoc = undefined;
@@ -183,6 +248,17 @@ async function updateComparison() {
   if (!source) return;
   host.dataset.comparisonReady = 'false';
   try {
+    if (source.format === 'fits') {
+      const layer = await loadArchiveFits(source, 'extra-telescope');
+      if (comparisonKey !== key) return;
+      comparisonLayer = layer;
+      layer.setOptions({ opacity: 1 - configuration.transparency / 100 });
+      comparisonLoaded = true;
+      host.dataset.comparisonReady = 'true';
+      host.dataset.comparisonId = source.id;
+      publishComparison();
+      return;
+    }
     const layer = A.HiPS(source.id, {
       url: archiveRoot(source),
       name: source.title,
@@ -209,7 +285,8 @@ async function updateComparison() {
       colormap: 'native',
     });
     engine.setOverlayImageLayer(layer, 'extra-telescope');
-    host.dataset.comparisonId = key;
+    host.dataset.comparisonId = source.id;
+    if (source.provider === 'Florida') return;
     const moc = A.MOCFromURL(
       archiveRoot(source) + 'Moc.fits',
       { opacity: 0, lineWidth: 0, fill: false, perimeter: false },
@@ -339,7 +416,7 @@ async function updateLayers() {
     presentCachedFrame();
     return;
   }
-  const key = config.source.kind === 'hips' ? 'hips' : config.source.url;
+  const key = config.source.kind === 'hips' ? 'hips' : JSON.stringify(config.source);
   if (key === layerKey) {
     if (
       config.source.kind === 'hips' &&
@@ -425,42 +502,48 @@ async function updateLayers() {
       configureSurveys();
     } else if (config.source.kind === 'archive-hips') {
       const source = config.source;
-      let resolveLoaded: () => void;
-      let rejectLoaded: (error: Error) => void;
-      const loaded = new Promise<void>((resolve, reject) => {
-        resolveLoaded = resolve;
-        rejectLoaded = reject;
-      });
-      const layer = A.HiPS(source.id, {
-        url: archiveRoot(source),
-        name: source.title,
-        successCallback: () => resolveLoaded(),
-        errorCallback: () =>
-          rejectLoaded(new Error(`No se pudo cargar ${source.title} desde ESA.`)),
-      });
-      await layer.query;
-      if (requestRevision !== revision) return;
-      layer.setOptions({ opacity: 1, colormap: 'native' });
-      engine.setOverlayImageLayer(layer, 'archive');
-      await loaded;
-      if (requestRevision !== revision) return;
-      // MOC is kept invisible and used only for a point-coverage check.
-      const moc = A.MOCFromURL(
-        `${archiveRoot(source)}Moc.fits`,
-        { opacity: 0, lineWidth: 0, fill: false, perimeter: false },
-        (loadedMoc) => {
-          if (requestRevision !== revision) return;
-          loadedMoc.hide();
-          coverage = loadedMoc;
-          publishView(false);
-        },
-        () => {
-          if (requestRevision !== revision) return;
-          coverageFailed = true;
-          publishView(false);
-        },
-      );
-      engine.addMOC(moc);
+      if (source.format === 'fits') {
+        await loadArchiveFits(source, 'archive');
+      } else {
+        let resolveLoaded: () => void;
+        let rejectLoaded: (error: Error) => void;
+        const loaded = new Promise<void>((resolve, reject) => {
+          resolveLoaded = resolve;
+          rejectLoaded = reject;
+        });
+        const layer = A.HiPS(source.id, {
+          url: archiveRoot(source),
+          name: source.title,
+          successCallback: () => resolveLoaded(),
+          errorCallback: () =>
+            rejectLoaded(new Error(`No se pudo cargar ${source.title} desde el archivo remoto.`)),
+        });
+        await layer.query;
+        if (requestRevision !== revision) return;
+        layer.setOptions({ opacity: 1, colormap: 'native' });
+        engine.setOverlayImageLayer(layer, 'archive');
+        await loaded;
+        if (requestRevision !== revision) return;
+        // MOC is kept invisible and used only for a point-coverage check.
+        if (source.provider !== 'Florida') {
+          const moc = A.MOCFromURL(
+            `${archiveRoot(source)}Moc.fits`,
+            { opacity: 0, lineWidth: 0, fill: false, perimeter: false },
+            (loadedMoc) => {
+              if (requestRevision !== revision) return;
+              loadedMoc.hide();
+              coverage = loadedMoc;
+              publishView(false);
+            },
+            () => {
+              if (requestRevision !== revision) return;
+              coverageFailed = true;
+              publishView(false);
+            },
+          );
+          engine.addMOC(moc);
+        }
+      }
     } else {
       const response = await fetch(config.source.url, { signal: AbortSignal.timeout(65000) });
       if (!response.ok) throw new Error('IRSA no pudo preparar el recorte.');
@@ -503,7 +586,7 @@ async function updateLayers() {
       type: 'sky:error',
       message:
         config.source.kind === 'archive-hips'
-          ? `No se pudo cargar ${config.source.title} desde ESA. Reintenta o vuelve a SPHEREx.`
+          ? `No se pudo cargar ${config.source.title} desde el archivo remoto. Reintenta o vuelve a SPHEREx.`
           : 'No se pudo cargar esta imagen de IRSA. Reintenta o selecciona otra exposición.',
     });
   }

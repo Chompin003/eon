@@ -1,0 +1,15 @@
+creator_did          = ivo://UFL/P/jwst-cmz-miri-coadd
+obs_title            = JWST Central Molecular Zone: MIRI color coadd
+hips_creator         = Adam Ginsburg (University of Florida)
+hips_version         = 1.4
+hips_release_date    = 2026-09-15T18:07Z
+hips_status          = public master clonableOnce
+hips_tile_format     = png
+hips_tile_width      = 512
+hips_order           = 14
+hips_frame           = galactic
+hips_builder         = astropy/reproject
+hips_initial_ra      = 266.5823620486326
+hips_initial_dec     = -28.62714090221641
+hips_initial_fov     = 0.03838463718029417
+dataproduct_type     = image

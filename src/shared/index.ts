@@ -8,4 +8,4 @@ export * from './timeline';
 export { createImageReadiness, type ImageReadiness } from './imageReadiness';
 export * from './moduleSlots';
 export type { SkyProjection, SkyProjectionWindow } from './skyProjection';
-export { ARCHIVE_SURVEYS, isArchiveSource } from './archiveSurveys';
+export { ARCHIVE_SURVEYS, isArchiveSource, archiveImageUrl } from './archiveSurveys';

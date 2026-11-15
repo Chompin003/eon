@@ -247,7 +247,7 @@ function HiPSViewer({
         ? `${source.sequence.id}:${source.sequence.attempt ?? 0}`
         : source.url
       : source.kind === 'archive-hips'
-        ? source.url
+        ? JSON.stringify(source)
         : source.kind;
   const frame = useRef<HTMLIFrameElement>(null);
   const current = useRef({
@@ -278,7 +278,7 @@ function HiPSViewer({
     setCoverageError(false);
     setComparisonError('');
     setLoadedComparison('');
-  }, [overlayComparison?.id]);
+  }, [overlayComparison]);
   const archive = source.kind === 'archive-hips';
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
@@ -520,7 +520,7 @@ function HiPSViewer({
         loadedComparison !== overlayComparison.id &&
         !comparisonError && (
           <div className="coverage-notice" role="status">
-            Cargando {overlayComparison.title} desde ESA… SPHEREx sigue disponible.
+            Cargando {overlayComparison.title} desde el archivo… SPHEREx sigue disponible.
           </div>
         )}
       {!connected && !error && (

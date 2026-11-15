@@ -59,9 +59,20 @@ function ExplorerApp() {
   const requestFrame = (id: string) =>
     setFrameRequest((prev) => ({ id, nonce: (prev?.nonce ?? 0) + 1 }));
   const paint = usePaintSession();
-  const [comparisonSource, setComparisonSource] = useState<ArchiveHiPSSource | undefined>(() =>
-    ARCHIVE_SURVEYS.find((s) => s.id === initial?.telescope),
-  );
+  const [comparisonSource, setComparisonSource] = useState<ArchiveHiPSSource | undefined>(() => {
+    const source = ARCHIVE_SURVEYS.find((s) => s.id === initial?.telescope);
+    return source?.provider === 'HLA' && initial?.hubble
+      ? {
+          ...source,
+          dataset: initial.hubble.dataset,
+          target: {
+            longitude: initial.hubble.longitude,
+            latitude: initial.hubble.latitude,
+            fov: 0.015,
+          },
+        }
+      : source;
+  });
   const [region, setRegion] = useState<SkyRegion | undefined>(() => {
     if (initial) return initial.region;
     try {
@@ -157,6 +168,14 @@ function ExplorerApp() {
     display: displayMode,
     spectralOverlay: overlay,
     telescope: comparisonSource?.id,
+    hubble:
+      comparisonSource?.provider === 'HLA'
+        ? {
+            dataset: comparisonSource.dataset!,
+            longitude: comparisonSource.target!.longitude,
+            latitude: comparisonSource.target!.latitude,
+          }
+        : undefined,
     comparison: comparisonMode,
     transparency,
     region,

@@ -26,6 +26,7 @@ test('SPHEREx is default; Hubble and Webb comparisons synchronize coordinates, z
     'true',
   );
   await controls.getByRole('button', { name: 'Hubble', exact: true }).click();
+  await page.getByLabel('Instrumento de Hubble').selectOption('ivo://ESAVO/P/HST/ACS-blue');
   await page
     .getByRole('group', { name: 'Distribución de telescopios' })
     .getByRole('button', { name: 'Pantalla dividida', exact: true })
@@ -61,6 +62,7 @@ test('SPHEREx is default; Hubble and Webb comparisons synchronize coordinates, z
   right = page.getByTitle('Cielo Hubble').contentFrame().locator('#sky');
   await expect(right).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
   await controls.getByRole('button', { name: 'Webb', exact: true }).click();
+  await page.getByLabel('Instrumento de Webb').selectOption('ivo://ESAVO/P/JWST/NIRCam_Imaging');
   right = page.getByTitle('Cielo Webb').contentFrame().locator('#sky');
   await expect(right).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
   await expect(page.getByLabel('Instrumento de Webb')).toHaveValue(
@@ -100,7 +102,7 @@ test('an archive failure leaves SPHEREx usable and comparisons retain Paint laye
     .getByRole('button', { name: 'Pantalla dividida', exact: true })
     .click();
   await expect(page.locator('.study-annotations [data-item]')).toHaveCount(2);
-  await page.route('**/api/telescope/0/**', (route) => route.abort());
+  await page.route('https://hla.stsci.edu/**', (route) => route.abort());
   await page
     .getByRole('group', { name: 'Telescopio de comparación' })
     .getByRole('button', { name: 'Hubble', exact: true })

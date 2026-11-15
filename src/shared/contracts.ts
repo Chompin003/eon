@@ -76,6 +76,11 @@ export interface ArchiveHiPSSource {
   url: string;
   instrument: string;
   releaseDate: string;
+  /** FITS cutout transport for HLA; legacy archive discriminant is preserved. */
+  format?: 'fits';
+  provider?: 'Florida' | 'HLA';
+  target?: ViewState;
+  dataset?: string;
 }
 
 export type DisplayMode = 'mono' | 'color' | 'split';
