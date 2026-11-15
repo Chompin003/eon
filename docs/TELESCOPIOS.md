@@ -1,5 +1,7 @@
 # Comparación SPHEREx / Hubble / Webb
 
+**Actualización:** las opciones predeterminadas usan Florida (Webb) y HLA (Hubble) directamente desde el navegador. [Uso, recursos y límites actuales](ARCHIVOS-DIRECTOS.md). La descripción del transporte ESA a continuación aplica solamente a sus cuatro opciones históricas.
+
 ## Conexión y modos actuales
 
 Controles → Comparar telescopios → Hubble/Webb ofrece **Superposición** y **Pantalla dividida**. En superposición, el deslizador cambia solo la transparencia del telescopio externo (0% opaco, 100% oculto). Se conserva la misma cámara y Paint; no se modifica el análisis SEP ni los catálogos.

@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+import { searchHubble } from './hubbleArchive';
 import { ARCHIVE_SURVEYS, type ArchiveHiPSSource, type ViewState } from '../shared';
 
 interface Props {
@@ -21,6 +23,35 @@ export function TelescopeComparison({
   transparency,
   onTransparencyChange,
 }: Props) {
+  const [results, setResults] = useState<ArchiveHiPSSource[]>([]);
+  const [status, setStatus] = useState('');
+  const request = useRef<AbortController | undefined>(undefined);
+  useEffect(() => () => request.current?.abort(), [source?.provider]);
+  useEffect(() => {
+    request.current?.abort();
+    setResults([]);
+    setStatus('');
+  }, [view.longitude, view.latitude]);
+  async function search() {
+    request.current?.abort();
+    const controller = new AbortController();
+    request.current = controller;
+    setResults([]);
+    setStatus('Consultando HLA…');
+    try {
+      const found = await searchHubble(view, controller.signal);
+      if (controller.signal.aborted) return;
+      setResults(found);
+      setStatus(
+        found.length
+          ? 'Elige una observación para cargar el recorte.'
+          : 'Sin observaciones HLA en esta región.',
+      );
+    } catch (error) {
+      if (!controller.signal.aborted)
+        setStatus(error instanceof Error ? error.message : 'No se pudo consultar HLA.');
+    }
+  }
   return (
     <section className="control-section" aria-labelledby="telescope-heading">
       <div className="section-title">
@@ -85,6 +116,40 @@ export function TelescopeComparison({
               </p>
             </>
           )}
+          {source.provider === 'HLA' && (
+            <>
+              <button className="plain-button" onClick={search}>
+                Buscar Hubble aquí
+              </button>
+              {status && <p role="status">{status}</p>}
+              {results.length > 0 && (
+                <label>
+                  Observación Hubble
+                  <select
+                    aria-label="Observación Hubble"
+                    value={
+                      results.some((item) => item.dataset === source.dataset) ? source.dataset : ''
+                    }
+                    onChange={(event) => {
+                      const selected = results.find((item) => item.dataset === event.target.value);
+                      if (selected) onSourceChange(selected);
+                    }}
+                  >
+                    <option value="">Selecciona una observación</option>
+                    {results.map((item) => (
+                      <option key={item.dataset} value={item.dataset}>
+                        {item.title} · {item.releaseDate}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+              <p className="survey-details">
+                Recorte de 512 × 512 píxeles; posición fija hasta elegir otra observación. HLA no
+                incluye datos posteriores a octubre de 2017.
+              </p>
+            </>
+          )}
           <label htmlFor="comparison-instrument">Instrumento de {source.telescope}</label>
           <select
             className="survey-select"
@@ -107,20 +172,33 @@ export function TelescopeComparison({
           </p>
           <button
             className="plain-button"
-            onClick={() => onViewChange({ longitude: 24.173958, latitude: 15.783667, fov: 0.14 })}
+            onClick={() =>
+              onViewChange(
+                source.target ?? { longitude: 24.173958, latitude: 15.783667, fov: 0.14 },
+              )
+            }
           >
-            Ver M74 · cobertura común
+            {source.provider === 'Florida'
+              ? 'Ver centro galáctico · Webb'
+              : source.provider === 'HLA'
+                ? 'Ver región del recorte Hubble'
+                : 'Ver M74 · cobertura común'}
           </button>
           <p className="survey-details">
-            Vista multifiltro de archivo para orientación, no fotometría ni comparación temporal.
-            Las épocas no están sincronizadas: cambiar la fecha de SPHEREx no cambia este mosaico.
-            Publicación del mosaico: {source.releaseDate}; no es la fecha de cada exposición.{' '}
-            {source.telescope === 'Hubble'
-              ? 'Estos mosaicos de Hubble recopilan observaciones hasta agosto de 2015.'
-              : 'Este mosaico de Webb es una instantánea del archivo publicada en 2024.'}
+            {source.provider === 'Florida'
+              ? 'Mosaico multifiltro del centro galáctico, Universidad de Florida. Teselas directas; cobertura parcial.'
+              : source.provider === 'HLA'
+                ? 'FITS científico de HLA/STScI con WCS original; carga directa, sin guardar imágenes en Cloudflare.'
+                : 'Mosaico de archivo ESA; el proveedor puede no estar disponible.'}{' '}
+            Las épocas no están sincronizadas: cambiar la fecha de SPHEREx no cambia este archivo.{' '}
+            Fecha del archivo: {source.releaseDate}.
           </p>
-          <a href={source.url} target="_blank" rel="noreferrer">
-            Fuente y cobertura ESA
+          <a
+            href={source.provider === 'HLA' ? 'https://hla.stsci.edu/' : source.url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Fuente y datos de {source.provider ?? 'ESA'}
           </a>
           {' · '}
           <a

@@ -7,6 +7,30 @@ import { installArchiveFixtures } from './archiveFixtures.ts';
  */
 export async function installTelescopeFixtures(page: Page) {
   await installArchiveFixtures(page);
+  const directFile = (name: string) =>
+    readFileSync(new URL(`./fixtures/direct/${name}`, import.meta.url));
+  await page.route('https://hla.stsci.edu/**', async (route) => {
+    const search = route.request().url().includes('hlaSIAP');
+    await route.fulfill({
+      body: directFile(search ? 'hubble-search.xml' : 'hubble.fits'),
+      contentType: search ? 'application/xml' : 'application/fits',
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    });
+  });
+  await page.route('https://starformation.astro.ufl.edu/avm_images/**', async (route) => {
+    const url = route.request().url();
+    const prefix = url.includes('jwst_miri_hips') ? 'miri' : 'nir';
+    const suffix = url.endsWith('properties')
+      ? 'properties'
+      : url.includes('Allsky')
+        ? 'allsky.png'
+        : 'tile.png';
+    await route.fulfill({
+      body: directFile(`${prefix}-${suffix}`),
+      contentType: suffix === 'properties' ? 'text/plain' : 'image/png',
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    });
+  });
   const sources = [
     ['HST/ACS/', 'hubble-acs', 'jpg'],
     ['HST/WFC3/', 'hubble-wfc3', 'jpg'],

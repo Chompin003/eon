@@ -9,7 +9,7 @@ test('a temporal archive failure can be retried through the non-interactive over
   page,
 }) => {
   let reject = true;
-  await page.route('**/api/telescope/{2,3}/**', (route) =>
+  await page.route('https://starformation.astro.ufl.edu/avm_images/**', (route) =>
     reject ? route.abort() : route.fallback(),
   );
   await page.goto(
@@ -43,7 +43,7 @@ test('an unresponsive archive times out explicitly without blocking SPHEREx', as
   const gate = new Promise<void>((resolve) => {
     release = resolve;
   });
-  await page.route('**/api/telescope/{2,3}/**', async (route) => {
+  await page.route('https://starformation.astro.ufl.edu/avm_images/**', async (route) => {
     await gate;
     await route.abort();
   });
@@ -55,7 +55,9 @@ test('an unresponsive archive times out explicitly without blocking SPHEREx', as
       .getByRole('button', { name: 'Webb', exact: true })
       .click();
     await expect(
-      page.getByText('Cargando Webb · NIRCam desde ESA… SPHEREx sigue disponible.'),
+      page.getByText(
+        'Cargando Webb · NIRCam/NIRISS · CMZ desde el archivo… SPHEREx sigue disponible.',
+      ),
     ).toBeVisible();
     await page.clock.fastForward(31000);
     await expect(page.getByRole('alert')).toContainText('ESA tardó demasiado');
@@ -86,7 +88,7 @@ test('HiPS telescopes share a single camera, offer both layouts and preserve the
   await expect(
     page.getByText('Las épocas no están sincronizadas:', { exact: false }),
   ).toBeVisible();
-  await page.route('**/api/telescope/0/**', (r) => r.abort());
+  await page.route('https://hla.stsci.edu/**', (r) => r.abort());
   await page
     .getByRole('group', { name: 'Telescopio de comparación' })
     .getByRole('button', { name: 'Hubble', exact: true })

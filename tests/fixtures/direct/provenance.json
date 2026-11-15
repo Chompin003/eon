@@ -1,0 +1,42 @@
+{
+  "hubble.fits": {
+    "url": "https://hla.stsci.edu/cgi-bin/fitscut.cgi?red=hst_10188_10_acs_wfc_f814w&RA=180.471267&Dec=-18.882101&size=512&format=fits",
+    "sha256": "c73ba164040aad678b3b1c1624cf0dbe25aec8dbf0c74c1c0d44c262e56494b5",
+    "bytes": 1059840
+  },
+  "hubble-search.xml": {
+    "url": "https://hla.stsci.edu/cgi-bin/hlaSIAP.cgi?POS=180.471267,-18.882101&SIZE=0.01&FORMAT=image/fits&inst=ACS,WFC3&imagetype=best",
+    "sha256": "2e9e95d2e334f47e98c54fd2e305303e14661d4acef6edb9ba64d0ee59228190",
+    "bytes": 60611
+  },
+  "nir-properties": {
+    "url": "https://starformation.astro.ufl.edu/avm_images/jwst_nir_hips/properties",
+    "sha256": "62c1510e984378143fae485b6588b68955a37d5619e44eef96b9b85a7044a526",
+    "bytes": 631
+  },
+  "nir-allsky.png": {
+    "url": "https://starformation.astro.ufl.edu/avm_images/jwst_nir_hips/Norder3/Allsky.png",
+    "sha256": "705174948dee18fe88d0bb37e2e65318e9c73d9073a357a8d9bc3c095025f143",
+    "bytes": 12695
+  },
+  "nir-tile.png": {
+    "url": "https://starformation.astro.ufl.edu/avm_images/jwst_nir_hips/Norder8/Dir280000/Npix289451.png",
+    "sha256": "7c763ac7e13d2ac2d3e14b09ebcdbe2ac79534b5c0ac9fbcbc350561bec233b3",
+    "bytes": 111942
+  },
+  "miri-properties": {
+    "url": "https://starformation.astro.ufl.edu/avm_images/jwst_miri_hips/properties",
+    "sha256": "c8a6fad07a28986c7c7bb4f5acd1a3783f9fcc070b59eb93ff2bd4f03029b45c",
+    "bytes": 611
+  },
+  "miri-allsky.png": {
+    "url": "https://starformation.astro.ufl.edu/avm_images/jwst_miri_hips/Norder3/Allsky.png",
+    "sha256": "b133de5448d977dc6c41ec7b2836843b90720d0b2b25db3975e4897f078af4f6",
+    "bytes": 12614
+  },
+  "miri-tile.png": {
+    "url": "https://starformation.astro.ufl.edu/avm_images/jwst_miri_hips/Norder8/Dir280000/Npix289451.png",
+    "sha256": "706c8dcff282b3d291417ce5ee73c63a3816c8fdda7f80c02c57a3416e0160d4",
+    "bytes": 47544
+  }
+}

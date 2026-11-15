@@ -45,7 +45,7 @@ test('real HiPS source has deep zoom, keyboard navigation and exact HMS/DMS targ
   await expect.poll(async () => Number(await sky.getAttribute('data-ra'))).toBeLessThan(359.9);
   await sky.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  expect(tileFrames.has('63')).toBe(true);
+  await expect.poll(() => tileFrames.has('63')).toBe(true);
   // The hidden second channel is no longer fetched during monochrome startup.
   expect(tileFrames.has('85')).toBe(false);
   expect(errors).toEqual([]);
