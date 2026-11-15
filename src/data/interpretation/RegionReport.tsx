@@ -272,6 +272,12 @@ export function RegionReport({
             DR3 y {report.catalog.byProvider.simbad} SIMBAD; pueden incluir el mismo objeto.
           </p>
         )}
+        {report.catalog && (
+          <p>
+            Las entradas utilizadas se conservan en el JSON para revisar la procedencia de las
+            candidaturas. Una consulta sin fallos no garantiza un inventario completo del cielo.
+          </p>
+        )}
         {Boolean(report.catalog?.errors.length) && (
           <p>
             {countText(

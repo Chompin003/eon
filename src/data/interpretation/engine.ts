@@ -79,6 +79,7 @@ export interface RegionInterpretation {
   catalog?: {
     queriedAt: string;
     entries: number;
+    records: RegionStudy['objects'];
     byProvider: { gaia: number; simbad: number };
     errors: readonly string[];
     truncated: boolean;
@@ -171,6 +172,7 @@ export function buildInterpretation(input: ReportInput): RegionInterpretation {
     report.catalog = {
       queriedAt: catalog.queriedAt,
       entries: catalog.objects.length,
+      records: catalog.objects,
       byProvider: {
         gaia: catalog.objects.filter((o) => o.provider === 'Gaia DR3').length,
         simbad: catalog.objects.filter((o) => o.provider === 'SIMBAD').length,
@@ -403,8 +405,14 @@ export function interpretGroup(report: RegionInterpretation, id: string) {
   const ambiguous =
     values.some((m) => m.detection.association === 'ambiguous') || candidateIds.size > 1;
   const candidate = values[0].detection.candidates[0];
+  const catalogObject = report.catalog?.records.find((o) => o.id === candidate?.id);
   const consistentCandidate =
     report.catalogContextComplete &&
+    catalogObject &&
+    candidate.name === catalogObject.name &&
+    candidate.provider === catalogObject.provider &&
+    candidate.category === catalogObject.category &&
+    candidate.probability === catalogObject.probability &&
     !ambiguous &&
     candidateIds.size === 1 &&
     values.every(
@@ -486,7 +494,7 @@ export function exportInterpretation(report: RegionInterpretation, selected?: st
     })),
     selectedGroup: selected ? interpretGroup(report, selected) : undefined,
     evidenceDefinitions: {
-      catalog: 'Entradas de las respuestas de catálogo, no objetos únicos ni detecciones SPHEREx.',
+      catalog: 'Filas conservadas de las respuestas consultadas, no objetos únicos ni detecciones SPHEREx. Un contexto completo solo significa respuestas sin fallo/truncamiento; no garantiza un inventario completo del cielo.',
       'pixel-associations':
         'Asociaciones candidatas guardadas con las detecciones; se cuentan por exposición.',
       'analysis-input':

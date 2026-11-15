@@ -55,6 +55,7 @@ test('real FITS evidence produces a traceable report and reviewing it adds no ar
     multiDateGroups: 1,
   });
   expect(json.selectedGroup.measurements).toBe(3);
+  expect(json.catalog.records).toHaveLength(json.catalog.entries);
   expect(json.limits).toMatchObject({
     physicalMotion: 'not-evaluated',
     brightnessVariability: 'not-evaluated',

@@ -76,6 +76,7 @@ try {
   await file.saveAs(join(output, file.suggestedFilename()));
   const json = JSON.parse(readFileSync(await file.path(), 'utf8'));
   expect(json.method).toBe('eon-evidence-rules-1');
+  if (json.catalog) expect(json.catalog.records).toHaveLength(json.catalog.entries);
   expect(json.limits.instrumentQuality).toBe('not-evaluated');
   expect(json.limits.physicalMotion).toBe('not-evaluated');
   if (!live)

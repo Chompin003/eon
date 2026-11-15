@@ -39,6 +39,8 @@ Los mosaicos Hubble/Webb, los canales visuales HiPS y las anotaciones son contex
 
 ## Comprobaciones
 
+El JSON conserva las entradas de catálogo utilizadas, incluyendo sus posiciones, época, clases y probabilidades publicadas cuando existen. Para describir una candidatura consistente también se comprueba que ID, nombre, proveedor, clase y probabilidad correspondan a esa consulta concreta. Un contexto de catálogos sin fallo/truncamiento no significa un inventario completo del cielo.
+
 Las pruebas de reglas cubren duplicados, fechas simultáneas, cambios de URL/región/consulta, cruce RA=0, banderas solapadas, catálogo parcial, extracción vacía, enlaces permitidos, determinismo y conservación de entradas. Los casos unitarios controlados no son datos de producción ni una medición de precisión científica.
 
 Las pruebas de navegador usan FITS y catálogos oficiales guardados. Contrastan el informe con 21 detecciones, 19 grupos y un grupo en tres fechas del ejemplo NGC 1491 a 5σ. Verifican JSON, navegación a evidencia, cero peticiones adicionales al revisar/exportar, catálogo sin píxeles, proveedor fallido, fecha FITS incorrecta y cancelación sin mezclar catálogos nuevos con píxeles anteriores. No se entrenó ni evaluó un clasificador nuevo.

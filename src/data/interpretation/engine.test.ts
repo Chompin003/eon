@@ -103,6 +103,18 @@ const candidate = {
   distanceArcsec: 1,
   probability: 0.99,
 };
+const catalogStar: RegionStudy['objects'][number] = {
+  id: candidate.id,
+  name: candidate.name,
+  provider: 'Gaia DR3',
+  longitude: 0.001,
+  latitude: 0,
+  referenceEpoch: 2016,
+  category: 'star',
+  probability: 0.99,
+  description: 'Controlled unit-test catalog row',
+};
+const matchedCatalog = () => catalog({ objects: [catalogStar] });
 
 describe('traceable interpretation, without scientific claims beyond the inputs', () => {
   it('counts per-exposure detections and groups without calling them unique objects', () => {
@@ -144,7 +156,7 @@ describe('traceable interpretation, without scientific claims beyond the inputs'
         measured(1, [detection('d1', { association: 'candidate', candidates: [candidate] })]),
       ],
     });
-    const group = interpretGroup(build(p), 'D0001')!;
+    const group = interpretGroup(build(p, matchedCatalog()), 'D0001')!;
     expect(group.counterpart).toBe('candidate');
     expect(group.candidate?.probability).toBe(0.99);
     expect(group.interpretation).toContain('no una identidad confirmada');
@@ -182,6 +194,32 @@ describe('traceable interpretation, without scientific claims beyond the inputs'
     expect(interpretGroup(build(), 'D0001')?.interpretation).toContain(
       'no demuestra un objeto nuevo',
     );
+  });
+  it('does not trust a stored candidate absent from or changed in the actual catalog snapshot', () => {
+    const p = pixels({
+      frames: [
+        measured(0, [detection('d0', { association: 'candidate', candidates: [candidate] })]),
+        measured(1, [detection('d1', { association: 'candidate', candidates: [candidate] })]),
+      ],
+    });
+    for (const c of [catalog(), catalog({ objects: [{ ...catalogStar, probability: 0.8 }] })]) {
+      const group = interpretGroup(build(p, c), 'D0001')!;
+      expect(group.counterpart).toBe('unresolved');
+      expect(group.candidate).toBeUndefined();
+    }
+  });
+  it('keeps the actual catalog rows as evidence without merging providers into unique objects', () => {
+    const c = catalog({
+      objects: [
+        catalogStar,
+        { ...catalogStar, id: 'simbad:test', provider: 'SIMBAD', probability: undefined },
+      ],
+    });
+    const report = buildInterpretation({ region, catalog: c });
+    expect(report.catalog?.entries).toBe(2);
+    expect(report.catalog?.byProvider).toEqual({ gaia: 1, simbad: 1 });
+    expect(exportInterpretation(report).catalog?.records).toEqual(c.objects);
+    expect(report.counts.detections).toBe(0);
   });
   it('rejects measurements from another region, dataset, sequence or catalog snapshot', () => {
     for (const p of [
@@ -301,7 +339,7 @@ describe('traceable interpretation, without scientific claims beyond the inputs'
         measured(1, [detection('d1', { association: 'candidate', candidates: [candidate] })]),
       ],
     });
-    const group = interpretGroup(build(p), 'D0001')!;
+    const group = interpretGroup(build(p, matchedCatalog()), 'D0001')!;
     expect(group.counterpart).toBe('candidate');
     expect(group.nextStep).toContain('primero las exposiciones con banderas');
     expect(group.limits.instrumentQuality).toBe('not-evaluated');
