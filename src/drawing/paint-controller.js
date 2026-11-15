@@ -1,4 +1,4 @@
-/* global customElements, HTMLElement, document, AbortController, requestAnimationFrame, cancelAnimationFrame, ResizeObserver, FileReader, Image, URL, Blob, XMLSerializer, devicePixelRatio, setTimeout */
+/* global performance, customElements, HTMLElement, document, AbortController, requestAnimationFrame, cancelAnimationFrame, ResizeObserver, FileReader, Image, URL, Blob, XMLSerializer, devicePixelRatio, setTimeout */
 /* Controles aislados en Shadow DOM; target debe ser un SVG de la página. */
 import M from './paint-model.js';
 (() => {
@@ -259,6 +259,8 @@ import M from './paint-model.js';
       this.enabled = false;
       this.visible = true;
       this.center = { ra: 180, dec: 0 };
+      this.textContext = document.createElement('canvas').getContext('2d');
+      this.textMetrics = new Map();
       this.options = { tool: 'pencil', color: '#86e1ce', width: 4, opacity: 1, fill: false };
       this.selected = null;
       this.gesture = null;
@@ -293,6 +295,11 @@ import M from './paint-model.js';
         .emoji-grid button { padding:3px 0; min-height:34px; border:0; background:transparent; font:24px/1.2 'Segoe UI Emoji','Apple Color Emoji',sans-serif; }
         .emoji-grid button:hover,.emoji-grid button:focus-visible { background:#e0eceb; }
         #emoji-empty { font-size:11px; color:#787774; }
+        #text-form { display:grid; gap:8px; padding:10px 0; }
+        #text-value { width:100%; box-sizing:border-box; resize:vertical; min-height:64px; background:#ffffff; color:#37352f; border:1px solid #dededb; border-radius:6px; padding:8px; font:14px system-ui; }
+        #space-alphabet { display:grid; grid-template-columns:repeat(8,1fr); gap:3px; }
+        #space-alphabet button { padding:4px 0; font:18px 'Segoe UI Symbol',sans-serif; }
+        #new-text,#edit-text { width:100%; margin-top:8px; }
       </style>
       <details>
         <summary><span class="badge">${icon('pencil')}</span><span class="title">Herramientas<small>ANOTACIONES DE ESTUDIO</small></span><span class="chevron" aria-hidden="true">⌄</span></summary>
@@ -324,6 +331,19 @@ import M from './paint-model.js';
           <div class="actions"><button type="button" id="undo" title="Deshacer (Ctrl+Z)">${icon('undo')}Deshacer</button><button type="button" id="redo" title="Rehacer (Ctrl+Y)">${icon('redo')}Rehacer</button></div>
           <div class="actions"><button type="button" id="image">${icon('image')}Imagen</button><button type="button" id="delete">${icon('trash')}Eliminar</button></div>
           <input id="file" type="file" accept="image/png,image/jpeg" hidden>
+          <button type="button" id="new-text">T + Texto / símbolos</button>
+          <button type="button" id="edit-text" disabled>Editar texto seleccionado</button>
+          <details id="text-editor"><summary>Texto y alfabeto espacial</summary>
+            <form id="text-form">
+              <label for="text-value">Texto</label>
+              <textarea id="text-value" maxlength="500" rows="3" placeholder="Ej.: α Centauri · λ = 2 μm"></textarea>
+              <label for="text-size">Tamaño del texto <output id="text-size-value">24 px</output></label>
+              <input id="text-size" type="range" min="8" max="160" value="24">
+              <div id="space-alphabet" role="group" aria-label="Letras griegas y símbolos astronómicos"></div>
+              <p class="help">Usa el color y la transparencia de Paint. Doble clic sobre el texto para editarlo.</p>
+              <div class="actions"><button type="submit">Guardar texto</button><button type="button" id="cancel-text">Cancelar texto</button></div>
+            </form>
+          </details>
           <details id="emoji-picker"><summary>😀 Emojis <span aria-hidden="true">⌄</span></summary><div class="emoji-body"><input id="emoji-search" type="search" placeholder="Buscar emoji…" aria-label="Buscar emoji" autocomplete="off"><div class="emoji-categories" role="group" aria-label="Categorías de emojis"></div><div class="emoji-grid" role="group" aria-label="Emojis predefinidos"></div><p id="emoji-empty" hidden>Sin coincidencias.</p></div></details>
           <div class="row"><button type="button" id="clear">Limpiar anotaciones</button></div>
           <div class="actions export"><button type="button" id="png">Exportar PNG</button><button type="button" id="jpg">Exportar JPG</button></div>
@@ -385,6 +405,42 @@ import M from './paint-model.js';
         });
       });
       const click = (id, fn) => listen(root.getElementById(id), 'click', fn);
+      click('new-text', () => this.openText());
+      click('edit-text', () =>
+        this.openText(this.history.items.find((item) => item.id === this.selected)),
+      );
+      click('cancel-text', () => {
+        root.getElementById('text-editor').open = false;
+        this.editTextId = null;
+      });
+      listen(root.getElementById('text-form'), 'submit', (event) => {
+        event.preventDefault();
+        this.saveText();
+      });
+      listen(root.getElementById('text-size'), 'input', (event) => {
+        root.getElementById('text-size-value').textContent = event.target.value + ' px';
+      });
+      const alphabet = 'α β γ δ ε θ λ μ π σ φ ω Δ Σ Π Ω ∞ ± ≠ ≈ ≤ ≥ √ ∫ ° ★ ✦ ☄ ☾ ☼ ⊕ 🌌'.split(
+        ' ',
+      );
+      root.getElementById('space-alphabet').replaceChildren(
+        ...alphabet.map((symbol) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = symbol;
+          button.setAttribute('aria-label', 'Insertar símbolo ' + symbol);
+          listen(button, 'click', () => {
+            const input = root.getElementById('text-value');
+            if (
+              input.value.length - (input.selectionEnd - input.selectionStart) + symbol.length <=
+              500
+            )
+              input.setRangeText(symbol, input.selectionStart, input.selectionEnd, 'end');
+            input.focus();
+          });
+          return button;
+        }),
+      );
       click('undo', () => this.undo());
       click('redo', () => this.redo());
       click('delete', () => this.removeSelected());
@@ -510,6 +566,81 @@ import M from './paint-model.js';
       grid.scrollTop = 0;
       root.getElementById('emoji-empty').hidden = items.length > 0;
     }
+    openText(item) {
+      this.cancel();
+      this.editTextId = item?.type === 'text' ? item.id : null;
+      const root = this.shadowRoot,
+        box = item ? this.pixelBounds(this.projectedPoints(item)) : null;
+      root.getElementById('text-editor').open = true;
+      root.getElementById('text-value').value = this.editTextId !== null ? item.text : '';
+      const size = box
+        ? M.clamp(Math.round(box.height / (item.text.split('\n').length * 1.3)), 8, 160)
+        : 24;
+      root.getElementById('text-size').value = size;
+      root.getElementById('text-size-value').textContent = size + ' px';
+      if (item) {
+        this.selected = item.id;
+        this.adoptStyle(item);
+        this.draw();
+      }
+      root.getElementById('text-value').focus();
+    }
+    saveText() {
+      const root = this.shadowRoot,
+        text = root.getElementById('text-value').value.trim();
+      if (!text) {
+        this.say('Escribe un texto antes de guardar.');
+        return;
+      }
+      if (!this.projection) {
+        this.say('Espera a que cargue el visor.');
+        return;
+      }
+      const size = Number(root.getElementById('text-size').value),
+        lines = text.split('\n');
+      const context = this.textContext;
+      context.font = 'bold ' + size + 'px "Segoe UI",sans-serif';
+      const width = Math.max(12, ...lines.map((line) => context.measureText(line).width)),
+        height = size * 1.3 * lines.length;
+      const original = this.history.items.find(
+        (item) => item.id === this.editTextId && item.type === 'text',
+      );
+      const old = original ? M.bounds(original) : null;
+      const center = old
+        ? this.projection.worldToPixel(M.wrapRA(old.x + old.width / 2), -(old.y + old.height / 2))
+        : this.projection.getSize().map((v) => v / 2);
+      if (!center) {
+        this.say('Centra el texto en el visor para editarlo.');
+        return;
+      }
+      const points = [
+        [-1, -1],
+        [1, 1],
+      ].map(([x, y]) => {
+        const w = this.projection.pixelToWorld(
+          center[0] + (x * width) / 2,
+          center[1] + (y * height) / 2,
+        );
+        return w ? { x: M.nearRA(w[0], this.center.ra), y: -w[1] } : { x: NaN, y: NaN };
+      });
+      if (!points.every(M.isSkyPoint)) {
+        this.say('Reduce el tamaño del texto para que quepa en el campo.');
+        return;
+      }
+      const item = { ...this.newItem('text', points), text };
+      if (original) item.id = original.id;
+      this.change(
+        original
+          ? this.history.items.map((el) => (el.id === original.id ? item : el))
+          : [...this.history.items, item],
+      );
+      this.setTool('select');
+      this.selected = item.id;
+      this.draw();
+      this.editTextId = null;
+      root.getElementById('text-editor').open = false;
+      this.say(original ? 'Texto actualizado.' : 'Texto añadido. Puedes moverlo y escalarlo.');
+    }
     say(message) {
       this.shadowRoot.getElementById('status').textContent = message;
     }
@@ -564,6 +695,9 @@ import M from './paint-model.js';
       preview.style.opacity = this.options.opacity;
       root.getElementById('undo').disabled = !this.history.past.length;
       root.getElementById('redo').disabled = !this.history.future.length;
+      root.getElementById('edit-text').disabled = !this.history.items.some(
+        (item) => item.id === this.selected && item.type === 'text',
+      );
       root.getElementById('delete').disabled = !this.history.items.some(
         (item) => item.id === this.selected,
       );
@@ -638,9 +772,15 @@ import M from './paint-model.js';
       const target = document
         .elementFromPoint(event.clientX, event.clientY)
         ?.closest('[data-item]');
-      return target && this.board.contains(target)
-        ? Number(target.getAttribute('data-item'))
-        : null;
+      if (target && this.board.contains(target)) return Number(target.getAttribute('data-item'));
+      const p = this.point(event);
+      for (const item of [...this.history.items].reverse()) {
+        if (item.type !== 'text') continue;
+        const b = M.bounds(item),
+          x = p.x - M.offsetFor(item, this.center.ra);
+        if (x >= b.x && x <= b.x + b.width && p.y >= b.y && p.y <= b.y + b.height) return item.id;
+      }
+      return null;
     }
     down(event) {
       if (!this.enabled || !this.visible || this.gesture || event.button !== 0) return;
@@ -650,6 +790,21 @@ import M from './paint-model.js';
         this.say('Fuera del rango de declinación −90° a +90°.');
         return;
       }
+      const candidate = this.history.items.find((item) => item.id === this.itemAt(event));
+      const now = performance.now();
+      if (
+        this.options.tool === 'select' &&
+        candidate?.type === 'text' &&
+        !event.target.hasAttribute('data-handle')
+      ) {
+        if (this.lastTextTap?.id === candidate.id && now - this.lastTextTap.time < 450) {
+          this.lastTextTap = null;
+          this.openText(candidate);
+          event.preventDefault();
+          return;
+        }
+        this.lastTextTap = { id: candidate.id, time: now };
+      } else this.lastTextTap = null;
       this.board.setPointerCapture(event.pointerId);
       const handle = event.target.getAttribute('data-handle');
       const hit = this.itemAt(event);
@@ -688,6 +843,7 @@ import M from './paint-model.js';
       const longitudeRadius = radius / Math.max(0.01, Math.cos((-point.y * Math.PI) / 180));
       // Only bbox candidates receive a cut; all other objects and cached SVG nodes are shared.
       this.history.items = this.history.items.map((item) => {
+        if (item.type === 'text') return item;
         const shift = M.offsetFor(item, this.center.ra),
           a = { x: previous.x - shift, y: previous.y },
           b = { x: point.x - shift, y: point.y };
@@ -866,7 +1022,7 @@ import M from './paint-model.js';
       return pixel && pixel.every(Number.isFinite) ? { x: pixel[0], y: pixel[1] } : null;
     }
     projectedPoints(item) {
-      if (['pencil', 'line', 'image', 'emoji'].includes(item.type))
+      if (['pencil', 'line', 'image', 'emoji', 'text'].includes(item.type))
         return item.points.map((p) => this.project(p));
       const b = M.bounds(item),
         points = [];
@@ -933,7 +1089,37 @@ import M from './paint-model.js';
           href: item.src,
           preserveAspectRatio: 'none',
         });
-      else if (item.type === 'emoji') {
+      else if (item.type === 'text') {
+        const lines = item.text.split('\n'),
+          size = b.height / (lines.length * 1.3);
+        node = svg('text', {
+          'data-item': item.id,
+          fill: item.color,
+          opacity: item.opacity,
+          'font-family': 'Segoe UI, Segoe UI Symbol, sans-serif',
+          'font-weight': 'bold',
+          'font-size': size,
+        });
+        const context = this.textContext;
+        context.font = 'bold 100px "Segoe UI",sans-serif';
+        let widths = this.textMetrics.get(item.text);
+        if (!widths) {
+          widths = lines.map((line) => context.measureText(line).width);
+          if (this.textMetrics.size >= 64)
+            this.textMetrics.delete(this.textMetrics.keys().next().value);
+          this.textMetrics.set(item.text, widths);
+        }
+        const max = Math.max(1, ...widths);
+        lines.forEach((line, index) => {
+          const span = svg('tspan', { x: b.x, y: b.y + size * (1 + index * 1.3) });
+          span.textContent = line || ' ';
+          if (widths[index] > 0) {
+            span.setAttribute('textLength', (b.width * widths[index]) / max);
+            span.setAttribute('lengthAdjust', 'spacingAndGlyphs');
+          }
+          node.append(span);
+        });
+      } else if (item.type === 'emoji') {
         node = svg('text', {
           ...common,
           x: b.x + b.width / 2,
