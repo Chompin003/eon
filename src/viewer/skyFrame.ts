@@ -9,6 +9,7 @@ import {
   type SkyProjectionWindow,
   type ArchiveHiPSSource,
   isArchiveSource,
+  ARCHIVE_SURVEYS,
 } from '../shared';
 import { cubeFileFrequency } from './spectral';
 import { displayFits } from './sip';
@@ -159,6 +160,10 @@ function publishView(notify = true) {
     send({ type: 'sky:view', view });
 }
 
+function archiveRoot(source: ArchiveHiPSSource) {
+  return `${location.origin}/api/telescope/${ARCHIVE_SURVEYS.findIndex((item) => item.id === source.id)}/`;
+}
+
 async function updateComparison() {
   if (!engine || !configuration || loading) return;
   const source = configuration.overlayComparison;
@@ -179,7 +184,7 @@ async function updateComparison() {
   host.dataset.comparisonReady = 'false';
   try {
     const layer = A.HiPS(source.id, {
-      url: source.url,
+      url: archiveRoot(source),
       name: source.title,
       successCallback: () => {
         if (comparisonKey === key) {
@@ -206,7 +211,7 @@ async function updateComparison() {
     engine.setOverlayImageLayer(layer, 'extra-telescope');
     host.dataset.comparisonId = key;
     const moc = A.MOCFromURL(
-      source.url + 'Moc.fits',
+      archiveRoot(source) + 'Moc.fits',
       { opacity: 0, lineWidth: 0, fill: false, perimeter: false },
       (loaded) => {
         if (comparisonKey !== key) return;
@@ -427,7 +432,7 @@ async function updateLayers() {
         rejectLoaded = reject;
       });
       const layer = A.HiPS(source.id, {
-        url: source.url,
+        url: archiveRoot(source),
         name: source.title,
         successCallback: () => resolveLoaded(),
         errorCallback: () =>
@@ -441,7 +446,7 @@ async function updateLayers() {
       if (requestRevision !== revision) return;
       // MOC is kept invisible and used only for a point-coverage check.
       const moc = A.MOCFromURL(
-        `${source.url}Moc.fits`,
+        `${archiveRoot(source)}Moc.fits`,
         { opacity: 0, lineWidth: 0, fill: false, perimeter: false },
         (loadedMoc) => {
           if (requestRevision !== revision) return;

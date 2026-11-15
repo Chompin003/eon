@@ -56,7 +56,7 @@ export function TelescopeComparison({
               aria-pressed={mode === 'overlay'}
               onClick={() => onModeChange('overlay')}
             >
-              Solapada
+              Superposición
             </button>
             <button
               className="plain-button"
