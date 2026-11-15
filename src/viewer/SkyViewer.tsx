@@ -30,6 +30,10 @@ interface Props {
   renderAnnotations?: (projection: SkyProjection) => ReactNode;
   onBufferStatus?: (status: BufferStatus) => void;
   comparisonSource?: ArchiveHiPSSource;
+  comparisonMode?: 'split' | 'overlay';
+  transparency?: number;
+  overlayComparison?: ArchiveHiPSSource;
+  projectionType?: 'TAN';
   selectingRegion?: boolean;
   onRegionSelected?: (region: SkyRegion) => void;
   onCancelRegion?: () => void;
@@ -39,7 +43,8 @@ export function SkyViewer(props: Props) {
   const [readyPanes, setReadyPanes] = useState<Record<string, string>>({});
   const mode = props.mode ?? 'mono';
   const comparison = props.comparisonSource;
-  const twoPanes = Boolean(comparison) || mode === 'split';
+  const overlayComparison = Boolean(comparison) && props.comparisonMode === 'overlay';
+  const twoPanes = comparison ? !overlayComparison : mode === 'split';
   const bufferedComparison = mode === 'split' && !comparison;
   const sequence = props.source.kind === 'fits' ? props.source.sequence : undefined;
   const bufferKey = `${sequence?.id ?? ''}:${sequence?.attempt ?? 0}`;
@@ -123,16 +128,45 @@ export function SkyViewer(props: Props) {
         <CheckerboardViewer {...props} source={props.source} />
       </Suspense>
     );
-  if (props.source.kind === 'fits' && sequence?.region) return <TimelapseViewer
-    {...props} source={props.source} mode={mode}
-    comparisonTitle={comparison?.title}
-    comparisonPane={comparison ? <HiPSViewer {...props} source={comparison} mode="mono" selectingRegion={false} /> : undefined}
-  />;
+  if (props.source.kind === 'fits' && sequence?.region)
+    return (
+      <TimelapseViewer
+        {...props}
+        source={props.source}
+        mode={mode}
+        comparisonTitle={comparison?.title}
+        comparisonPane={
+          comparison ? (
+            <HiPSViewer
+              {...props}
+              source={comparison}
+              mode="mono"
+              selectingRegion={false}
+              renderAnnotations={overlayComparison ? undefined : props.renderAnnotations}
+              projectionType={overlayComparison ? 'TAN' : undefined}
+              view={
+                overlayComparison
+                  ? {
+                      longitude: sequence.region.longitude,
+                      latitude: sequence.region.latitude,
+                      fov: sequence.region.sizeDeg,
+                    }
+                  : props.view
+              }
+              onViewChange={overlayComparison ? () => {} : props.onViewChange}
+            />
+          ) : undefined
+        }
+        comparisonMode={props.comparisonMode}
+        transparency={props.transparency}
+      />
+    );
   return (
     <div className={twoPanes ? 'sky-split' : 'sky-single'}>
       <div className="sky-pane">
         <HiPSViewer
           {...props}
+          overlayComparison={overlayComparison ? comparison : undefined}
           mode={mode === 'split' ? 'mono' : mode}
           buffer={buffer}
           onGPUProgress={(count, failed) => progress('main', count, failed)}
@@ -157,6 +191,7 @@ export function SkyViewer(props: Props) {
           <HiPSViewer
             {...props}
             source={comparison ?? props.source}
+            overlayComparison={undefined}
             selectingRegion={false}
             mode={comparison ? 'mono' : 'color'}
             buffer={comparison ? undefined : buffer}
@@ -196,6 +231,9 @@ function HiPSViewer({
   selectingRegion,
   onRegionSelected,
   onCancelRegion,
+  overlayComparison,
+  transparency = 35,
+  projectionType,
 }: Props & { buffer?: FrameBuffer; onGPUProgress?: (count: number, failed: number) => void }) {
   const documentKey =
     source.kind === 'fits'
@@ -216,6 +254,9 @@ function HiPSViewer({
     onReadyChange,
     buffer,
     onGPUProgress,
+    overlayComparison,
+    transparency,
+    projectionType,
   });
   const engineReady = useRef(false);
   const sent = useRef(new Set<string>());
@@ -224,6 +265,12 @@ function HiPSViewer({
   const [projection, setProjection] = useState<SkyProjection>();
   const [covered, setCovered] = useState<boolean>();
   const [coverageError, setCoverageError] = useState(false);
+  const [comparisonError, setComparisonError] = useState('');
+  useEffect(() => {
+    setCovered(undefined);
+    setCoverageError(false);
+    setComparisonError('');
+  }, [overlayComparison?.id]);
   const archive = source.kind === 'archive-hips';
   const [attempt, setAttempt] = useState(0);
 
@@ -238,13 +285,26 @@ function HiPSViewer({
       onReadyChange,
       buffer,
       onGPUProgress,
+      overlayComparison,
+      transparency,
+      projectionType,
     };
     const wireSource =
       source.kind === 'fits' && source.sequence
         ? { ...source, sequence: { ...source.sequence, frames: [] } }
         : source;
     frame.current?.contentWindow?.postMessage(
-      { type: 'sky:configure', source: wireSource, view, mode, secondFrame, overlay },
+      {
+        type: 'sky:configure',
+        source: wireSource,
+        view,
+        mode,
+        secondFrame,
+        overlay,
+        overlayComparison,
+        transparency,
+        projectionType,
+      },
       location.origin,
     );
   }, [
@@ -257,6 +317,9 @@ function HiPSViewer({
     onReadyChange,
     buffer,
     onGPUProgress,
+    overlayComparison,
+    transparency,
+    projectionType,
   ]);
 
   const flush = () => {
@@ -303,13 +366,32 @@ function HiPSViewer({
       const message = event.data;
       if (!message || typeof message !== 'object') return;
       if (message.type === 'sky:boot') {
-        const { source, view, mode, secondFrame, overlay } = current.current;
+        const {
+          source,
+          view,
+          mode,
+          secondFrame,
+          overlay,
+          overlayComparison,
+          transparency,
+          projectionType,
+        } = current.current;
         const wireSource =
           source.kind === 'fits' && source.sequence
             ? { ...source, sequence: { ...source.sequence, frames: [] } }
             : source;
         event.source?.postMessage(
-          { type: 'sky:configure', source: wireSource, view, mode, secondFrame, overlay },
+          {
+            type: 'sky:configure',
+            source: wireSource,
+            view,
+            mode,
+            secondFrame,
+            overlay,
+            overlayComparison,
+            transparency,
+            projectionType,
+          },
           { targetOrigin: location.origin },
         );
       } else if (message.type === 'sky:engine-ready') {
@@ -340,6 +422,13 @@ function HiPSViewer({
       } else if (message.type === 'sky:coverage') {
         if (typeof message.covered === 'boolean') setCovered(message.covered);
         setCoverageError(message.covered === null);
+      } else if (
+        message.type === 'sky:comparison' &&
+        message.id === current.current.overlayComparison?.id
+      ) {
+        setCovered(typeof message.covered === 'boolean' ? message.covered : undefined);
+        setCoverageError(message.covered === null);
+        setComparisonError(typeof message.error === 'string' ? message.error : '');
       } else if (message.type === 'sky:escape') {
         window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
       }
@@ -367,15 +456,27 @@ function HiPSViewer({
         className="hips-frame"
       />
       {connected && projection && renderAnnotations?.(projection)}
-      {selectingRegion && connected && projection && onRegionSelected && onCancelRegion && <RegionSelector
-        projection={projection} view={view} onViewChange={onViewChange} onSelect={onRegionSelected} onCancel={onCancelRegion}
-      />}
-      {archive && connected && (covered === false || coverageError) && (
+      {selectingRegion && connected && projection && onRegionSelected && onCancelRegion && (
+        <RegionSelector
+          projection={projection}
+          view={view}
+          onViewChange={onViewChange}
+          onSelect={onRegionSelected}
+          onCancel={onCancelRegion}
+        />
+      )}
+      {(archive || overlayComparison) && connected && (covered === false || coverageError) && (
         <div className="coverage-notice" role="status">
           {covered === false
             ? 'El centro está fuera de la cobertura de este mosaico.'
             : 'No se pudo verificar la cobertura.'}{' '}
-          {source.telescope} no cubre todo el cielo. Prueba M74 o busca otra posición.
+          {archive ? source.telescope : overlayComparison?.telescope} no cubre todo el cielo. Prueba
+          M74 o busca otra posición.
+        </div>
+      )}
+      {overlayComparison && comparisonError && (
+        <div className="coverage-notice" role="alert">
+          {comparisonError} SPHEREx sigue disponible.
         </div>
       )}
       {!connected && !error && (

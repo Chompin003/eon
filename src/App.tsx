@@ -73,6 +73,10 @@ function ExplorerApp() {
   const [secondFrame, setSecondFrame] = useState(initial?.band2 ?? 84);
   const [displayMode, setDisplayMode] = useState<DisplayMode>(initial?.display ?? 'mono');
   const [overlay, setOverlay] = useState(initial?.spectralOverlay ?? false);
+  const [comparisonMode, setComparisonMode] = useState<'split' | 'overlay'>(
+    initial?.comparison ?? 'overlay',
+  );
+  const [transparency, setTransparency] = useState(initial?.transparency ?? 35);
   const [observationSource, setObservationSource] = useState<FITSSource | null>(null);
   const [selectingRegion, setSelectingRegion] = useState(false);
   const selectionPreviousView = useRef(view);
@@ -127,8 +131,8 @@ function ExplorerApp() {
     display: displayMode,
     spectralOverlay: overlay,
     telescope: comparisonSource?.id,
-    comparison: initial?.comparison ?? 'split',
-    transparency: initial?.transparency ?? 35,
+    comparison: comparisonMode,
+    transparency,
     region,
     exposure: observationSource?.sequence?.region
       ? { id: observationSource.id, region: observationSource.sequence.region }
@@ -202,6 +206,10 @@ function ExplorerApp() {
       drawingTools={<PaintTools session={paint} />}
       telescopeTools={
         <TelescopeComparison
+          mode={comparisonMode}
+          onModeChange={setComparisonMode}
+          transparency={transparency}
+          onTransparencyChange={setTransparency}
           source={comparisonSource}
           onSourceChange={setComparisonSource}
           view={view}
@@ -216,6 +224,8 @@ function ExplorerApp() {
         <SkyViewer
           source={source}
           comparisonSource={comparisonSource}
+          comparisonMode={comparisonMode}
+          transparency={transparency}
           secondFrame={secondFrame}
           mode={displayMode}
           overlay={overlay}

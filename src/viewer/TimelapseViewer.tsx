@@ -9,6 +9,8 @@ interface Props {
   mode: DisplayMode;
   comparisonPane?: ReactNode;
   comparisonTitle?: string;
+  comparisonMode?: 'split' | 'overlay';
+  transparency?: number;
   onViewChange: (view: ViewState) => void;
   onReadyChange?: (ready: boolean) => void;
   onBufferStatus?: (status: BufferStatus) => void;
@@ -36,7 +38,8 @@ export function TimelapseViewer(props: Props) {
     current.current.onBufferStatus?.({ ...buffer.status(), sequenceId: sequence.id });
   }, [buffer, revision, sequence.id]);
   const split = props.mode === 'split',
-    two = split || Boolean(props.comparisonPane);
+    overlay = Boolean(props.comparisonPane) && props.comparisonMode === 'overlay',
+    two = props.comparisonPane ? !overlay : split;
   const common = {
     region,
     buffer,
@@ -51,6 +54,8 @@ export function TimelapseViewer(props: Props) {
       <div className="sky-pane region-pane">
         <RegionCanvas
           {...common}
+          comparisonOverlay={overlay ? props.comparisonPane : undefined}
+          comparisonOpacity={1 - (props.transparency ?? 35) / 100}
           mode={split ? 'mono' : (props.mode as 'mono' | 'color')}
           onPresented={(ready) => current.current.onReadyChange?.(ready)}
         />

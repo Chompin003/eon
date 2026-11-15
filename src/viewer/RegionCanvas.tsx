@@ -48,6 +48,8 @@ interface Props {
   onViewChange: (view: ViewState) => void;
   onPresented: (ready: boolean) => void;
   renderAnnotations?: (projection: SkyProjection) => ReactNode;
+  comparisonOverlay?: ReactNode;
+  comparisonOpacity?: number;
 }
 export function RegionCanvas(props: Props) {
   const { region, buffer, frameId, mode, view } = props;
@@ -206,6 +208,7 @@ export function RegionCanvas(props: Props) {
     currentCamera.center[0] - currentCamera.span / 2 >= grid.size ||
     currentCamera.center[1] + currentCamera.span / 2 <= 0 ||
     currentCamera.center[1] - currentCamera.span / 2 >= grid.size;
+  const camera = gridCamera(grid, view);
   return (
     <div className="region-stage" ref={host}>
       <canvas
@@ -282,6 +285,19 @@ export function RegionCanvas(props: Props) {
           }
         }}
       />
+      {props.comparisonOverlay && (
+        <div
+          className="registered-archive"
+          style={{
+            opacity: props.comparisonOpacity,
+            transform: camera
+              ? `translate(${size / 2 - (camera.center[0] * size) / camera.span}px, ${size / 2 - (camera.center[1] * size) / camera.span}px) scale(${grid.size / camera.span})`
+              : 'none',
+          }}
+        >
+          {props.comparisonOverlay}
+        </div>
+      )}
       {props.renderAnnotations?.(projection)}
       {!frame && (
         <div className="region-message" role="status">

@@ -48,13 +48,13 @@ export function readLocation(url: URL): SharedLocation | undefined {
       latitude: dec,
       fov: number('fov', VIEW_LIMITS.minFov, VIEW_LIMITS.maxFov) ?? DEFAULT_VIEW.fov,
     },
-    band: band !== undefined && Number.isInteger(band) ? band : 62,
-    band2: band2 !== undefined && Number.isInteger(band2) ? band2 : 84,
+    band: band !== undefined && Number.isInteger(band) && ![50, 51].includes(band) ? band : 62,
+    band2: band2 !== undefined && Number.isInteger(band2) && ![50, 51].includes(band2) ? band2 : 84,
     display:
       q.get('display') === 'color' ? 'color' : q.get('display') === 'split' ? 'split' : 'mono',
     spectralOverlay: q.get('mix') === '1',
     telescope: ARCHIVE_SURVEYS.find((s) => s.id === q.get('tel'))?.id,
-    comparison: q.get('compare') === 'overlay' ? 'overlay' : 'split',
+    comparison: q.get('compare') === 'split' ? 'split' : 'overlay',
     transparency: number('fade', 0, 100) ?? 35,
     region,
     exposure:

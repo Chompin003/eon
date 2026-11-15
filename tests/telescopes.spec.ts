@@ -26,6 +26,10 @@ test('SPHEREx is default; Hubble and Webb comparisons synchronize coordinates, z
     'true',
   );
   await controls.getByRole('button', { name: 'Hubble', exact: true }).click();
+  await page
+    .getByRole('group', { name: 'Distribución de telescopios' })
+    .getByRole('button', { name: 'Pantalla dividida', exact: true })
+    .click();
   await expect(page.locator('iframe')).toHaveCount(2);
   const left = page.getByTitle('Cielo SPHEREx').contentFrame().locator('#sky');
   let right = page.getByTitle('Cielo Hubble').contentFrame().locator('#sky');
@@ -90,6 +94,10 @@ test('an archive failure leaves SPHEREx usable and comparisons retain Paint laye
   await page
     .getByRole('group', { name: 'Telescopio de comparación' })
     .getByRole('button', { name: 'Webb', exact: true })
+    .click();
+  await page
+    .getByRole('group', { name: 'Distribución de telescopios' })
+    .getByRole('button', { name: 'Pantalla dividida', exact: true })
     .click();
   await expect(page.locator('.study-annotations [data-item]')).toHaveCount(2);
   await page.route('https://skies.esac.esa.int/HST/ACS/**', (route) => route.abort());
