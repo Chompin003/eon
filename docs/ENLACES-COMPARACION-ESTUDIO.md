@@ -26,4 +26,8 @@ El estudio se implementará después de comprobar datos, hardware y herramientas
 
 ## Recuperación ante fallos de archivo
 
+Implementado en [PR #17](https://github.com/Chompin003/eon/pull/17): la carga y los errores del enlace se muestran fuera de los controles. **Reintentar enlace** repite la fecha original; **Ver mosaico** cancela la solicitud y elimina la intención temporal. Un error no borra `epoch` de la dirección. Al finalizar correctamente, la exposición queda pausada y se conserva en la URL como vista activa. El 15 de noviembre de 2026, SIA devolvió 502 tanto en consultas directas como desde Cloudflare; el visor y los catálogos se verificaron por separado. Una caída del archivo no se sustituye por otra fecha ni por datos de prueba.
+
+![QA de recuperación con error HTTP 502 provocado y mosaico HiPS real](shared-exposure-retry.png)
+
 Coordinación previa: App y ObservationsPanel añadirán estado explícito de restauración y un contador de reintento. La exposición solicitada se mantendrá en el URL mientras falle IRSA; solo el éxito o la elección explícita de volver al mosaico la retirarán del estado pendiente. App compondrá un aviso accesible fuera del panel. No cambia ViewState, coordinateTools ni las fuentes permitidas. Se comprobarán fallo transitorio, reintento exacto y cancelación de solicitudes pendientes.

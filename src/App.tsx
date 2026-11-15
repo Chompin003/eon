@@ -41,6 +41,11 @@ export function App() {
 function ExplorerApp() {
   const [initial] = useState(() => readLocation(new URL(location.href)));
   const [restoring, setRestoring] = useState(Boolean(initial?.exposure));
+  const [restoreState, setRestoreState] = useState<'none' | 'loading' | 'ready' | 'error'>(
+    initial?.exposure ? 'loading' : 'none',
+  );
+  const [restoreError, setRestoreError] = useState('');
+  const [restoreAttempt, setRestoreAttempt] = useState(0);
   const [study, setStudy] = useState<RegionStudy>();
   const [showStudy, setShowStudy] = useState(true);
   const [selectedObject, setSelectedObject] = useState<StudyObject>();
@@ -207,8 +212,15 @@ function ExplorerApp() {
       }
       timeTools={
         <ObservationsPanel
-          restoreExposure={initial?.exposure}
-          onRestoreSettled={() => setRestoring(false)}
+          restoreExposure={
+            restoreState === 'loading' || restoreState === 'error' ? initial?.exposure : undefined
+          }
+          restoreAttempt={restoreAttempt}
+          onRestoreStatus={(state, message) => {
+            setRestoreState(state);
+            setRestoreError(message ?? '');
+          }}
+          onRestoreSuccess={() => setRestoring(false)}
           view={view}
           onViewChange={updateView}
           onSourceChange={setObservationSource}
@@ -216,11 +228,17 @@ function ExplorerApp() {
           bufferStatus={bufferStatus}
           selectedRegion={region}
           onSelectRegion={() => {
+            setRestoreState('none');
+            setRestoring(false);
             selectionPreviousView.current = view;
             setSelectingRegion(true);
             setView((current) => ({ ...current, fov: 0.5 }));
           }}
-          onClearRegion={() => setRegion(undefined)}
+          onClearRegion={() => {
+            setRegion(undefined);
+            setRestoreState('none');
+            setRestoring(false);
+          }}
         />
       }
       coordinateTools={<CoordinatesPanel view={view} onViewChange={updateView} />}
@@ -235,74 +253,106 @@ function ExplorerApp() {
           onSourceChange={setComparisonSource}
           view={view}
           onViewChange={(next) => {
+            setRestoreState('none');
+            setRestoring(false);
             setObservationSource(null);
             updateView(next);
           }}
         />
       }
     >
-      {metadata ? (
-        <SkyViewer
-          source={source}
-          comparisonSource={comparisonSource}
-          comparisonMode={comparisonMode}
-          transparency={transparency}
-          secondFrame={secondFrame}
-          mode={displayMode}
-          overlay={overlay}
-          onReadyChange={imageReadiness.setReady}
-          onBufferStatus={setBufferStatus}
-          selectingRegion={selectingRegion}
-          onRegionSelected={(value) => {
-            setRegion(value);
-            setSelectingRegion(false);
-            setView({
-              longitude: value.longitude,
-              latitude: value.latitude,
-              fov: value.sizeDeg * 2.5,
-            });
-          }}
-          onCancelRegion={() => {
-            setSelectingRegion(false);
-            setView(selectionPreviousView.current);
-          }}
-          view={view}
-          layers={CHECKERBOARD_LAYERS}
-          onViewChange={updateView}
-          renderAnnotations={(projection) => (
-            <>
-              <PaintSurface session={paint} projection={projection} />
-              {study && showStudy && (
-                <StudyMarkers
-                  result={study}
-                  projection={projection}
-                  date={observationSource?.dateUtc}
-                  selected={selectedObject?.id}
-                  onSelect={setSelectedObject}
-                />
-              )}
-            </>
-          )}
-        />
-      ) : dataError ? (
-        <div className="viewer-error" role="alert">
-          <strong>No se pudo consultar SPHEREx</strong>
-          <p>{dataError}</p>
-          <button
-            className="plain-button"
-            onClick={() => {
-              setDataError('');
-              setDataAttempt(dataAttempt + 1);
+      <>
+        {(restoreState === 'loading' || restoreState === 'error') && (
+          <div className="link-restore-notice" role={restoreState === 'error' ? 'alert' : 'status'}>
+            <strong>
+              {restoreState === 'loading'
+                ? 'Restaurando exposición del enlace…'
+                : 'No se pudo restaurar la exposición del enlace.'}
+            </strong>
+            <p>
+              {restoreState === 'loading'
+                ? 'Consultando la fecha solicitada en IRSA.'
+                : restoreError}
+            </p>
+            {restoreState === 'error' && (
+              <button className="plain-button" onClick={() => setRestoreAttempt((n) => n + 1)}>
+                Reintentar enlace
+              </button>
+            )}{' '}
+            <button
+              className="plain-button"
+              onClick={() => {
+                setRestoreState('none');
+                setRestoring(false);
+              }}
+            >
+              Ver mosaico
+            </button>
+          </div>
+        )}
+        {metadata ? (
+          <SkyViewer
+            source={source}
+            comparisonSource={comparisonSource}
+            comparisonMode={comparisonMode}
+            transparency={transparency}
+            secondFrame={secondFrame}
+            mode={displayMode}
+            overlay={overlay}
+            onReadyChange={imageReadiness.setReady}
+            onBufferStatus={setBufferStatus}
+            selectingRegion={selectingRegion}
+            onRegionSelected={(value) => {
+              setRegion(value);
+              setSelectingRegion(false);
+              setView({
+                longitude: value.longitude,
+                latitude: value.latitude,
+                fov: value.sizeDeg * 2.5,
+              });
             }}
-          >
-            Reintentar
-          </button>
-        </div>
-      ) : (
-        <div className="viewer-loading" role="status">
-          Consultando el mosaico oficial de SPHEREx…
-        </div>
-      )}
+            onCancelRegion={() => {
+              setSelectingRegion(false);
+              setView(selectionPreviousView.current);
+            }}
+            view={view}
+            layers={CHECKERBOARD_LAYERS}
+            onViewChange={updateView}
+            renderAnnotations={(projection) => (
+              <>
+                <PaintSurface session={paint} projection={projection} />
+                {study && showStudy && (
+                  <StudyMarkers
+                    result={study}
+                    projection={projection}
+                    date={observationSource?.dateUtc}
+                    selected={selectedObject?.id}
+                    onSelect={setSelectedObject}
+                  />
+                )}
+              </>
+            )}
+          />
+        ) : dataError ? (
+          <div className="viewer-error" role="alert">
+            <strong>No se pudo consultar SPHEREx</strong>
+            <p>{dataError}</p>
+            <button
+              className="plain-button"
+              onClick={() => {
+                setDataError('');
+                setDataAttempt(dataAttempt + 1);
+              }}
+            >
+              Reintentar
+            </button>
+          </div>
+        ) : (
+          <div className="viewer-loading" role="status">
+            Consultando el mosaico oficial de SPHEREx…
+          </div>
+        )}
+      </>
     </ExplorerLayout>
   );
 }
