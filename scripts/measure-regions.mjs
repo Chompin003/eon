@@ -1,5 +1,6 @@
 /* global document, window, performance, MutationObserver, process, console, setTimeout */
 import { chromium, expect } from '@playwright/test';
+import { URL } from 'node:url';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { installArchiveFixtures } from '../tests/archiveFixtures.ts';
 const live = process.env.EON_LIVE === '1';
