@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-14",
+  "summary": "La precarga y la reproducción desde memoria están verificadas. Las 46 pruebas unitarias y 13 pruebas de navegador incluyen coordenadas, Paint, comparación y recuperación de errores.",
+  "measurements": [
+    "Tres FITS oficiales guardados; retardo de red artificial de 150 ms; intervalo de 100 ms; 900 x 650; WebGL por software. Diez cuadros medidos por versión.",
+    "Antes a después: mediana 532.5 a 122.0 ms; p95 702.7 a 280.8 ms. Descargas FITS: 11 a 0; navegaciones del documento: 11 a 0. Arranque HiPS: 30 a 15 teselas.",
+    "Secuencia completa: 60 exposiciones, 120 presentaciones y 60 fechas distintas. Mediana 272.1 ms; p95 952.2 ms; cero descargas FITS durante el bucle. Persisten pausas de renderizado con WebGL software bajo carga.",
+    "La prueba completa usó metadatos SIA reales guardados y recortes IRSA/caché local porque SIA devolvía 502. Preparó la secuencia en 25.1 s con caché disponible; no mide una descarga inicial desde cero."
+  ],
+  "controlled": {
+    "frames": 10,
+    "sequenceFrames": 3,
+    "intervalMs": 100,
+    "controlledLatencyMs": 150,
+    "before": {
+      "medianGapMs": 532.5,
+      "p95GapMs": 702.7,
+      "playbackCutoutRequests": 11,
+      "playbackDocumentNavigations": 11,
+      "initialHiPSTileRequests": 30
+    },
+    "after": {
+      "controlledLatencyMs": 150,
+      "source": "three recorded IRSA exposures",
+      "sequenceFrames": 3,
+      "retries": 0,
+      "viewport": "900x650",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "intervalMs": 100,
+      "preparationMs": 2218.6043,
+      "frames": 10,
+      "uniqueDates": 3,
+      "medianGapMs": 122,
+      "p95GapMs": 280.8000000002794,
+      "playbackCutoutRequests": 0,
+      "playbackDocumentNavigations": 0,
+      "initialHiPSTileRequests": 15
+    }
+  },
+  "fullSequence": {
+    "source": "recorded IRSA SIA metadata / live IRSA cutouts via local Pages Functions",
+    "sequenceFrames": 60,
+    "retries": 0,
+    "viewport": "900x650",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "intervalMs": 100,
+    "preparationMs": 25069.1236,
+    "frames": 120,
+    "uniqueDates": 60,
+    "medianGapMs": 272.10000000009313,
+    "p95GapMs": 952.1999999997206,
+    "playbackCutoutRequests": 0,
+    "playbackDocumentNavigations": 0,
+    "initialHiPSTileRequests": 15
+  }
+}

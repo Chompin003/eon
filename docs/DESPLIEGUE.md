@@ -24,7 +24,7 @@ git push -u origin feat/sky-viewer feat/spherex-data feat/drawing-tools feat/int
 
 Ejecuta estos comandos solo desde la carpeta de este proyecto y después de que su bootstrap esté completo. Si ya hay un repositorio del mismo nombre o un remoto `origin`, inspecciónalo primero y no lo reemplaces. El repositorio público permite usar las protecciones de rama del plan gratuito; no publiques archivos ajenos o secretos.
 
-En Settings → General → Pull Requests están habilitados **Allow auto-merge** y merge commits; las ramas duraderas no se borran automáticamente. `main` exige cero aprobaciones humanas y los checks `quality` y `Cloudflare Pages`, sin force pushes ni eliminación, incluso para administradores. No se exige actualizar la rama por cada integración ajena; los conflictos reales sí bloquean el merge. No configures pagos.
+En Settings → General → Pull Requests están habilitados **Allow auto-merge** y merge commits; las ramas duraderas no se borran automáticamente. `main` exige cero aprobaciones humanas y los checks `quality` (GitHub Actions) y `Cloudflare Pages: eon-visualizer` (aplicación oficial Cloudflare), sin force pushes ni eliminación, incluso para administradores. Al migrar de proyecto se actualizó el nombre de ese check y se conservó su aplicación emisora. No se exige actualizar la rama por cada integración ajena; los conflictos reales sí bloquean el merge. No configures pagos.
 
 ## Cloudflare: integración oficial de Git
 
@@ -33,15 +33,15 @@ En Settings → General → Pull Requests están habilitados **Allow auto-merge*
 3. Elige **GitHub** y autoriza la aplicación oficial **Cloudflare Workers and Pages**. Limita su acceso a **Only select repositories → eon**.
 4. Selecciona el repositorio y configura:
 
-| Opción                           | Valor                                                        |
-| -------------------------------- | ------------------------------------------------------------ |
-| Project name                     | `eon-visualizer` |
-| Production branch                | `main`                                                       |
-| Framework preset                 | React (Vite) / Vite                                          |
-| Build command                    | `npm run build`                                              |
-| Build output directory           | `dist`                                                       |
-| Root directory                   | Raíz del repositorio (vacío)                                 |
-| Variable de build, si hace falta | `NODE_VERSION=24.11.1`                                       |
+| Opción                           | Valor                        |
+| -------------------------------- | ---------------------------- |
+| Project name                     | `eon-visualizer`             |
+| Production branch                | `main`                       |
+| Framework preset                 | React (Vite) / Vite          |
+| Build command                    | `npm run build`              |
+| Build output directory           | `dist`                       |
+| Root directory                   | Raíz del repositorio (vacío) |
+| Variable de build, si hace falta | `NODE_VERSION=24.11.1`       |
 
 5. Pulsa **Save and Deploy**. Espera el estado **Success** y abre la URL `*.pages.dev` que Cloudflare asigne (no se da por creada hasta que el panel la confirme).
 6. En Settings → Builds & deployments / Branch control, activa los despliegues automáticos de producción para `main` y previews para todas las ramas no productivas. No excluyas las cuatro ramas de trabajo.

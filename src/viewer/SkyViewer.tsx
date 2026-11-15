@@ -268,6 +268,7 @@ function HiPSViewer({
     setProjection(undefined);
     engineReady.current = false;
     sent.current.clear();
+    current.current.onGPUProgress?.(0, 0);
     setCovered(undefined);
     setCoverageError(false);
   }, [documentKey, attempt]);
@@ -295,7 +296,7 @@ function HiPSViewer({
           { targetOrigin: location.origin },
         );
       } else if (message.type === 'sky:engine-ready') {
-        clearTimeout(timeout);
+        if (current.current.source.kind === 'fits') clearTimeout(timeout);
         engineReady.current = true;
         flush();
       } else if (message.type === 'sky:buffer-progress') {

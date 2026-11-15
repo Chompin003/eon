@@ -26,6 +26,7 @@ test('prepared playback repeats without FITS requests or rebuilding either pane'
   const right = page.locator('iframe').nth(1).contentFrame().locator('#sky');
   await expect(right).toHaveAttribute('data-buffered', '3', { timeout: 30000 });
   await expect(page.getByTestId('buffer-progress')).toHaveAttribute('data-ready', 'true');
+  await expect(page.getByText(/^Imagen visible/)).toBeVisible();
   const before = { cutouts, navigations };
   const seen: string[] = [];
   await page.exposeFunction('recordEpoch', (id: string) => seen.push(id));
@@ -39,7 +40,7 @@ test('prepared playback repeats without FITS requests or rebuilding either pane'
   });
   await page.getByRole('slider', { name: 'Intervalo entre fechas' }).press('Home');
   await page.getByRole('button', { name: 'Reproducir', exact: true }).click();
-  await expect.poll(() => seen.length).toBeGreaterThanOrEqual(18);
+  await expect.poll(() => seen.length, { timeout: 30000 }).toBeGreaterThanOrEqual(18);
   await page.getByRole('button', { name: 'Pausar', exact: true }).click();
   expect(new Set(seen)).toEqual(new Set(provenance.exposures.map((entry) => entry.id)));
   expect({ cutouts, navigations }).toEqual(before);

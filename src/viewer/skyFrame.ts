@@ -170,19 +170,22 @@ function presentCachedFrame() {
   const entry = cachedFrames.get(source.id);
   if (!entry) return;
   const key = `${source.id}:${mode}`;
-  if (presentation === key) return;
-  if (visibleFrame && visibleFrame !== source.id)
-    cachedFrames.get(visibleFrame)?.layer.setOptions({ opacity: 0 });
-  entry.layer.setOptions({ opacity: 1, colormap: mode === 'color' ? 'viridis' : 'native' });
-  visibleFrame = source.id;
-  presentation = key;
-  host.dataset.ready = 'true';
-  host.dataset.source = 'fits';
-  host.dataset.frameId = source.id;
-  host.dataset.imageRa = String(entry.ra);
-  host.dataset.imageDec = String(entry.dec);
-  host.dataset.imageFov = String(entry.fov);
-  host.dataset.mode = mode;
+  if (presentation !== key) {
+    if (visibleFrame && visibleFrame !== source.id)
+      cachedFrames.get(visibleFrame)?.layer.setOptions({ opacity: 0 });
+    entry.layer.setOptions({ opacity: 1, colormap: mode === 'color' ? 'viridis' : 'native' });
+    visibleFrame = source.id;
+    presentation = key;
+    host.dataset.ready = 'true';
+    host.dataset.source = 'fits';
+    host.dataset.frameId = source.id;
+    host.dataset.imageRa = String(entry.ra);
+    host.dataset.imageDec = String(entry.dec);
+    host.dataset.imageFov = String(entry.fov);
+    host.dataset.mode = mode;
+  }
+  // A layout change can require a fresh readiness acknowledgement even when
+  // the same image remains visible (e.g. opening the comparison pane).
   cancelAnimationFrame(presentTick);
   presentTick = requestAnimationFrame(() => {
     if (configuration?.source.id === source.id) send({ type: 'sky:ready', frameId: source.id });

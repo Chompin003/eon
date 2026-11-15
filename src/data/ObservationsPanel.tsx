@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import {
   TIMELINE_LIMITS,
   type FITSSource,
   type Observation,
   type ViewState,
   type BufferStatus,
+  type ImageReadiness,
 } from '../shared';
 import { loadAllObservations } from './observations';
 
@@ -13,7 +14,7 @@ interface Props {
   onViewChange: (view: ViewState) => void;
   onSourceChange: (source: FITSSource | null) => void;
   /** Whether the selected image has been presented by the viewer. */
-  imageReady: boolean;
+  imageReadiness: ImageReadiness;
   bufferStatus: BufferStatus;
 }
 
@@ -21,9 +22,10 @@ export function ObservationsPanel({
   view,
   onViewChange,
   onSourceChange,
-  imageReady,
+  imageReadiness,
   bufferStatus,
 }: Props) {
+  const imageReady = useSyncExternalStore(imageReadiness.subscribe, imageReadiness.getSnapshot);
   const [observations, setObservations] = useState<Observation[]>([]);
   const [center, setCenter] = useState<ViewState>();
   const [detector, setDetector] = useState('SPHEREx-D4');
@@ -38,6 +40,10 @@ export function ObservationsPanel({
   const [attempt, setAttempt] = useState(0);
   const [queryProgress, setQueryProgress] = useState('');
   const abort = useRef<AbortController | null>(null);
+  const presented = useRef(imageReady);
+  useEffect(() => {
+    presented.current = imageReady;
+  }, [imageReady]);
   const props = useRef({ view, onViewChange, onSourceChange });
   useEffect(() => {
     props.current = { view, onViewChange, onSourceChange };
@@ -83,10 +89,13 @@ export function ObservationsPanel({
 
   useEffect(() => {
     if (!playing || !enabled || matching.length < 2 || !fullyBuffered) return;
-    const timer = window.setInterval(
-      () => setIndex((value) => (value + 1) % matching.length),
-      interval,
-    );
+    const timer = window.setInterval(() => {
+      // Under heavy rendering load, wait for this frame's acknowledgement
+      // instead of silently skipping dates. The prepared sequence needs no I/O.
+      if (!presented.current) return;
+      presented.current = false;
+      setIndex((value) => (value + 1) % matching.length);
+    }, interval);
     return () => clearInterval(timer);
   }, [playing, enabled, matching.length, interval, fullyBuffered]);
 
@@ -213,6 +222,9 @@ export function ObservationsPanel({
               role="status"
               data-testid="buffer-progress"
               data-ready={fullyBuffered}
+              data-prepared={bufferStatus.prepared}
+              data-failed={bufferStatus.failed}
+              data-total={matching.length}
             >
               <span>
                 {fullyBuffered

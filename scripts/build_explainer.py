@@ -128,11 +128,11 @@ y=para('La base científica se comprobó con datos reales: en la región inicial
 y=heading('Criterios de aceptación de la mejora',y-8)
 for text in ['La secuencia se prepara antes de reproducir y muestra avance.', 'Un bucle ya preparado no descarga de nuevo los FITS.', 'El visor no se reconstruye en cada fecha.', 'La fecha visible corresponde al cuadro presentado.', 'Cambiar velocidad, B/N o color reutiliza los cuadros preparados.', 'Una búsqueda truncada recupera ventanas temporales adicionales.', 'Coordenadas, Paint y sincronización siguen funcionando.']:
  txt('•',46,y,10,color=ACCENT);y=para(text,y,x=61,width=490,size=10,leading=14)
-report=ROOT/'data-cache/eon-performance.json'
+report=ROOT/'docs/performance.json'
 y=heading('Resultado de la implementación',y-12)
 if report.exists():
  r=json.loads(report.read_text(encoding='utf-8'));y=para(r['summary'],y)
- for line in r.get('measurements',[]):y=para(line,y,size=10,leading=14)
+ for line in r.get('measurements',[]):y=para(line,y,size=9.8,leading=13.5)
 else:y=para('Medición pendiente: esta primera edición documenta el sistema y el diseño de la mejora. Se actualizará al terminar la implementación; no se atribuyen todavía cifras de velocidad a un cambio sin medir.',y)
 y=heading('Límites que permanecen',y-8)
 para('La red y la preparación inicial pueden tardar. La memoria disponible limita el tamaño de una secuencia. La visualización no elimina los artefactos del mosaico ni homogeneiza automáticamente longitud de onda o PSF entre exposiciones. Comparar imágenes ayuda a investigar; una conclusión científica necesita esos controles adicionales.',y,size=10,leading=14)
