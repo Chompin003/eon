@@ -764,3 +764,30 @@ input[type='range']::-moz-range-thumb {
 .export-dialog::backdrop {
   background: #0008;
 }
+
+.archive-fields {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+.archive-field-marker,
+.archive-field-guide {
+  position: absolute;
+  pointer-events: auto;
+  background: #123340;
+  color: white;
+  border: 1px solid #79d8df;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+}
+.archive-field-marker {
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+.archive-field-guide {
+  bottom: 54px;
+  right: 12px;
+  max-width: 270px;
+}

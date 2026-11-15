@@ -29,6 +29,7 @@ import {
   exportFilename,
 } from './shared';
 import {
+  ArchiveRegions,
   SkyViewer,
   analyzePixels,
   captureSky,
@@ -475,6 +476,17 @@ function ExplorerApp() {
             renderAnnotations={(projection) => (
               <>
                 <PaintSurface session={paint} projection={projection} />
+                <ArchiveRegions
+                  projection={projection}
+                  source={comparisonSource}
+                  onOpen={(field) => {
+                    setComparisonSource(field);
+                    setObservationSource(null);
+                    setRestoreState('none');
+                    setRestoring(false);
+                    updateView(field.target!);
+                  }}
+                />
                 {pixelStudy && (exportLayers?.markers ?? showPixels) && observationSource && (
                   <DetectionMarkers
                     result={pixelStudy}
