@@ -25,9 +25,19 @@ import {
   type RegionStudy,
   type StudyObject,
   type PixelStudy,
+  type ExportLayers,
+  exportFilename,
 } from './shared';
-import { ArchiveRegions, SkyViewer, analyzePixels } from './viewer';
-import { ExplorerLayout } from './ui';
+import {
+  ArchiveRegions,
+  SkyViewer,
+  analyzePixels,
+  captureSky,
+  pngBlob,
+  waitForExportFrame,
+  createGifEncoder,
+} from './viewer';
+import { ExplorerLayout, ExportPanel, type ExportRequest } from './ui';
 import { PaintTools, PaintSurface, usePaintSession } from './drawing';
 import { useShareLink } from './useShareLink';
 
@@ -56,6 +66,8 @@ function ExplorerApp() {
   const [selectedTrack, setSelectedTrack] = useState<string>();
   const [showPixels, setShowPixels] = useState(true);
   const [frameRequest, setFrameRequest] = useState<{ id: string; nonce: number }>();
+  const [timelineInterval, setTimelineInterval] = useState(200);
+  const [exportLayers, setExportLayers] = useState<ExportLayers>();
   const requestFrame = (id: string) =>
     setFrameRequest((prev) => ({ id, nonce: (prev?.nonce ?? 0) + 1 }));
   const paint = usePaintSession();
@@ -124,6 +136,87 @@ function ExplorerApp() {
     failed: 0,
     bytes: 0,
   });
+  const exportFrames = useMemo(() => {
+    const sequence = observationSource?.sequence;
+    if (!sequence?.region || bufferStatus.sequenceId !== sequence.id) return [];
+    const ready = new Set(bufferStatus.readyFrameIds);
+    return sequence.frames
+      .filter((f) => ready.has(f.id))
+      .sort((a, b) => Date.parse(a.dateUtc) - Date.parse(b.dateUtc));
+  }, [observationSource?.sequence, bufferStatus]);
+  const exportView = async ({ format, layers, maxSide, signal, progress }: ExportRequest) => {
+    // Snapshot the selection. Frame requests pause playback and preserve the sequence buffer.
+    const original = observationSource;
+    const frozenView = { ...view };
+    if (format === 'gif' && exportFrames.length < 2)
+      throw Error('Prepara al menos dos fechas de una región.');
+    if (format === 'gif' && exportFrames.length > 200)
+      throw Error('El GIF admite hasta 200 fechas. Reduce el rango temporal antes de exportar.');
+    const frames = [...exportFrames];
+    let encoder: ReturnType<(typeof import('./viewer'))['createGifEncoder']> | undefined;
+    setExportLayers(layers);
+    if (original) requestFrame(original.id);
+    try {
+      const root = document.querySelector<HTMLElement>('.viewer-surface');
+      if (!root) throw Error('No se encontró el visor.');
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      );
+      signal.throwIfAborted();
+      let blob: Blob, filename: string;
+      if (format === 'png') {
+        if (original?.sequence?.region) await waitForExportFrame(root, original.id, signal);
+        const canvas = await captureSky(root, layers, signal, { maxSide });
+        try {
+          blob = await pngBlob(canvas);
+        } finally {
+          canvas.width = canvas.height = 0;
+        }
+        filename = exportFilename(frozenView);
+      } else {
+        encoder = createGifEncoder(signal);
+        let dimensions = '';
+        for (let i = 0; i < frames.length; i++) {
+          signal.throwIfAborted();
+          const frame = frames[i];
+          progress(`Cuadro ${i + 1} de ${frames.length} · ${frame.dateUtc.slice(0, 10)}`);
+          requestFrame(frame.id);
+          await waitForExportFrame(root, frame.id, signal);
+          const canvas = await captureSky(root, { ...layers, space: true }, signal, {
+            maxSide,
+            opaque: true,
+            date: frame.dateUtc,
+          });
+          try {
+            const currentDimensions = `${canvas.width}x${canvas.height}`;
+            if (dimensions && dimensions !== currentDimensions)
+              throw Error(
+                'La ventana cambió de tamaño durante la exportación. Vuelve a intentarlo.',
+              );
+            dimensions = currentDimensions;
+            await encoder.write(canvas, timelineInterval);
+          } finally {
+            canvas.width = canvas.height = 0;
+          }
+        }
+        progress('Terminando el archivo…');
+        blob = await encoder.finish();
+        filename = exportFilename(frozenView, [frames[0].dateUtc, frames.at(-1)!.dateUtc]);
+      }
+      signal.throwIfAborted();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+      return filename;
+    } finally {
+      encoder?.dispose();
+      setExportLayers(undefined);
+      if (original) requestFrame(original.id);
+    }
+  };
   useEffect(() => {
     try {
       if (region) localStorage.setItem('eon:last-region:v1', JSON.stringify(region));
@@ -258,8 +351,19 @@ function ExplorerApp() {
           )}
         </div>
       }
+      exportTools={
+        <ExportPanel
+          onExport={exportView}
+          readyFrames={exportFrames.length}
+          totalFrames={
+            observationSource?.sequence?.region ? observationSource.sequence.frames.length : 0
+          }
+          markersAvailable={Boolean(pixelStudy || study)}
+        />
+      }
       timeTools={
         <ObservationsPanel
+          onIntervalChange={setTimelineInterval}
           exampleRequest={exampleRequest}
           restoreExample={initial?.dataset === 'ngc1491-example'}
           frameRequest={frameRequest}
@@ -383,7 +487,7 @@ function ExplorerApp() {
                     updateView(field.target!);
                   }}
                 />
-                {pixelStudy && showPixels && observationSource && (
+                {pixelStudy && (exportLayers?.markers ?? showPixels) && observationSource && (
                   <DetectionMarkers
                     result={pixelStudy}
                     frameId={observationSource.id}
@@ -392,7 +496,7 @@ function ExplorerApp() {
                     onSelect={setSelectedTrack}
                   />
                 )}
-                {study && showStudy && (
+                {study && (showStudy || (exportLayers?.markers && !pixelStudy)) && (
                   <StudyMarkers
                     result={study}
                     projection={projection}

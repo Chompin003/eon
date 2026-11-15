@@ -11,4 +11,6 @@ export interface SkyProjection {
 
 export interface SkyProjectionWindow extends Window {
   spherexProjection?: SkyProjection;
+  /** Aladin's public PNG export; no access to its internal WebGL buffers. */
+  spherexCapture?: () => Promise<Blob>;
 }

@@ -33,6 +33,7 @@ interface Survey extends Layer {
   setFrequency(frequency: { value: number; unit: 'Hz' }): void;
 }
 interface AladinView {
+  getViewData(type: 'blob', imageType: 'image/png', logo: boolean): Promise<Blob>;
   getRaDec(): [number, number];
   getFov(): [number, number];
   getSize(): [number, number];
@@ -644,6 +645,10 @@ async function start() {
       lockNorthUp: true,
     });
     engine.setFoVRange(VIEW_LIMITS.minFov, VIEW_LIMITS.maxFov);
+    (window as SkyProjectionWindow).spherexCapture = () => {
+      if (!engine) return Promise.reject(new Error('El visor todavía no está listo.'));
+      return engine.getViewData('blob', 'image/png', false);
+    };
     // Same-origin, read-only access to Aladin's actual SIN/FITS display projection.
     (window as SkyProjectionWindow).spherexProjection = {
       worldToPixel: (ra, dec) => engine?.world2pix(ra, dec),
